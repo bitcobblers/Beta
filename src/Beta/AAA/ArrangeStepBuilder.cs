@@ -10,15 +10,15 @@ public class ArrangeStepBuilder : StepBuilder
     }
 
     [PublicAPI]
-    public ArrangeStepBuilder Arrange(Action handler) => new (Compile(handler));
+    public ArrangeStepBuilder Arrange(Action handler) => new(Compile(handler));
 
     [PublicAPI]
-    public ArrangeStepBuilder<T> Arrange<T>(Func<T> handler) => new (Compile(handler));
+    public ArrangeStepBuilder<T> Arrange<T>(Func<T> handler) => new(Compile(handler));
 
     [PublicAPI]
     public ActStepBuilder Act(Action handler) => new(Compile(handler));
 
-    [PublicAPI] 
+    [PublicAPI]
     public ActStepBuilder<T> Act<T>(Func<T> handler) => new(Compile(handler));
 }
 
