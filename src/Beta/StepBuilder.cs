@@ -2,7 +2,7 @@
 
 public class StepBuilder
 {
-    public Delegate Handler { get; protected set; } = () => { };
+    public Delegate Handler { get; } = () => { };
 
     public StepBuilder()
     {
