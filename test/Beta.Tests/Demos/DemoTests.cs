@@ -1,7 +1,5 @@
-﻿using Beta.Tests.Demos;
-
-namespace Beta.Tests;
-public class BetaTestTests
+﻿namespace Beta.Tests.Demos;
+public class DemoTests
 {
     [Fact]
     public void RunCalculator()

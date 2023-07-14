@@ -53,7 +53,7 @@ public class StepBuilder<TIn> : StepBuilder
         {
             var result = Handler.DynamicInvoke();
             handler((TIn)result!);
-            
+
             return (TIn)result!;
         };
     }
