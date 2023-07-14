@@ -6,7 +6,8 @@ public class CalculatorDemo : BetaTest
 {
     public CalculatorDemo()
     {
-        AdditionInput.ToTest(this, "Addition Tests", (test, input) =>
+        // Guided test.
+        AdditionInput.ToTest(this, "Addition Tests (Guided)", (test, input) =>
         {
             test
                 .AddSteps(steps => steps
@@ -17,6 +18,23 @@ public class CalculatorDemo : BetaTest
                     result.Should().Be(input.Expected);
                 })
             );
+        });
+
+        // Basic (escape hatch) test.
+        AdditionInput.ToTest(this, "Addition Tests (Basic)", (test, input) =>
+        {
+            test
+                .Basic(() =>
+                {
+                    // Arrange.
+                    var calculator = new Calculator();
+
+                    // Act.
+                    int result = calculator.Add(input.A, input.B);
+
+                    // Assert.
+                    result.Should().Be(input.Expected);
+                });
         });
     }
 
