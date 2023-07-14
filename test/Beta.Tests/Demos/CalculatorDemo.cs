@@ -9,15 +9,19 @@ public class CalculatorDemo : BetaTest
     {
         AdditionInput.ToTest(this, "Addition Tests", (test, input) =>
         {
-            test.AddSteps(steps => steps
+            test
+                .AddSteps(steps => steps
                 .Arrange(() => new Calculator())
                 .Act(calc => calc.Add(input.A, input.B))
-                .Assert(result => result.Should().Be(input.Expected))
+                .Assert(result =>
+                {
+                    result.Should().Be(input.Expected);
+                })
             );
         });
     }
 
-    public IEnumerable<Input> AdditionInput
+    private static IEnumerable<Input> AdditionInput
     {
         get
         {
@@ -29,9 +33,9 @@ public class CalculatorDemo : BetaTest
         }
     }
 
-    public record Input(int A, int B, int Expected);
+    private record Input(int A, int B, int Expected);
 
-    private class Calculator
+    public class Calculator
     {
         public int Add(int a, int b) => a + b;
     }

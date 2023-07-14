@@ -2,22 +2,21 @@
 
 public class StepBuilder
 {
-    protected readonly Action _handler = () => { };
+    public Delegate Handler { get; protected set; } = () => { };
 
     public StepBuilder()
     {
     }
 
-    protected StepBuilder(Action handler)
-    {
-        _handler = handler;
-    }
+    protected StepBuilder(Action handler) => Handler = handler;
+
+    protected StepBuilder(Func<object> handler) => Handler = handler;
 
     protected Action Compile(Action? handler)
     {
         return () =>
         {
-            _handler?.Invoke();
+            Handler.DynamicInvoke();
             handler?.Invoke();
         };
     }
@@ -26,7 +25,7 @@ public class StepBuilder
     {
         return () =>
         {
-            _handler?.Invoke();
+            Handler.DynamicInvoke();
             return handler();
         };
     }
@@ -34,15 +33,16 @@ public class StepBuilder
 
 public class StepBuilder<TIn> : StepBuilder
 {
-    protected readonly Func<TIn> _handler;
-
-    protected StepBuilder(Func<TIn> handler) => _handler = handler;
+    protected StepBuilder(Func<TIn> handler) :
+        base(() => handler())
+    {
+    }
 
     protected Func<TOut> Compile<TOut>(Func<TIn, TOut> handler)
     {
         return () =>
         {
-            var result = _handler();
+            dynamic result = Handler.DynamicInvoke()!;
             return handler(result);
         };
     }
@@ -51,9 +51,10 @@ public class StepBuilder<TIn> : StepBuilder
     {
         return () =>
         {
-            var result = _handler();
-            handler(result);
-            return result;
+            var result = Handler.DynamicInvoke();
+            handler((TIn)result!);
+            
+            return (TIn)result!;
         };
     }
 }
