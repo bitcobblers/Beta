@@ -37,6 +37,25 @@ public class BetaTest
         _tests.Add(new TestDefinition(builder.Name, input, builder.Handler));
     }
 
+    public void UnitTest(string? name, Action test)
+    {
+        AddTest(name, configure =>
+        {
+            configure.Basic(test);
+        });
+    }
+
+    public void UnitTest<T>(string? name, IEnumerable<T> source, Action <TestBuilder,T> test)
+    {
+        foreach (var input in source)
+        {
+            AddTest(name, input, (configure, _) =>
+            {
+                configure.Basic(() => test(configure, input));
+            });
+        }
+    }
+
     public void Execute()
     {
         foreach (var test in _tests)

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Linq.Expressions;
+using FluentAssertions;
 
 namespace Beta.Tests.Demos;
 
@@ -7,34 +8,46 @@ public class CalculatorDemo : BetaTest
     public CalculatorDemo()
     {
         // Guided test.
-        AdditionInput.ToTest(this, "Addition Tests (Guided)", (test, input) =>
+        //AdditionInput.ToTest(this, "Addition Tests (Guided)", (test, input) =>
+        //{
+        //    test
+        //        .AddSteps(steps => steps
+        //        .Arrange(() => new Calculator())
+        //        .Act(calc => calc.Add(input.A, input.B))
+        //        .Assert(result =>
+        //        {
+        //            result.Should().Be(input.Expected);
+        //        })
+        //    );
+        //});
+
+        //// Basic (escape hatch) test.
+        //AdditionInput.ToTest(this, "Addition Tests (Basic)", (test, input) =>
+        //{
+        //    test
+        //        .Basic(() =>
+        //        {
+        //            // Arrange.
+        //            var calculator = new Calculator();
+
+        //            // Act.
+        //            int result = calculator.Add(input.A, input.B);
+
+        //            // Assert.
+        //            result.Should().Be(input.Expected);
+        //        });
+        //});
+
+        UnitTest("Addition Tests (classic)", AdditionInput, (_, input) =>
         {
-            test
-                .AddSteps(steps => steps
-                .Arrange(() => new Calculator())
-                .Act(calc => calc.Add(input.A, input.B))
-                .Assert(result =>
-                {
-                    result.Should().Be(input.Expected);
-                })
-            );
-        });
+            // Arrange.
+            var calculator = new Calculator();
 
-        // Basic (escape hatch) test.
-        AdditionInput.ToTest(this, "Addition Tests (Basic)", (test, input) =>
-        {
-            test
-                .Basic(() =>
-                {
-                    // Arrange.
-                    var calculator = new Calculator();
+            // Act.
+            int result = calculator.Add(input.A, input.B);
 
-                    // Act.
-                    int result = calculator.Add(input.A, input.B);
-
-                    // Assert.
-                    result.Should().Be(input.Expected);
-                });
+            // Assert.
+            result.Should().Be(input.Expected);
         });
     }
 
