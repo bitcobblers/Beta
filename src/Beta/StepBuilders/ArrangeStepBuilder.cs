@@ -2,13 +2,13 @@
 
 namespace Beta.StepBuilders;
 
-public class ArrangeStepBuilder<TInput> : StepBuilder<TInput>
+public class ArrangeStepBuilder<TContext> : StepBuilder<TContext>
 {
-    public ArrangeStepBuilder(Func<TInput> handler)
+    public ArrangeStepBuilder(Func<TContext> handler)
         : base(handler)
     {
     }
 
     [PublicAPI]
-    public ActStepBuilder<TOut> Act<TOut>(Func<TInput, TOut> handler) => new(Compile(handler));
+    public ActStepBuilder<TResult> Act<TResult>(Func<TContext, TResult> handler) => new(Compile(handler));
 }

@@ -38,7 +38,12 @@ public class StepBuilder<TInput> : StepBuilder
     {
     }
 
-    protected Func<TOut> Compile<TOut>(Func<TInput, TOut> handler)
+    protected StepBuilder(Action? handler)
+        : base(handler)
+    {
+    }
+
+    protected Func<TOutput> Compile<TOutput>(Func<TInput, TOutput> handler)
     {
         return () =>
         {
@@ -47,14 +52,12 @@ public class StepBuilder<TInput> : StepBuilder
         };
     }
 
-    protected Func<TInput> Compile<TI>(Action<TInput> handler)
+    protected Action CompileAction(Action<TInput> handler)
     {
         return () =>
         {
             var result = Handler.DynamicInvoke();
             handler((TInput)result!);
-
-            return (TInput)result!;
         };
     }
 }

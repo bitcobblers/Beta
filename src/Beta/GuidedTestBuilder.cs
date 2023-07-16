@@ -6,5 +6,5 @@ namespace Beta;
 public class GuidedTestBuilder : BaseTestBuilder
 {
     [PublicAPI]
-    public ArrangeStepBuilder<T> Arrange<T>(Func<T> handler) => new(handler);
+    public ArrangeStepBuilder<TContext> Arrange<TContext>(Func<TContext> handler) => new(handler);
 }

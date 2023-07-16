@@ -1,8 +1,8 @@
 ﻿namespace Beta.StepBuilders;
 
-public class AssertStepBuilder<TIn> : StepBuilder<TIn>
+public class AssertStepBuilder<TInput> : StepBuilder<TInput>
 {
-    public AssertStepBuilder(Func<TIn> handler)
+    public AssertStepBuilder(Action handler)
         : base(handler)
     {
     }

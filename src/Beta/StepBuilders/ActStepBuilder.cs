@@ -10,5 +10,5 @@ public class ActStepBuilder<TInput> : StepBuilder<TInput>
     }
 
     [PublicAPI]
-    public AssertStepBuilder<TInput> Assert(Action<TInput> handler) => new(Compile<TInput>(handler));
+    public AssertStepBuilder<TInput> Assert(Action<TInput> handler) => new(CompileAction(handler));
 }
