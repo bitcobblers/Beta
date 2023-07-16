@@ -1,9 +1,24 @@
-﻿namespace Beta;
+﻿using JetBrains.Annotations;
+
+namespace Beta;
 
 public class GuidedTest : BaseTest
 {
-    //public void Test(string? name)
-    //{
-    //    AddTest();
-    //}
+    [PublicAPI]
+    public void Test(string? name)
+    {
+        AddTest<GuidedTestBuilder>(name, configure =>
+        {
+
+        });
+    }
+
+    [PublicAPI]
+    public void Test<TInput>(string? name, IEnumerable<TInput> source, TestConfigurator<GuidedTestBuilder, TInput> test)
+    {
+        foreach (var input in source)
+        {
+            AddTest(name, input, test);
+        }
+    }
 }
