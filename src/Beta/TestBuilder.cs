@@ -1,14 +1,10 @@
-﻿namespace Beta;
+﻿using Beta.AAA;
 
-public class TestBuilder
+namespace Beta;
+
+public class BaseTestBuilder
 {
-    public string Name { get; }
     public Delegate Handler { get; private set; }
-
-    public TestBuilder(string name)
-    {
-        Name = name;
-    }
 
     public void AddSteps(Func<StepBuilder, StepBuilder?> steps)
     {
@@ -20,4 +16,25 @@ public class TestBuilder
             Handler = configuredSteps.Handler;
         }
     }
+
+    public void SetHandler(Func<StepBuilder, StepBuilder?> steps)
+    {
+        var stepBuilder = new StepBuilder();
+        var configuredSteps = steps(stepBuilder);
+
+        if (configuredSteps != null)
+        {
+            Handler = configuredSteps.Handler;
+        }
+    }
+}
+
+public class BasicTestBuilder : BaseTestBuilder
+{
+
+}
+
+public class GuidedTestBuilder : BaseTestBuilder
+{
+    public ArrangeStepBuilder Arrange(Action handler) => new(handler);
 }

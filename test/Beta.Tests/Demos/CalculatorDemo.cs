@@ -3,7 +3,7 @@ using FluentAssertions;
 
 namespace Beta.Tests.Demos;
 
-public class CalculatorDemo : BetaTest
+public class CalculatorDemo : BasicTest
 {
     public CalculatorDemo()
     {
@@ -38,7 +38,7 @@ public class CalculatorDemo : BetaTest
         //        });
         //});
 
-        UnitTest("Addition Tests (classic)", AdditionInput, (_, input) =>
+        Test("Addition Tests (basic)", AdditionInput, input =>
         {
             // Arrange.
             var calculator = new Calculator();
