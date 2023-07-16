@@ -7,6 +7,7 @@ public class ActStepBuilder<TInput> : StepBuilder<TInput>
     public ActStepBuilder(BaseTestBuilder builder, Func<TInput> handler)
         : base(builder, handler)
     {
+        builder.UpdateHandler(Handler);
     }
 
     [PublicAPI]

@@ -13,4 +13,9 @@ public class BaseTestBuilder
             Handler = configuredSteps.Handler;
         }
     }
+
+    public void UpdateHandler(Delegate handler)
+    {
+        Handler = handler;
+    }
 }
