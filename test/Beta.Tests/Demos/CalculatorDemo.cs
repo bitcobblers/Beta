@@ -6,7 +6,7 @@ public class CalculatorDemo : BetaTest
 {
     public CalculatorDemo()
     {
-        BasicTest("Addition Tests (basic)", AdditionInput, input =>
+        BasicTest("Addition Tests (basic)", AdditionInput, (_, input) =>
         {
             // Arrange.
             var calculator = new Calculator();

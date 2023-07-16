@@ -14,20 +14,20 @@ public class BetaTest
     [PublicAPI]
     public void BasicTest(string? name, Action test)
     {
-        AddTest<BasicTestBuilder>(name, configure =>
+        AddTest<BasicTestBuilder>(name, builder =>
         {
-            configure.SetHandler(_ => new BasicStepBuilder(test));
+            builder.SetHandler(_ => new BasicStepBuilder(test));
         });
     }
 
     [PublicAPI]
-    public void BasicTest<TInput>(string? name, IEnumerable<TInput> source, Action<TInput> test)
+    public void BasicTest<TInput>(string? name, IEnumerable<TInput> source, TestConfigurator<BasicTestBuilder, TInput> test)
     {
         foreach (var input in source)
         {
-            AddTest<BasicTestBuilder, TInput>(name, input, (configure, _) =>
+            AddTest<BasicTestBuilder, TInput>(name, input, (builder, _) =>
             {
-                configure.SetHandler(_ => new BasicStepBuilder(() => test(input)));
+                builder.SetHandler(_ => new BasicStepBuilder(() => test(builder, input)));
             });
         }
     }
