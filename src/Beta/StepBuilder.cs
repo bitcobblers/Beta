@@ -31,14 +31,14 @@ public class StepBuilder
     }
 }
 
-public class StepBuilder<TIn> : StepBuilder
+public class StepBuilder<TInput> : StepBuilder
 {
-    protected StepBuilder(Func<TIn> handler) :
+    protected StepBuilder(Func<TInput> handler) :
         base(() => handler())
     {
     }
 
-    protected Func<TOut> Compile<TOut>(Func<TIn, TOut> handler)
+    protected Func<TOut> Compile<TOut>(Func<TInput, TOut> handler)
     {
         return () =>
         {
@@ -47,14 +47,14 @@ public class StepBuilder<TIn> : StepBuilder
         };
     }
 
-    protected Func<TIn> Compile<TI>(Action<TIn> handler)
+    protected Func<TInput> Compile<TI>(Action<TInput> handler)
     {
         return () =>
         {
             var result = Handler.DynamicInvoke();
-            handler((TIn)result!);
+            handler((TInput)result!);
 
-            return (TIn)result!;
+            return (TInput)result!;
         };
     }
 }

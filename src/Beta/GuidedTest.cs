@@ -5,12 +5,9 @@ namespace Beta;
 public class GuidedTest : BaseTest
 {
     [PublicAPI]
-    public void Test(string? name)
+    public void Test(string? name, TestConfigurator<GuidedTestBuilder> test)
     {
-        AddTest<GuidedTestBuilder>(name, configure =>
-        {
-
-        });
+        AddTest(name, test);
     }
 
     [PublicAPI]

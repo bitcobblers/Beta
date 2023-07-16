@@ -8,7 +8,6 @@ public class BaseTest
     private readonly Dictionary<string, List<TestDefinition>> _tests = new();
 
     public delegate void TestConfigurator<in TBuilder>(TBuilder builder) where TBuilder : BaseTestBuilder;
-
     public delegate void TestConfigurator<in TBuilder, in TInput>(TBuilder builder, TInput input) where TBuilder : BaseTestBuilder;
 
     protected void AddTest<TBuilder>(string? name, TestConfigurator<TBuilder> configure)

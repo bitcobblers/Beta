@@ -1,17 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace Beta.AAA;
-
-//public class AssertStepBuilder : StepBuilder
-//{
-//    public AssertStepBuilder(Action handler)
-//        : base(handler)
-//    {
-//    }
-
-//    [PublicAPI]
-//    public AssertStepBuilder Assert(Action handler) => new(Compile(handler));
-//}
+﻿namespace Beta.AAA;
 
 public class AssertStepBuilder<TIn> : StepBuilder<TIn>
 {
@@ -19,7 +6,4 @@ public class AssertStepBuilder<TIn> : StepBuilder<TIn>
         : base(handler)
     {
     }
-
-    //[PublicAPI]
-    //public AssertStepBuilder<TIn> Assert(Action<TIn> handler) => new(Compile<TIn>(handler));
 }
