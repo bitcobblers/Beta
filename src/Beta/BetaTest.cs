@@ -69,6 +69,11 @@ public class BetaTest
         var builder = new TBuilder();
         configure?.Invoke(builder);
 
+        if(builder.IsValid(out var errors)==false)
+        {
+            throw new IncorrectlyConfiguredTestException(name, errors.ToArray());
+        }
+
         RegisterTest(new TestDefinition(name, null, builder.Handler));
     }
 
@@ -82,6 +87,11 @@ public class BetaTest
 
         var builder = new TBuilder();
         configure?.Invoke(builder, input);
+
+        if (builder.IsValid(out var errors) == false)
+        {
+            throw new IncorrectlyConfiguredTestException(name, errors.ToArray());
+        }
 
         RegisterTest(new TestDefinition(name, input, builder.Handler));
     }

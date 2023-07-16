@@ -1,6 +1,6 @@
 ﻿namespace Beta;
 
-public class BaseTestBuilder
+public abstract class BaseTestBuilder
 {
     public Delegate Handler { get; private set; } = () => { };
 
@@ -8,4 +8,6 @@ public class BaseTestBuilder
     {
         Handler = handler;
     }
+
+    public abstract bool IsValid(out List<string> messages);
 }

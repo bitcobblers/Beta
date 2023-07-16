@@ -7,6 +7,7 @@ public class ActStepBuilder<TInput> : StepBuilder<GuidedTestBuilder, TInput>
     public ActStepBuilder(GuidedTestBuilder builder, Func<TInput> handler)
         : base(builder, handler)
     {
+        builder.IsActDefined = true;
     }
 
     [PublicAPI]
