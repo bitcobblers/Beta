@@ -47,6 +47,7 @@ public class BetaTest
         }
     }
 
+    [PublicAPI]
     public void Execute()
     {
         foreach (var (_, tests) in _tests)
