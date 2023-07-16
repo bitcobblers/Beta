@@ -2,7 +2,7 @@
 
 namespace Beta;
 
-public class GuidedTest : BaseTest
+public class GuidedTest : BetaTest
 {
     [PublicAPI]
     public void Test(string? name, TestConfigurator<GuidedTestBuilder> test)

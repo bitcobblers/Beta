@@ -2,7 +2,7 @@
 
 namespace Beta;
 
-public class BasicTest : BaseTest
+public class BasicTest : BetaTest
 {
     [PublicAPI]
     public void Test(string? name, Action test)

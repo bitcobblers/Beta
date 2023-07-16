@@ -1,5 +1,5 @@
 ﻿namespace Beta;
 
-public class BehaviorTest : BaseTest
+public class BehaviorTest : BetaTest
 {
 }
