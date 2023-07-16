@@ -1,5 +1,4 @@
-﻿using Beta.StepBuilders;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace Beta;
 
@@ -12,12 +11,12 @@ public class BetaTest
     public delegate void TestConfigurator<in TBuilder, in TInput>(TBuilder builder, TInput input) where TBuilder : BaseTestBuilder;
 
     [PublicAPI]
-    public void BasicTest(string? name, Action test)
+    public void BasicTest(string? name, TestConfigurator<BasicTestBuilder> test)
     {
-        AddTest<BasicTestBuilder>(name, builder =>
+        AddTest(name, new TestConfigurator<BasicTestBuilder>(b =>
         {
-            builder.SetHandler(() => new BasicStepBuilder(builder, test));
-        });
+            b.UpdateHandler(() => test(b));
+        }));
     }
 
     [PublicAPI]
@@ -25,10 +24,10 @@ public class BetaTest
     {
         foreach (var input in source)
         {
-            AddTest<BasicTestBuilder, TInput>(name, input, (builder, _) =>
+            AddTest(name, input, new TestConfigurator<BasicTestBuilder, TInput>((b, i) =>
             {
-                builder.SetHandler(() => new BasicStepBuilder(builder, () => test(builder, input)));
-            });
+                b.UpdateHandler(() => test(b, i));
+            }));
         }
     }
 

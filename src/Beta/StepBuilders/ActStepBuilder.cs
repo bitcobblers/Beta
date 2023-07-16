@@ -2,9 +2,9 @@
 
 namespace Beta.StepBuilders;
 
-public class ActStepBuilder<TInput> : StepBuilder<TInput>
+public class ActStepBuilder<TInput> : StepBuilder<GuidedTestBuilder, TInput>
 {
-    public ActStepBuilder(BaseTestBuilder builder, Func<TInput> handler)
+    public ActStepBuilder(GuidedTestBuilder builder, Func<TInput> handler)
         : base(builder, handler)
     {
         builder.UpdateHandler(Handler);

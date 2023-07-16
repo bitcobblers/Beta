@@ -1,18 +1,18 @@
 ﻿namespace Beta;
 
-public class StepBuilder
+public class StepBuilder<TTestBuilder> where TTestBuilder : BaseTestBuilder
 {
-    public Delegate Handler { get; } = () => { };
-    protected BaseTestBuilder Builder { get; }
+    protected Delegate Handler { get; } = () => { };
+    protected TTestBuilder Builder { get; }
 
-    public StepBuilder(BaseTestBuilder builder)
+    public StepBuilder(TTestBuilder builder)
     {
         Builder = builder;
     }
 
-    protected StepBuilder(BaseTestBuilder builder, Action handler) : this(builder) => Handler = handler;
+    protected StepBuilder(TTestBuilder builder, Action handler) : this(builder) => Handler = handler;
 
-    protected StepBuilder(BaseTestBuilder builder, Func<object> handler) : this(builder) => Handler = handler;
+    protected StepBuilder(TTestBuilder builder, Func<object> handler) : this(builder) => Handler = handler;
 
     protected Action Compile(Action? handler)
     {
@@ -33,14 +33,15 @@ public class StepBuilder
     }
 }
 
-public class StepBuilder<TInput> : StepBuilder
+public class StepBuilder<TTestBuilder, TInput> : StepBuilder<TTestBuilder>
+    where TTestBuilder : BaseTestBuilder
 {
-    protected StepBuilder(BaseTestBuilder builder, Func<TInput>? handler) :
+    protected StepBuilder(TTestBuilder builder, Func<TInput>? handler) :
         base(builder, () => handler())
     {
     }
 
-    protected StepBuilder(BaseTestBuilder builder, Action? handler)
+    protected StepBuilder(TTestBuilder builder, Action? handler)
         : base(builder, handler)
     {
     }

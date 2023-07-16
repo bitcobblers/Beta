@@ -2,9 +2,9 @@
 
 namespace Beta.StepBuilders;
 
-public class ArrangeStepBuilder<TContext> : StepBuilder<TContext>
+public class ArrangeStepBuilder<TContext> : StepBuilder<GuidedTestBuilder, TContext>
 {
-    public ArrangeStepBuilder(BaseTestBuilder builder, Func<TContext> handler)
+    public ArrangeStepBuilder(GuidedTestBuilder builder, Func<TContext> handler)
         : base(builder, handler)
     {
         builder.UpdateHandler(Handler);
