@@ -1,4 +1,4 @@
-﻿namespace Beta.AAA;
+﻿namespace Beta.StepBuilders;
 
 public class AssertStepBuilder<TIn> : StepBuilder<TIn>
 {

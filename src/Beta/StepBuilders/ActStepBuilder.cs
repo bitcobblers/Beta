@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace Beta.AAA;
+namespace Beta.StepBuilders;
 
 public class ActStepBuilder<TInput> : StepBuilder<TInput>
 {

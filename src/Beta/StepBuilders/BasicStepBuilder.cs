@@ -1,4 +1,4 @@
-﻿namespace Beta;
+﻿namespace Beta.StepBuilders;
 
 public class BasicStepBuilder : StepBuilder
 {

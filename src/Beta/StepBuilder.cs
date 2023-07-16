@@ -33,7 +33,7 @@ public class StepBuilder
 
 public class StepBuilder<TInput> : StepBuilder
 {
-    protected StepBuilder(Func<TInput> handler) :
+    protected StepBuilder(Func<TInput>? handler) :
         base(() => handler())
     {
     }
