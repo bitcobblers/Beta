@@ -2,8 +2,8 @@
 
 public class AssertStepBuilder<TInput> : StepBuilder<TInput>
 {
-    public AssertStepBuilder(Action handler)
-        : base(handler)
+    public AssertStepBuilder(BaseTestBuilder builder, Action handler)
+        : base(builder, handler)
     {
     }
 }

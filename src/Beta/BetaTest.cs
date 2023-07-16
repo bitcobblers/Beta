@@ -16,7 +16,7 @@ public class BetaTest
     {
         AddTest<BasicTestBuilder>(name, builder =>
         {
-            builder.SetHandler(_ => new BasicStepBuilder(test));
+            builder.SetHandler(() => new BasicStepBuilder(builder, test));
         });
     }
 
@@ -27,7 +27,7 @@ public class BetaTest
         {
             AddTest<BasicTestBuilder, TInput>(name, input, (builder, _) =>
             {
-                builder.SetHandler(_ => new BasicStepBuilder(() => test(builder, input)));
+                builder.SetHandler(() => new BasicStepBuilder(builder, () => test(builder, input)));
             });
         }
     }

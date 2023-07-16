@@ -2,8 +2,8 @@
 
 public class BasicStepBuilder : StepBuilder
 {
-    public BasicStepBuilder(Action handler)
-        : base(handler)
+    public BasicStepBuilder(BaseTestBuilder builder, Action handler)
+        : base(builder, handler)
     {
     }
 }

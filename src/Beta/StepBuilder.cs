@@ -3,14 +3,16 @@
 public class StepBuilder
 {
     public Delegate Handler { get; } = () => { };
+    protected BaseTestBuilder Builder { get; }
 
-    public StepBuilder()
+    public StepBuilder(BaseTestBuilder builder)
     {
+        Builder = builder;
     }
 
-    protected StepBuilder(Action handler) => Handler = handler;
+    protected StepBuilder(BaseTestBuilder builder, Action handler) : this(builder) => Handler = handler;
 
-    protected StepBuilder(Func<object> handler) => Handler = handler;
+    protected StepBuilder(BaseTestBuilder builder, Func<object> handler) : this(builder) => Handler = handler;
 
     protected Action Compile(Action? handler)
     {
@@ -33,13 +35,13 @@ public class StepBuilder
 
 public class StepBuilder<TInput> : StepBuilder
 {
-    protected StepBuilder(Func<TInput>? handler) :
-        base(() => handler())
+    protected StepBuilder(BaseTestBuilder builder, Func<TInput>? handler) :
+        base(builder, () => handler())
     {
     }
 
-    protected StepBuilder(Action? handler)
-        : base(handler)
+    protected StepBuilder(BaseTestBuilder builder, Action? handler)
+        : base(builder, handler)
     {
     }
 

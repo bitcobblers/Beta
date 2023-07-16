@@ -4,10 +4,9 @@ public class BaseTestBuilder
 {
     public Delegate Handler { get; private set; } = () => { };
 
-    public void SetHandler(Func<StepBuilder, StepBuilder?> steps)
+    public void SetHandler(Func<StepBuilder?> steps)
     {
-        var stepBuilder = new StepBuilder();
-        var configuredSteps = steps(stepBuilder);
+        var configuredSteps = steps();
 
         if (configuredSteps != null)
         {
