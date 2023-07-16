@@ -15,7 +15,7 @@ public class BetaTest
     {
         AddTest(name, new TestConfigurator<BasicTestBuilder>(b =>
         {
-            b.UpdateHandler(() => test(b));
+            (b as BaseTestBuilder).UpdateHandler(() => test(b));
         }));
     }
 
@@ -26,7 +26,7 @@ public class BetaTest
         {
             AddTest(name, input, new TestConfigurator<BasicTestBuilder, TInput>((b, i) =>
             {
-                b.UpdateHandler(() => test(b, i));
+                (b as BaseTestBuilder).UpdateHandler(() => test(b, i));
             }));
         }
     }
