@@ -5,14 +5,12 @@ public class StepBuilder<TTestBuilder> where TTestBuilder : BaseTestBuilder
     protected Delegate Handler { get; } = () => { };
     protected TTestBuilder Builder { get; }
 
-    public StepBuilder(TTestBuilder builder)
+    protected StepBuilder(TTestBuilder builder, Delegate handler)
     {
+        Handler = handler;
         Builder = builder;
+        Builder.UpdateHandler(Handler);
     }
-
-    protected StepBuilder(TTestBuilder builder, Action handler) : this(builder) => Handler = handler;
-
-    protected StepBuilder(TTestBuilder builder, Func<object> handler) : this(builder) => Handler = handler;
 
     protected Action Compile(Action? handler)
     {

@@ -7,7 +7,6 @@ public class ArrangeStepBuilder<TContext> : StepBuilder<GuidedTestBuilder, TCont
     public ArrangeStepBuilder(GuidedTestBuilder builder, Func<TContext> handler)
         : base(builder, handler)
     {
-        builder.UpdateHandler(Handler);
     }
 
     [PublicAPI]
