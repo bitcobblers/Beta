@@ -2,6 +2,11 @@
 
 public class BasicTestBuilder : BaseTestBuilder
 {
+    public BasicTestBuilder(IServiceProvider serviceProvider)
+        : base(serviceProvider)
+    {
+    }
+
     // ReSharper disable once UnusedParameter.Global
     public new void UpdateHandler(Delegate handler)
     {

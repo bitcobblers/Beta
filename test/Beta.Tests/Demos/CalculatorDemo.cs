@@ -1,18 +1,24 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta.Tests.Demos;
 
 public class CalculatorDemo : BetaTest
 {
-    public CalculatorDemo()
+    protected override void ConfigureContainer(IServiceCollection services)
     {
-        BasicTest("Addition Tests (basic)", AdditionInput, (_, input) =>
+        services.AddSingleton<Calculator>();
+    }
+
+    protected override void DefineTests()
+    {
+        BasicTest("Addition Tests (basic)", AdditionInput, (test, input) =>
         {
             // Arrange.
-            var calculator = new Calculator();
+            var calculator = test.Requires<Calculator>();
 
             // Act.
-            int result = calculator.Add(input.A, input.B);
+            int result = calculator!.Add(input.A, input.B);
 
             // Assert.
             result.Should().Be(input.Expected);
@@ -21,8 +27,8 @@ public class CalculatorDemo : BetaTest
         GuidedTest("Addition Tests (guided)", AdditionInput, (test, input) =>
         {
             test
-                .Arrange(() => new Calculator())
-                .Act(calc => calc.Add(input.A, input.B))
+                .Arrange(test.Requires<Calculator>)
+                .Act(calc => calc!.Add(input.A, input.B))
                 .Assert(result =>
                 {
                     result.Should().Be(input.Expected);

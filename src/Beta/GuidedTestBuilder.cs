@@ -5,6 +5,11 @@ namespace Beta;
 
 public class GuidedTestBuilder : BaseTestBuilder
 {
+    public GuidedTestBuilder(IServiceProvider serviceProvider) 
+        : base(serviceProvider)
+    {
+    }
+
     public bool IsArrangeDefined { get; set; }
     public bool IsActDefined { get; set; }
     public bool IsAssertDefined { get; set; }
