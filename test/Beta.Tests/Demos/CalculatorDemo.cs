@@ -2,25 +2,28 @@
 using Microsoft.Extensions.DependencyInjection;
 using static Beta.CommonSteps.AAA;
 
-
 namespace Beta.Tests.Demos;
 
-public class CalculatorDemo : BetaTest
+public class CalculatorDemo : TestContainer
 {
     // ReSharper disable once MemberCanBeMadeStatic.Global
-    public Proof AddTest()
+    public BetaTest AddTest()
     {
-        var apply = (Input i) =>
-            from calculator in Arrange(GetCalculator)
-            select Act(() => calculator.Add(i.A, i.B));
+        return NewTest(AdditionInput)
+            .Apply(i =>
+                from calculator in Arrange(GetCalculator)
+                select Act(() => calculator.Add(i.A, i.B)))
+            .Proof(_ => { });
 
-        return Proof.New(
-            AdditionInput,
-            apply,
-            Axiom.From(apply));
+        // return NewTest(() =>
+        //         from calculator in Arrange(GetCalculator)
+        //         select Act(() => calculator.Add(1, 1)))
+        //     .Proof(_ => { });
     }
 
     private static Calculator GetCalculator() => new();
+
+    private static int GetValue(int value) => value;
 
     // ---
 
