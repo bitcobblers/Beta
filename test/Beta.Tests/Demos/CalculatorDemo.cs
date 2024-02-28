@@ -1,24 +1,36 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using JetBrains.Annotations;
 using static Beta.CommonSteps.AAA;
 
 namespace Beta.Tests.Demos;
 
 public class CalculatorDemo : TestContainer
 {
-    // ReSharper disable once MemberCanBeMadeStatic.Global
-    public BetaTest AddTest()
+    [PublicAPI]
+    public BetaTest AddTestNoInput()
     {
-        return NewTest(AdditionInput)
-            .Apply(i =>
-                from calculator in Arrange(GetCalculator)
-                select Act(() => calculator.Add(i.A, i.B)))
-            .Proof(_ => { });
+        return Test(from a in Arrange(() => 1)
+                    let r = Act2(() => a + 2)
+                    select r.Test(3));
+    }
 
-        // return NewTest(() =>
-        //         from calculator in Arrange(GetCalculator)
-        //         select Act(() => calculator.Add(1, 1)))
-        //     .Proof(_ => { });
+    [PublicAPI]
+    public BetaTest AddTestWithInput()
+    {
+        return Test(AdditionInput, i =>
+            from a in Arrange(() => 1)
+            from b in Arrange(() => 2)
+            let c = Act2(() => a + b)
+            select c.Test(i.Expected));
+    }
+
+    [PublicAPI]
+    public BetaTest AddAsyncTest()
+    {
+        return Test(
+            from a in Arrange(() => Task.FromResult(1))
+            from b in Arrange(() => 2)
+            let c = Act2(async () => (await a) + b)
+            select c.Test(3));
     }
 
     private static Calculator GetCalculator() => new();

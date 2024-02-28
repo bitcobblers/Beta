@@ -5,6 +5,8 @@ public class DemoTests
     public void RunCalculator()
     {
         var calcDemo = new CalculatorDemo();
-        var proof = calcDemo.AddTest();
+        var proof = calcDemo.AddAsyncTest();
+
+        proof.Prove();
     }
 }

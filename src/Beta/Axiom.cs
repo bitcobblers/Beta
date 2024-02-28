@@ -15,6 +15,34 @@ public class Axiom
 
 public class Axiom<T> : Axiom
 {
+    public Axiom()
+    {
+
+    }
+
+    public Axiom(T value)
+    {
+
+    }
+
+    public ProofResult Test(T value)
+    {
+        return new ProofResult(value, true, "Success");
+    }
+}
+
+public class AsyncAxiom<T> : Axiom
+{
+    public AsyncAxiom()
+    {
+
+    }
+
+    public AsyncAxiom(Task<T> value)
+    {
+
+    }
+
     public ProofResult Test(T value)
     {
         return new ProofResult(value, true, "Success");
