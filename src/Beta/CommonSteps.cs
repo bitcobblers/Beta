@@ -18,7 +18,7 @@ public static class CommonSteps
         public static StepResult<T> Arrange<T>(Func<T> handler) => new("Arrange", handler);
         public static StepResult<T> Act<T>(Func<T> handler) => new("Act", handler);
         public static Axiom<T> Act2<T>(Func<T> handler) => new(handler());
-        public static AsyncAxiom<T> Act2<T>(Func<Task<T>> handler) => new(handler());
+        public static Axiom<T> Act2<T>(Func<Task<T>> handler) => new(handler());
         // public static Axiom Assert<T>(Func<T>? handler) => new(() => new Axiom(handler));
     }
 

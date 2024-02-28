@@ -23,15 +23,15 @@ public class CalculatorDemo : TestContainer
             select c.IsEqual(i.Expected));
     }
 
-    // [PublicAPI]
-    // public BetaTest AddAsyncTest()
-    // {
-    //     return Test(
-    //         from a in Arrange(() => Task.FromResult(1))
-    //         from b in Arrange(() => 2)
-    //         let c = Act2(async () => (await a) + b)
-    //         select c.Test(3));
-    // }
+    [PublicAPI]
+    public BetaTest AddAsyncTest()
+    {
+        return Test(
+            from a in Arrange(() => Task.FromResult(1))
+            from b in Arrange(() => 2)
+            let c = Act2(async () => (await a) + b)
+            select c.IsEqual(3));
+    }
 
     private static Calculator GetCalculator() => new();
 
