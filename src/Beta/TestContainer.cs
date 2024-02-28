@@ -7,12 +7,12 @@ public class TestContainer
     //     return null;
     // }
 
-    public BetaTest Test(Axiom<ProofResult> axiom)
+    public BetaTest Test<T>(Axiom<T> axiom)
     {
         return null;
     }
 
-    public BetaTest Test<TInput>(IEnumerable<TInput> data, Func<TInput, Axiom<ProofResult>> apply)
+    public BetaTest Test<TInput, T>(IEnumerable<TInput> data, Func<TInput, Axiom<T>> apply)
     {
         return null;
         //return new BetaTestWithData<TInput>(data);

@@ -2,10 +2,10 @@ namespace Beta;
 
 public class Axiom
 {
-    public static Axiom<TInput, T> From<TInput, T>(Func<TInput, StepResult<T>> ignored)
-    {
-        return new Axiom<TInput, T>();
-    }
+    // public static Axiom<TInput, T> From<TInput, T>(Func<TInput, StepResult<T>> ignored)
+    // {
+    //     return new Axiom<TInput, T>();
+    // }
 
     public static Axiom<T> From<T>(StepResult<T> ignored)
     {
@@ -29,6 +29,11 @@ public class Axiom<T> : Axiom
     {
         return new ProofResult(value, true, "Success");
     }
+
+    public Axiom<T> IsEqual(T value)
+    {
+        return this;
+    }
 }
 
 public class AsyncAxiom<T> : Axiom
@@ -49,10 +54,10 @@ public class AsyncAxiom<T> : Axiom
     }
 }
 
-public class Axiom<TInput, T> : Axiom
-{
-    public ProofResult Test(TInput input, T value)
-    {
-        return new ProofResult(input, true, "Success");
-    }
-}
+// public class Axiom<TInput, T> : Axiom
+// {
+//     public ProofResult Test(TInput input, T value)
+//     {
+//         return new ProofResult(input, true, "Success");
+//     }
+// }

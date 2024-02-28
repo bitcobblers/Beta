@@ -10,7 +10,7 @@ public class CalculatorDemo : TestContainer
     {
         return Test(from a in Arrange(() => 1)
                     let r = Act2(() => a + 2)
-                    select r.Test(3));
+                    select r.IsEqual(3));
     }
 
     [PublicAPI]
@@ -20,18 +20,18 @@ public class CalculatorDemo : TestContainer
             from a in Arrange(() => 1)
             from b in Arrange(() => 2)
             let c = Act2(() => a + b)
-            select c.Test(i.Expected));
+            select c.IsEqual(i.Expected));
     }
 
-    [PublicAPI]
-    public BetaTest AddAsyncTest()
-    {
-        return Test(
-            from a in Arrange(() => Task.FromResult(1))
-            from b in Arrange(() => 2)
-            let c = Act2(async () => (await a) + b)
-            select c.Test(3));
-    }
+    // [PublicAPI]
+    // public BetaTest AddAsyncTest()
+    // {
+    //     return Test(
+    //         from a in Arrange(() => Task.FromResult(1))
+    //         from b in Arrange(() => 2)
+    //         let c = Act2(async () => (await a) + b)
+    //         select c.Test(3));
+    // }
 
     private static Calculator GetCalculator() => new();
 

@@ -78,16 +78,16 @@ public static class StepResultChainer
         return new TestResult<TResult>(selector(input.Execute()));
     }
 
-    public static TestResult<TResult> Select<TIn, TResult>(this StepResult<TIn> input, Func<TIn, Task<TResult>> selector)
-    {
-        // return new TestResult<TResult>(selector(input.Execute()));
-        return null;
-    }
+    // public static TestResult<TResult> Select<TIn, TResult>(this StepResult<TIn> input, Func<TIn, Task<TResult>> selector)
+    // {
+    //     // return new TestResult<TResult>(selector(input.Execute()));
+    //     return null;
+    // }
 
 
-    public static Axiom<TResult> Select<TIn, TResult>(this TestResult<TIn> input, Func<TIn, TResult> selector)
+    public static TResult Select<TIn, TResult>(this TestResult<TIn> input, Func<TIn, TResult> selector)
     {
-        return new Axiom<TResult>(selector(input.Value));
+        return selector(input.Value);
     }
 
     // public static AsyncAxiom<TResult> Select<TIn, TResult>(this TestResult<TIn> input, Func<TIn, Task<TResult>> selector)
