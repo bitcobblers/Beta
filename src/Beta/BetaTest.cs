@@ -13,7 +13,7 @@ public class BetaTestNoData<T>(Axiom<T> test) : BetaTest
     }
 }
 
-public class BetaTestWithData<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Axiom<T>> apply) : BetaTest
+public class BetaTestWithData<TInput, T>(ITestDataSource<TInput> scenarios, Func<TInput, Axiom<T>> apply) : BetaTest
 {
     public override void Prove()
     {
