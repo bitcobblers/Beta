@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace Beta;
 
-public class RawEnumerableTestDataSource<T>(IEnumerable<T> scenarios) : ITestDataSource<T>
+public class EnumerableScenarioSource<T>(IEnumerable<T> scenarios) : IScenarioSource<T>
 {
     public bool SupportsEagerLoading => true;
     public IEnumerator<T> GetEnumerator() => scenarios.GetEnumerator();

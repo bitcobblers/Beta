@@ -7,13 +7,13 @@ public class TestContainer
         return new BetaTestNoData<T>(axiom);
     }
 
-    public BetaTest Test<TInput, T>(ITestDataSource<TInput> scenarios, Func<TInput, Axiom<T>> apply)
+    public BetaTest Test<TInput, T>(IScenarioSource<TInput> scenarios, Func<TInput, Axiom<T>> apply)
     {
         return new BetaTestWithData<TInput, T>(scenarios, apply);
     }
 
     public BetaTest Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Axiom<T>> apply)
     {
-        return new BetaTestWithData<TInput, T>(new RawEnumerableTestDataSource<TInput>(scenarios), apply);
+        return new BetaTestWithData<TInput, T>(new EnumerableScenarioSource<TInput>(scenarios), apply);
     }
 }

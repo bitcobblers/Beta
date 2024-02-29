@@ -1,6 +1,6 @@
 namespace Beta;
 
-public interface ITestDataSource<out T> : IEnumerable<T>
+public interface IScenarioSource<out T> : IEnumerable<T>
 {
     bool SupportsEagerLoading { get; }
 }
