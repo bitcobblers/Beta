@@ -1,3 +1,4 @@
+using System.Reflection;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,7 +11,12 @@ public class TestContainer
     [PublicAPI]
     public virtual IEnumerable<BetaTest> Discover()
     {
-        yield break;
+        const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
+
+        return from method in GetType().GetMethods(flags)
+               where method.GetParameters().Length == 0
+               where method.ReturnType.IsAssignableTo(typeof(BetaTest))
+               select method.Invoke(this, []) as BetaTest;
     }
 
     public void Prepare()
