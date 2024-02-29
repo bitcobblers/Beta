@@ -1,10 +1,15 @@
 ﻿using JetBrains.Annotations;
-// using static Beta.CommonSteps;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta.Tests.Demos;
 
 public class CalculatorDemo : TestContainer
 {
+    protected override void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton<Calculator>();
+    }
+
     [PublicAPI]
     public BetaTest AddTestNoInput()
     {
@@ -17,9 +22,10 @@ public class CalculatorDemo : TestContainer
     public BetaTest AddTestWithInput()
     {
         return Test(AdditionInput, i =>
+            from calculator in Require<Calculator>()
             from a in Gather(() => 1)
             from b in Gather(2)
-            let c = Apply(() => a + b)
+            let c = Apply(() => calculator.Add(a, b))
             select c.IsEqual(i.Expected));
     }
 
