@@ -1,11 +1,11 @@
 ﻿namespace Beta;
 
-public abstract class BetaTest
+public abstract class BetaTest(object instance)
 {
     public abstract void Prove();
 }
 
-public class BetaTestNoData<T>(Axiom<T> test) : BetaTest
+public class BetaTestNoData<T>(object instance, Axiom<T> test) : BetaTest(instance)
 {
     public override void Prove()
     {
@@ -13,7 +13,10 @@ public class BetaTestNoData<T>(Axiom<T> test) : BetaTest
     }
 }
 
-public class BetaTestWithData<TInput, T>(IScenarioSource<TInput> scenarios, Func<TInput, Axiom<T>> apply) : BetaTest
+public class BetaTestWithData<TInput, T>(
+    object instance,
+    IScenarioSource<TInput> scenarios,
+    Func<TInput, Axiom<T>> apply) : BetaTest(instance)
 {
     public override void Prove()
     {
