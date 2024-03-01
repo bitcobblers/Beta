@@ -55,18 +55,19 @@ public class TestContainer
     [PublicAPI]
     protected BetaTest Test<T>(Axiom<T> axiom)
     {
-        return new BetaTestNoData<T>(this, axiom);
+        return new BetaTest<T>(this, axiom);
     }
 
     [PublicAPI]
-    protected BetaTest Test<TInput, T>(IScenarioSource<TInput> scenarios, Func<TInput, Axiom<T>> apply)
+    protected IEnumerable<BetaTest> Test<TInput, T>(IScenarioSource<TInput> scenarios, Func<TInput, Axiom<T>> apply)
     {
-        return new BetaTestWithData<TInput, T>(this, scenarios, apply);
+        return from scenario in scenarios
+               select Test(apply(scenario));
     }
 
-    [PublicAPI]
-    protected BetaTest Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Axiom<T>> apply)
+    protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Axiom<T>> apply)
     {
-        return new BetaTestWithData<TInput, T>(this, new EnumerableScenarioSource<TInput>(scenarios), apply);
+        return from scenario in scenarios
+               select Test(apply(scenario));
     }
 }

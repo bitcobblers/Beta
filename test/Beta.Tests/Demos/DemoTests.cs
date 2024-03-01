@@ -3,11 +3,16 @@
 public class DemoTests
 {
     [Fact]
-    public void RunCalculator()
+    public async Task RunCalculator()
     {
         var calcDemo = new CalculatorDemo();
-        var proof = calcDemo.AddTestNoInput();
+        var tests = calcDemo.AddTestMany();
 
-        proof.Prove();
+        calcDemo.Prepare();
+
+        foreach (var test in tests)
+        {
+            await test.Prove();
+        }
     }
 }

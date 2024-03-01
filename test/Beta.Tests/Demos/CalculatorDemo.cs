@@ -1,10 +1,10 @@
-﻿using Beta.Shouldly;
-using Beta.Shouldly.ShouldBe;
+﻿using Beta.Shouldly.ShouldBe;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta.Tests.Demos;
 
+[PublicAPI]
 public class CalculatorDemo : TestContainer
 {
     protected override void ConfigureServices(IServiceCollection services)
@@ -12,38 +12,21 @@ public class CalculatorDemo : TestContainer
         services.AddSingleton<Calculator>();
     }
 
-    [PublicAPI]
-    public BetaTest AddTestNoInput()
-    {
-        return Test(from a in Gather(() => 1)
-                    let r = Apply(() => a == 1)
-                    select r.ShouldBeTrue());
-    }
-
-    [PublicAPI]
-    public BetaTest AddTestWithInput()
-    {
-        return Test(AdditionInput, i =>
-            from calculator in Require<Calculator>()
-            from a in Gather(() => 1)
-            from b in Gather(2)
-            let c = Apply(() => calculator.Add(a, b))
-            select c.ShouldBe(i.Expected));
-    }
-
-    [PublicAPI]
-    public BetaTest AddAsyncTest()
+    public BetaTest AddTest1()
     {
         return Test(
-            from a in Gather(() => Task.FromResult(1))
-            from b in Gather(() => 2)
-            let c = Apply(async () => (await a) + b)
-            select c.ShouldBe(3));
+            from calculator in Require<Calculator>()
+            let result = Apply(() => calculator.Add(1, 2))
+            select result.ShouldBe(3));
     }
 
-    private static Calculator GetCalculator() => new();
-
-    private static int GetValue(int value) => value;
+    public IEnumerable<BetaTest> AddTestMany()
+    {
+        return Test(AdditionInput, i =>
+            from calculator in Gather(() => Task.FromResult(new Calculator()))
+            let result = Apply(async () => (await calculator).Add(i.A, i.B))
+            select result.ShouldBe(i.Expected));
+    }
 
     // ---
 
