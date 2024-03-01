@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using Shouldly;
+﻿using Shouldly;
 
 namespace Beta.Shouldly.ShouldBe;
 

@@ -1,19 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
     <ItemGroup>
-      <PackageReference Include="Shouldly" Version="4.2.1">
-          <PrivateAssets>compile</PrivateAssets>
-      </PackageReference>
+      <PackageReference Include="Shouldly" Version="4.*" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Beta\Beta.csproj" />
     </ItemGroup>
-
 </Project>

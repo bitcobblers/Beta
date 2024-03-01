@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using JetBrains.Annotations;
 using Shouldly;
 
 namespace Beta.Shouldly;

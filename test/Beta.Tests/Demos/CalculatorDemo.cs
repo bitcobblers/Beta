@@ -1,5 +1,4 @@
 ﻿using Beta.Shouldly.ShouldBe;
-using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta.Tests.Demos;
