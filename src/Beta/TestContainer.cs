@@ -45,27 +45,27 @@ public class TestContainer
     protected StepResult<T> Gather<T>(Func<T> handler) => new(handler);
 
     [PublicAPI]
-    protected Axiom<T> Apply<T>(Func<T> handler) => new(handler());
+    protected Proof<T> Apply<T>(Func<T> handler) => new(handler());
 
     [PublicAPI]
-    protected Axiom<T> Apply<T>(Func<Task<T>> handler) => new(handler());
+    protected Proof<T> Apply<T>(Func<Task<T>> handler) => new(handler());
 
     // ---
 
     [PublicAPI]
-    protected BetaTest Test<T>(Axiom<T> axiom)
+    protected BetaTest Test<T>(Proof<T> proof)
     {
-        return new BetaTest<T>(this, axiom);
+        return new BetaTest<T>(this, proof);
     }
 
     [PublicAPI]
-    protected IEnumerable<BetaTest> Test<TInput, T>(IScenarioSource<TInput> scenarios, Func<TInput, Axiom<T>> apply)
+    protected IEnumerable<BetaTest> Test<TInput, T>(IScenarioSource<TInput> scenarios, Func<TInput, Proof<T>> apply)
     {
         return from scenario in scenarios
                select Test(apply(scenario));
     }
 
-    protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Axiom<T>> apply)
+    protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply)
     {
         return from scenario in scenarios
                select Test(apply(scenario));

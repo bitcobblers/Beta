@@ -8,14 +8,14 @@ namespace Beta.Shouldly;
 [PublicAPI]
 public static class AxiomBooleanExtensions
 {
-    public static Axiom<bool> ShouldBeTrue([DoesNotReturnIf(false)] this Axiom<bool> axiom, string? customMessage = null)
+    public static Proof<bool> ShouldBeTrue([DoesNotReturnIf(false)] this Proof<bool> proof, string? customMessage = null)
     {
-        return axiom.CallShouldly(actual => actual.ShouldBeTrue(customMessage));
+        return proof.CallShouldly(actual => actual.ShouldBeTrue(customMessage));
     }
 
-    public static Axiom<bool> ShouldBeFalse([DoesNotReturnIf(true)] this Axiom<bool> axiom,
+    public static Proof<bool> ShouldBeFalse([DoesNotReturnIf(true)] this Proof<bool> proof,
         string? customMessage = null)
     {
-        return axiom.CallShouldly(actual => actual.ShouldBeFalse(customMessage));
+        return proof.CallShouldly(actual => actual.ShouldBeFalse(customMessage));
     }
 }

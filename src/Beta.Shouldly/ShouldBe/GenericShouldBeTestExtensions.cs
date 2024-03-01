@@ -6,21 +6,21 @@ namespace Beta.Shouldly.ShouldBe;
 [PublicAPI]
 public static class GenericShouldBeTestExtensions
 {
-    public static Axiom<T> ShouldBe<T>(this Axiom<T> axiom, T? expected, string? customMessage = null)
+    public static Proof<T> ShouldBe<T>(this Proof<T> proof, T? expected, string? customMessage = null)
     {
-        return axiom.CallShouldly(actual => actual.ShouldBe(expected, customMessage));
+        return proof.CallShouldly(actual => actual.ShouldBe(expected, customMessage));
     }
 
-    public static Axiom<T> ShouldBe<T>(
-        this Axiom<T> axiom, T? expected,
+    public static Proof<T> ShouldBe<T>(
+        this Proof<T> proof, T? expected,
         IEqualityComparer<T> comparer,
         string? customMessage = null)
     {
-        return axiom.CallShouldly(actual => actual.ShouldBe(expected, comparer, customMessage));
+        return proof.CallShouldly(actual => actual.ShouldBe(expected, comparer, customMessage));
     }
 
-    public static Axiom<T> ShouldNotBe<T>(this Axiom<T> axiom, T? expected, string? customMessage = null)
+    public static Proof<T> ShouldNotBe<T>(this Proof<T> proof, T? expected, string? customMessage = null)
     {
-        return axiom.CallShouldly(actual => actual.ShouldNotBe(expected, customMessage));
+        return proof.CallShouldly(actual => actual.ShouldNotBe(expected, customMessage));
     }
 }

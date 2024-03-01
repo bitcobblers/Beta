@@ -4,8 +4,8 @@ namespace Beta.Shouldly;
 
 public static class UtilityExtensions
 {
-    internal static Axiom<T> CallShouldly<T>(this Axiom<T> axiom, Action<T> action) =>
-        axiom.Assert(actual =>
+    internal static Proof<T> CallShouldly<T>(this Proof<T> proof, Action<T> action) =>
+        proof.Assert(actual =>
         {
             try
             {
