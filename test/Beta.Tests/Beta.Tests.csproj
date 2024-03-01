@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
@@ -25,5 +24,4 @@
     <Using Include="Shouldly" />
     <Using Include="Xunit" />
   </ItemGroup>
-
 </Project>
