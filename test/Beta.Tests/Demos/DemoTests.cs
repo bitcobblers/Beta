@@ -1,4 +1,5 @@
 ﻿namespace Beta.Tests.Demos;
+
 public class DemoTests
 {
     [Fact]

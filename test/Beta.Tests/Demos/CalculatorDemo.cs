@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using Beta.Shouldly;
+using Beta.Shouldly.ShouldBe;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta.Tests.Demos;
@@ -14,8 +16,8 @@ public class CalculatorDemo : TestContainer
     public BetaTest AddTestNoInput()
     {
         return Test(from a in Gather(() => 1)
-                    let r = Apply(() => a + 2)
-                    select r.IsEqual(3));
+                    let r = Apply(() => a == 1)
+                    select r.ShouldBeTrue());
     }
 
     [PublicAPI]
@@ -26,7 +28,7 @@ public class CalculatorDemo : TestContainer
             from a in Gather(() => 1)
             from b in Gather(2)
             let c = Apply(() => calculator.Add(a, b))
-            select c.IsEqual(i.Expected));
+            select c.ShouldBe(i.Expected));
     }
 
     [PublicAPI]
@@ -36,7 +38,7 @@ public class CalculatorDemo : TestContainer
             from a in Gather(() => Task.FromResult(1))
             from b in Gather(() => 2)
             let c = Apply(async () => (await a) + b)
-            select c.IsEqual(3));
+            select c.ShouldBe(3));
     }
 
     private static Calculator GetCalculator() => new();
