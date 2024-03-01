@@ -32,16 +32,16 @@ public class TestContainer
     // ---
 
     [PublicAPI]
-    protected StepResult<T> Require<T>() where T : notnull => new(() => _servicesProvider.GetRequiredService<T>());
+    protected Step<T> Require<T>() where T : notnull => new(() => _servicesProvider.GetRequiredService<T>());
 
     [PublicAPI]
-    protected StepResult<object> Require(Type type) => new(() => _servicesProvider.GetRequiredService(type));
+    protected Step<object> Require(Type type) => new(() => _servicesProvider.GetRequiredService(type));
 
     [PublicAPI]
-    protected StepResult<T> Gather<T>(T value) => new(() => value);
+    protected Step<T> Gather<T>(T value) => new(() => value);
 
     [PublicAPI]
-    protected StepResult<T> Gather<T>(Func<T> handler) => new(handler);
+    protected Step<T> Gather<T>(Func<T> handler) => new(handler);
 
     [PublicAPI]
     protected Proof<T> Apply<T>(Func<T> handler) => new(handler());
