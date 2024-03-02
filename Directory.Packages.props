@@ -8,7 +8,6 @@
         <PackageVersion Include="FakeItEasy" Version="8.0.0" />
         <PackageVersion Include="GitHubActionsTestLogger" Version="2.3.3" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
         <PackageVersion Include="GitVersion.MSBuild" Version="5.12.0" PrivateAssets="All" />
-        <PackageVersion Include="JetBrains.Annotations" Version="2023.3.0" />
         <PackageVersion Include="JetBrains.Annotations" Version="2023.3.0" PrivateAssets="all" />
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
         <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
