@@ -1,14 +1,15 @@
-#-------------------------------------------------------------------------------#
-#               Qodana analysis is configured by qodana.yaml file               #
-#             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
-#-------------------------------------------------------------------------------#
 version: "1.0"
-#Specify IDE code to run analysis without container (Applied in CI/CD pipeline)
+linter: jetbrains/qodana-dotnet:2023.3
+fixesStrategy: cleanup
 ide: QDNET
-#Specify inspection profile for code analysis
+dotnet:
+  solution: Beta.sln
+
+bootstrap: |
+  dotnet restore
+  dotnet build --no-restore
+  dotnet test --no-restore --no-build /p:CollectCoverage=true /p:CoverletOutput=/.qodana/code-coverage /p:CoverletOutputFormat=lcov
+
 profile:
-  name: qodana.starter
-exclude:
-  - name: All
-    paths:
-      - src
+  name: qodana.recommended
+failThreshold: 75

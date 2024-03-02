@@ -16,9 +16,9 @@ jobs:
     uses: ./.github/workflows/_qodana.yml
     secrets: inherit
 
-  codeql:
-    if: ${{ github.ref_type=='tag' || github.ref_name=='main' }}
-    uses: ./.github/workflows/_codeql.yml
+#  codeql:
+#    if: ${{ github.ref_type=='tag' || github.ref_name=='main' }}
+#    uses: ./.github/workflows/_codeql.yml
 
 #  docfx:
 #    if: ${{ github.ref_type=='tag' || github.ref_name=='main' }}
@@ -28,7 +28,7 @@ jobs:
 
   nuget:
     if: ${{ github.ref_type=='tag' || github.ref_name=='main' }}
-    needs: [calc-variables, test, codeql]
+    needs: [calc-variables, test, qodana]
     uses: ./.github/workflows/_nuget.yml
     secrets: inherit
     with:
