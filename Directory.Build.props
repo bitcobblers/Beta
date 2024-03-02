@@ -20,5 +20,6 @@
     <ItemGroup Label="JetBrains Helpers">
         <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
         <Using Include="JetBrains.Annotations" />
+        <Using Include="System" />
     </ItemGroup>
 </Project>
