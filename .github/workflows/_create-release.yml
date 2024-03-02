@@ -18,6 +18,7 @@ on:
 
 jobs:
   create-release:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Create Release
