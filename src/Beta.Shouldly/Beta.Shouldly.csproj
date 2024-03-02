@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <ItemGroup>
+      <PackageReference Include="Shouldly" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Beta\Beta.csproj" />
+    </ItemGroup>
+</Project>

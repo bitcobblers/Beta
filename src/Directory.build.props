@@ -1,0 +1,38 @@
+<Project>
+    <ImportGroup>
+        <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+    </ImportGroup>
+
+    <ItemGroup Label="References">
+        <PackageReference Include="DotNet.ReproducibleBuilds" />
+        <PackageReference Include="GitVersion.MsBuild" />
+    </ItemGroup>
+
+    <ItemGroup Label="Global Files">
+        <None Include="$(SolutionDir)LICENSE" Visible="true" Pack="true" Link="LICENSE" PackagePath="/"  />
+        <None Include="$(SolutionDir)README.md" Visible="true" Pack="true" Link="README.md" PackagePath="/"  />
+    </ItemGroup>
+
+    <PropertyGroup Label="Defaults">
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IsPackable>true</IsPackable>
+        <IsTestProject>false</IsTestProject>
+    </PropertyGroup>
+
+    <PropertyGroup Label="GitVersion">
+        <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+        <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+        <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Package Settings">
+        <PackageProjectUrl>https://github.com/bitcobblers/DrillSergeant</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/bitcobblers/Beta.git</RepositoryUrl>
+        <PackageTags>unit testing;tdd</PackageTags>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Title>Beta</Title>
+        <Description>Write functional unit tests.</Description>
+    </PropertyGroup>
+</Project>

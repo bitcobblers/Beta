@@ -1,42 +1,18 @@
-﻿using JetBrains.Annotations;
+﻿namespace Beta;
 
-namespace Beta;
-
-public class BetaTest : BaseTest
+#pragma warning disable CS9113 // Parameter is unread.
+public abstract class BetaTest(object instance)
+#pragma warning restore CS9113 // Parameter is unread.
 {
-    [PublicAPI]
-    public void BasicTest(string? name, TestConfigurator<BasicTestBuilder> test)
-    {
-        AddTest(name, new TestConfigurator<BasicTestBuilder>(b =>
-        {
-            (b as BaseTestBuilder).UpdateHandler(() => test(b));
-        }));
-    }
+    public abstract Task Prove();
+}
 
-    [PublicAPI]
-    public void BasicTest<TInput>(string? name, IEnumerable<TInput> source, TestConfigurator<BasicTestBuilder, TInput> test)
+#pragma warning disable CS9113 // Parameter is unread.
+public class BetaTest<T>(object instance, Proof<T> test) : BetaTest(instance)
+#pragma warning restore CS9113 // Parameter is unread.
+{
+    public override Task Prove()
     {
-        foreach (var input in source)
-        {
-            AddTest(name, input, new TestConfigurator<BasicTestBuilder, TInput>((b, i) =>
-            {
-                (b as BaseTestBuilder).UpdateHandler(() => test(b, i));
-            }));
-        }
-    }
-
-    [PublicAPI]
-    public void GuidedTest(string? name, TestConfigurator<GuidedTestBuilder> test)
-    {
-        AddTest(name, test);
-    }
-
-    [PublicAPI]
-    public void GuidedTest<TInput>(string? name, IEnumerable<TInput> source, TestConfigurator<GuidedTestBuilder, TInput> test)
-    {
-        foreach (var input in source)
-        {
-            AddTest(name, input, test);
-        }
+        throw new NotImplementedException();
     }
 }

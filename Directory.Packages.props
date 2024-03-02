@@ -1,0 +1,19 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageVersion Include="coverlet.collector" Version="6.0.0" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+        <PackageVersion Include="DotNet.ReproducibleBuilds" Version="1.1.1" PrivateAccess="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+        <PackageVersion Include="FakeItEasy" Version="8.0.0" />
+        <PackageVersion Include="GitHubActionsTestLogger" Version="2.3.3" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+        <PackageVersion Include="GitVersion.MSBuild" Version="5.12.0" PrivateAssets="All" />
+        <PackageVersion Include="JetBrains.Annotations" Version="2023.3.0" PrivateAssets="all" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+        <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+        <PackageVersion Include="Shouldly" Version="4.2.1" PrivateAssets="compile" />
+        <PackageVersion Include="xunit" Version="2.5.0" />
+        <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.0" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    </ItemGroup>
+</Project>

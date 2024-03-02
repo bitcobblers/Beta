@@ -1,0 +1,24 @@
+<Project>
+    <PropertyGroup>
+        <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>latest</LangVersion>
+        <TreatWarningsAsErrors Condition=" '$(Configuration)' == 'Release' ">true</TreatWarningsAsErrors>
+        <Authors>BitCobblers</Authors>
+        <Company>BitCobblers</Company>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Signing">
+        <SignAssembly>true</SignAssembly>
+        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Beta.snk</AssemblyOriginatorKeyFile>
+        <BetaPublicKey>002400000480000094000000060200000024000052534131000400000100010075565151bd76c3ddb78a582ce057054bd10f75e2564a9ed6e095828fe075343e5bc2af60aeef26c36c67cabe3a780cad34d45188b4f2b7e2af4a26c273c3f747c07d286c81db5fef23c7fcc694c1c26344263accd71ac285f99196a1b66cf25e752161a34c8bc30f65c028ded24be05e76b4329c32b6ac695981600ec71248be</BetaPublicKey>
+    </PropertyGroup>
+
+    <ItemGroup Label="JetBrains Helpers">
+        <PackageReference Include="JetBrains.Annotations" PrivateAssets="All" />
+        <Using Include="JetBrains.Annotations" />
+    </ItemGroup>
+</Project>
