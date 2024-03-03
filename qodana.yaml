@@ -5,8 +5,8 @@ dotnet:
   solution: Beta.sln
 
 bootstrap: dotnet build, cd test/Beta.Tests && \\
-           dotnet add package coverlet.msbuild && \\
-           ((dotnet test /p:CollectCoverage=true /p:CoverletOutput=test/Beta.Tests/.qodana/code-coverage /p:CoverletOutputFormat=lcov))
+  dotnet add package coverlet.msbuild && \\
+  ((dotnet test /p:CollectCoverage=true /p:CoverletOutput=test/Beta.Tests/.qodana/code-coverage /p:CoverletOutputFormat=lcov))
 
 profile:
   name: qodana.recommended
