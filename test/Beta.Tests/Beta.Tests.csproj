@@ -16,6 +16,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\Beta.Runner.TestAdapter\Beta.Runner.TestAdapter.csproj" />
+
         <ProjectReference Include="..\..\src\Beta.FakeItEasy\Beta.FakeItEasy.csproj" />
         <ProjectReference Include="..\..\src\Beta.Shouldly\Beta.Shouldly.csproj" />
         <ProjectReference Include="..\..\src\Beta\Beta.csproj" />
