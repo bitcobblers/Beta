@@ -10,6 +10,8 @@ public class Proof<T>(Task<T> actual)
     {
     }
 
+    public Task<T> Actual => actual;
+
     public Proof<T> Assert(ProofHandler<T> assert)
     {
         _handlers.Add(assert);
