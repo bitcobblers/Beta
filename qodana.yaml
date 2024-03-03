@@ -7,6 +7,7 @@ dotnet:
 bootstrap: |
   dotnet restore
   dotnet build --no-restore
+  cd test/Beta.Tests
   dotnet test --no-restore --no-build /p:CollectCoverage=true /p:CoverletOutput=./.qodana/code-coverage /p:CoverletOutputFormat=lcov
 
 profile:
