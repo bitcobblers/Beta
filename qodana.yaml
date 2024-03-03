@@ -7,8 +7,8 @@ dotnet:
 bootstrap: |
   dotnet restore
   dotnet build --no-restore
-  dotnet test --no-restore --no-build /p:CollectCoverage=true /p:CoverletOutput=/.qodana/code-coverage /p:CoverletOutputFormat=lcov
+  dotnet test --no-restore --no-build /p:CollectCoverage=true /p:CoverletOutput=./.qodana/code-coverage /p:CoverletOutputFormat=lcov
 
 profile:
   name: qodana.recommended
-failThreshold: 75
+failThreshold: 70
