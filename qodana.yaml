@@ -4,9 +4,12 @@ ide: QDNET
 dotnet:
   solution: Beta.sln
 
-bootstrap: dotnet build, cd test/Beta.Tests && \\
-  dotnet add package coverlet.msbuild && \\
-  ((dotnet test /p:CollectCoverage=true /p:CoverletOutput=test/Beta.Tests/.qodana/code-coverage /p:CoverletOutputFormat=lcov))
+bootstrap: |
+  dotnet restore
+  dotnet build --no-restore
+  dotnet test --no-restore --no-build /p:CollectCoverage=true /p:CoverletOutput=./.qodana/code-coverage /p:CoverletOutputFormat=lcov
+  mkdir -p .qodana/code-coverage
+  find . -type f -name "code-coverage*.info" -exec cp {} .qodana/code-coverage \;
 
 profile:
   name: qodana.recommended
