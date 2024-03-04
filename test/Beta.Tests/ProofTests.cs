@@ -16,4 +16,7 @@ public class ProofTests
         results.ShouldHaveSingleItem();
         results[0].ShouldBe(new ProofResult(true, true, "It's true"));
     }
+
+    [Fact]
+    public void Foo() { }
 }
