@@ -1,4 +1,5 @@
 ﻿using Beta.FakeItEasy;
+using static Beta.CommonSteps;
 
 namespace Beta.Tests.FakeItEasy;
 
