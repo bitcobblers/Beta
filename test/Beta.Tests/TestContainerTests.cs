@@ -23,19 +23,6 @@ public class TestContainerTests
         }
 
         [Fact]
-        public void ReturnsMultipleTests()
-        {
-            // Arrange
-            var container = new StubWithEnumerableTests();
-
-            // Act
-            var tests = container.Discover().ToArray();
-
-            // Assert
-            tests.Length.ShouldBe(2);
-        }
-
-        [Fact]
         public void ReturnsNoTests()
         {
             // Arrange
@@ -53,16 +40,6 @@ public class TestContainerTests
             public BetaTest SingleTest()
             {
                 return Test(new Proof<int>(42));
-            }
-        }
-
-        private class StubWithEnumerableTests : TestContainer
-        {
-            public IEnumerable<BetaTest> MultipleTests()
-            {
-                return Test(
-                    new EnumerableScenarioSource<int>([1, 2]),
-                    x => new Proof<int>(x));
             }
         }
 

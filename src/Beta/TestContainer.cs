@@ -1,7 +1,6 @@
-using System.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta;
 
@@ -112,13 +111,6 @@ public class TestContainer
     protected BetaTest Test<T>(Proof<T> proof, [CallerMemberName] string testName = "")
     {
         return new BetaTest(this, testName, proof);
-    }
-
-    [PublicAPI]
-    protected IEnumerable<BetaTest> Test<TInput, T>(IScenarioSource<TInput> scenarios, Func<TInput, Proof<T>> apply)
-    {
-        return from scenario in scenarios
-               select Test(apply(scenario));
     }
 
     protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply, [CallerMemberName] string testName = "")
