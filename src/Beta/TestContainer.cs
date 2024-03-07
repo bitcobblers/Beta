@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta;
@@ -21,23 +23,34 @@ public class TestContainer
     [IgnoreDiscovery]
     public IEnumerable<BetaTest> Discover()
     {
-        foreach (var test in from method in FindTestMethod(method => method.ReturnType.IsAssignableTo(typeof(BetaTest)))
-                             let test = method.Invoke(this, []) as BetaTest
-                             where test is not null
-                             select test)
+        Prepare();
+
+        foreach (var discoveredTest in from method in FindTestMethod(m =>
+                                           m.ReturnType.IsAssignableTo(typeof(BetaTest)))
+                                       let test =
+                                           method.Invoke(this, Array.Empty<object>()) as BetaTest
+                                       where test is not null
+                                       select test with
+                                       {
+                                           Method = method
+                                       })
         {
-            yield return test;
+            yield return discoveredTest;
         }
 
-        foreach (var test in from method in FindTestMethod(method =>
-                                 method.ReturnType.IsAssignableTo(typeof(IEnumerable<BetaTest>)))
-                             let tests = method.Invoke(this, []) as IEnumerable<BetaTest>
-                             where tests is not null
-                             from test in tests
-                             where test is not null
-                             select test)
+        foreach (var discoveredTest in from method in FindTestMethod(m =>
+                                           m.ReturnType.IsAssignableTo(typeof(IEnumerable<BetaTest>)))
+                                       let tests =
+                                           method.Invoke(this, Array.Empty<object>()) as IEnumerable<BetaTest>
+                                       where tests is not null
+                                       from test in tests
+                                       where test is not null
+                                       select test with
+                                       {
+                                           Method = method
+                                       })
         {
-            yield return test;
+            yield return discoveredTest;
         }
     }
 
@@ -57,7 +70,10 @@ public class TestContainer
     [PublicAPI]
     protected Step<T> Require<T>() where T : notnull
     {
-        return new Step<T>(() => ServicesProvider!.GetRequiredService<T>());
+        return new Step<T>(() =>
+        {
+            return ServicesProvider!.GetRequiredService<T>();
+        });
     }
 
     [PublicAPI]
@@ -93,9 +109,9 @@ public class TestContainer
     // ---
 
     [PublicAPI]
-    protected BetaTest Test<T>(Proof<T> proof)
+    protected BetaTest Test<T>(Proof<T> proof, [CallerMemberName] string testName = "")
     {
-        return new BetaTest<T>(this, proof);
+        return new BetaTest(this, testName, proof);
     }
 
     [PublicAPI]
@@ -105,9 +121,9 @@ public class TestContainer
                select Test(apply(scenario));
     }
 
-    protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply)
+    protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply, [CallerMemberName] string testName = "")
     {
         return from scenario in scenarios
-               select Test(apply(scenario));
+               select new BetaTest(this, testName, apply(scenario));
     }
 }
