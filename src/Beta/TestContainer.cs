@@ -108,14 +108,14 @@ public class TestContainer
     // ---
 
     [PublicAPI]
-    protected BetaTest Test<T>(Proof<T> proof, [CallerMemberName] string testName = "")
+    protected BetaTest Test<T>(Func<Proof<T>> apply, [CallerMemberName] string testName = "")
     {
-        return new BetaTest(this, testName, proof);
+        return new BetaTest(this, null, testName, apply);
     }
 
     protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply, [CallerMemberName] string testName = "")
     {
         return from scenario in scenarios
-               select new BetaTest(this, testName, apply(scenario));
+               select new BetaTest(this, scenario, testName, () => apply(scenario));
     }
 }

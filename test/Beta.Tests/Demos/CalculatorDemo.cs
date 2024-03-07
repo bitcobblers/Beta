@@ -13,7 +13,7 @@ public class CalculatorDemo : TestContainer
 
     public BetaTest AddTest1()
     {
-        return Test(
+        return Test(() =>
             from calculator in Require<Calculator>()
             let result = Apply(() => calculator.Add(1, 2))
             select result.ShouldBe(3));

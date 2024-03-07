@@ -39,7 +39,7 @@ public class TestContainerTests
         {
             public BetaTest SingleTest()
             {
-                return Test(new Proof<int>(42));
+                return Test(() => new Proof<int>(42));
             }
         }
 
