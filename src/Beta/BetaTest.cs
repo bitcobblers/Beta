@@ -3,7 +3,7 @@
 namespace Beta;
 
 [PublicAPI]
-public record BetaTest(object Instance, string Name, IProof Proof)
+public record BetaTest(object Instance, string Name, Proof Proof)
 {
     public Guid Id { get; } = Guid.NewGuid();
 
