@@ -9,4 +9,8 @@
     <PackageReference Include="Microsoft.TestPlatform.ObjectModel" />
     </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Beta\Beta.csproj" />
+  </ItemGroup>
+
 </Project>

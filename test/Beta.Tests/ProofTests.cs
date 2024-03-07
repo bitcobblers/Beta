@@ -18,5 +18,12 @@ public class ProofTests
     }
 
     [Fact]
-    public void Foo() { }
+    public void Foo()
+    {
+    }
+
+    [Fact]
+    public void Bar()
+    {
+    }
 }

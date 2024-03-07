@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Reflection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -9,63 +10,125 @@ namespace Beta.Runner.TestAdapter;
 [FileExtension(".dll")]
 [FileExtension(".exe")]
 [Category("managed")]
-[DefaultExecutorUri(Constants.ExecutorUri)]
-[ExtensionUri(Constants.ExecutorUri)]
-public class BetaTestAdapter(IFrameworkMatcher frameworkMatcher)
+[DefaultExecutorUri("executor://Beta")]
+[ExtensionUri("executor://Beta")]
+public class BetaTestAdapter(IAssemblySourceFilter sourceFilter)
     : ITestDiscoverer, ITestExecutor
 {
-    private static readonly HashSet<string> PlatformAssemblies = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "microsoft.visualstudio.testplatform.unittestframework.dll",
-        "microsoft.visualstudio.testplatform.core.dll",
-        "microsoft.visualstudio.testplatform.testexecutor.core.dll",
-        "microsoft.visualstudio.testplatform.extensions.msappcontaineradapter.dll",
-        "microsoft.visualstudio.testplatform.objectmodel.dll",
-        "microsoft.visualstudio.testplatform.utilities.dll",
-        "vstest.executionengine.appcontainer.exe",
-        "vstest.executionengine.appcontainer.x86.exe",
-
-        "beta.testadapter.dll"
-    };
-
-    public BetaTestAdapter() : this(new NetCoreFrameworkMatcher())
-    {
-    }
-
-
-    public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext discoveryContext, IMessageLogger logger, ITestCaseDiscoverySink discoverySink)
+    public BetaTestAdapter()
+        : this(
+            new DefaultAssemblySourceFilter(
+                new NetCoreFrameworkMatcher()))
     {
         System.Diagnostics.Debugger.Launch();
         System.Diagnostics.Debugger.Break();
 
+    }
+
+    public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext discoveryContext, IMessageLogger logger,
+                              ITestCaseDiscoverySink discoverySink)
+    {
         var logHelper = new InternalLogger(logger, Stopwatch.StartNew());
         var settings = RunSettings.Parse(discoveryContext.RunSettings?.SettingsXml);
+        PrintBanner(logHelper, settings);
 
-        logHelper.Log(TestMessageLevel.Informational, "*** BETA *** Target Framework Version: " + settings.TargetFrameworkVersion);
-
-        if (frameworkMatcher.IsMatch(settings.TargetFrameworkVersion) == false)
+        foreach (var source in sources)
         {
-            return;
+            foreach (var testCase in DiscoverTests(logHelper, source, settings))
+            {
+                logHelper.Log(TestMessageLevel.Informational, "*** BETA *** Discovered Test " + testCase.FullyQualifiedName);
+                discoverySink.SendTestCase(testCase);
+            }
         }
     }
 
     public void RunTests(IEnumerable<TestCase>? tests, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
     {
-        System.Diagnostics.Debugger.Launch();
-        System.Diagnostics.Debugger.Break();
+        var logHelper = new InternalLogger(frameworkHandle, Stopwatch.StartNew());
+        var settings = RunSettings.Parse(runContext?.RunSettings?.SettingsXml);
 
-        frameworkHandle!.SendMessage(TestMessageLevel.Informational, "*** BETA *** Running Tests");
+        logHelper.Log(TestMessageLevel.Informational, "*** BETA *** Running Tests");
     }
 
     public void RunTests(IEnumerable<string>? sources, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
     {
-        System.Diagnostics.Debugger.Launch();
-        System.Diagnostics.Debugger.Break();
+        var logHelper = new InternalLogger(frameworkHandle, Stopwatch.StartNew());
+        var settings = RunSettings.Parse(runContext?.RunSettings?.SettingsXml);
+        PrintBanner(logHelper, settings);
 
-        frameworkHandle!.SendMessage(TestMessageLevel.Informational, "*** BETA *** Starting Tests");
+        foreach (var source in sources ?? Array.Empty<string>())
+        {
+            RunTests(DiscoverTests(logHelper, source, settings), runContext, frameworkHandle);
+        }
     }
 
     public void Cancel()
     {
+    }
+
+    private static void PrintBanner(InternalLogger logger, RunSettings settings)
+    {
+        logger.Log(TestMessageLevel.Informational,
+            "*** BETA *** Target Framework Version: " + settings.TargetFrameworkVersion);
+    }
+
+    private IEnumerable<TestCase> DiscoverTests(InternalLogger logger, string source, RunSettings settings)
+    {
+        logger.Log(TestMessageLevel.Informational, "*** BETA *** Discovering Tests in " + source);
+
+        try
+        {
+            if (sourceFilter.ShouldInclude(source, settings))
+            {
+                foreach (var testCase in ScanAssembly(logger, source, settings))
+                {
+                    yield return testCase;
+                }
+            }
+        }
+        finally
+        {
+            logger.Log(TestMessageLevel.Informational, "*** BETA *** Discovered Tests in " + source);
+        }
+    }
+
+    // scan assembly for public classes implementing TestContainer
+    public IEnumerable<TestCase> ScanAssembly(InternalLogger logger, string assemblyPath, RunSettings settings)
+    {
+        logger.Log(TestMessageLevel.Informational, "*** BETA *** Scanning Assembly " + assemblyPath);
+
+        try
+        {
+            var assembly = Assembly.LoadFrom(assemblyPath);
+            using var session = new DiaSessionWrapper(assemblyPath);
+
+            foreach (var test in from type in assembly.GetTypes()
+                                 where type.IsPublic && type.IsClass && type.IsAssignableTo(typeof(TestContainer))
+                                 where type.GetConstructors().Any(c => c.GetParameters().Length == 0)
+                                 let instance = Activator.CreateInstance(type) as TestContainer
+                                 select instance.Discover())
+            {
+                foreach (var testCase in test)
+                {
+                    var navInfo = session.GetNavigationData(testCase.Method);
+                    var fullyQualifiedName = testCase.Method?.DeclaringType?.FullName + "." + testCase.Method?.Name;
+
+                    yield return new TestCase
+                    {
+                        Id = testCase.Id,
+                        CodeFilePath = navInfo?.FileName,
+                        DisplayName = testCase.Name,
+                        ExecutorUri = new Uri("executor://Beta"),
+                        FullyQualifiedName = fullyQualifiedName,
+                        Source = assemblyPath,
+                        LineNumber = navInfo?.MinLineNumber ?? 0,
+                    };
+                }
+            }
+        }
+        finally
+        {
+            logger.Log(TestMessageLevel.Informational, "*** BETA *** Scanned Assembly " + assemblyPath);
+        }
     }
 }
