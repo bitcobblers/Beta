@@ -22,8 +22,6 @@ public class TestContainer
     [IgnoreDiscovery]
     public IEnumerable<BetaTest> Discover()
     {
-        Prepare();
-
         foreach (var discoveredTest in from method in FindTestMethod(m =>
                                            m.ReturnType.IsAssignableTo(typeof(BetaTest)))
                                        let test =
@@ -69,40 +67,13 @@ public class TestContainer
     [PublicAPI]
     protected Step<T> Require<T>() where T : notnull
     {
-        return new Step<T>(() =>
-        {
-            return ServicesProvider!.GetRequiredService<T>();
-        });
+        return new Step<T>(() => ServicesProvider!.GetRequiredService<T>());
     }
 
     [PublicAPI]
     protected Step<object> Require(Type type)
     {
         return new Step<object>(() => ServicesProvider!.GetRequiredService(type));
-    }
-
-    [PublicAPI]
-    protected Step<T> Gather<T>(T value)
-    {
-        return new Step<T>(() => value);
-    }
-
-    [PublicAPI]
-    protected Step<T> Gather<T>(Func<T> handler)
-    {
-        return new Step<T>(handler);
-    }
-
-    [PublicAPI]
-    protected Proof<T> Apply<T>(Func<T> handler)
-    {
-        return new Proof<T>(handler());
-    }
-
-    [PublicAPI]
-    protected Proof<T> Apply<T>(Func<Task<T>> handler)
-    {
-        return new Proof<T>(handler());
     }
 
     // ---
