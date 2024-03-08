@@ -4,6 +4,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Beta.Tests" Key="$(BetaPublicKey)"/>
+    <InternalsVisibleTo Include="Beta.Tests" Key="$(BetaPublicKey)" />
   </ItemGroup>
 </Project>

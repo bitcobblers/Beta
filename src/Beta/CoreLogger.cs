@@ -4,7 +4,7 @@ namespace Beta;
 
 public abstract class CoreLogger(string scope, Stopwatch stopwatch) : ICoreLogger
 {
-    protected string Scope => scope;
+    public string Scope => scope;
     protected Stopwatch Stopwatch => stopwatch;
 
     public abstract void Log(LogLevel level, string message);

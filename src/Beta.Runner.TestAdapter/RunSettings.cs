@@ -2,8 +2,10 @@ using System.Xml.Linq;
 
 namespace Beta.Runner.TestAdapter;
 
-public class RunSettings
+public record RunSettings
 {
+    public static RunSettings Empty { get; } = new();
+
     public string? ResultsDirectory { get; private set; }
     public string? SolutionDirectory { get; private set; }
     public int MaxCpuCount { get; private set; }
@@ -20,7 +22,7 @@ public class RunSettings
 
         if (string.IsNullOrWhiteSpace(xmlContent))
         {
-            return settings;
+            return Empty;
         }
 
         try
@@ -30,26 +32,38 @@ public class RunSettings
         catch
         {
             // TODO: Add exceptions to ignore.
-            return settings;
+            return Empty;
         }
 
         var configElement = parsed.Root?.Element("RunConfiguration");
 
         if (configElement == null)
         {
-            return settings;
+            return Empty;
         }
 
-        settings.SolutionDirectory = ParseString(configElement, nameof(SolutionDirectory));
-        settings.ResultsDirectory = ParseString(configElement, nameof(ResultsDirectory));
-        settings.CollectSourceInformation = ParseBool(configElement, nameof(CollectSourceInformation));
-        settings.TargetFrameworkVersion = ParseString(configElement, nameof(TargetFrameworkVersion));
-        settings.TargetPlatform = ParseString(configElement, nameof(TargetPlatform));
-        settings.BatchSize = ParseInt(configElement, nameof(BatchSize));
-        settings.DesignMode = ParseBool(configElement, nameof(DesignMode));
-        settings.MaxCpuCount = ParseInt(configElement, nameof(MaxCpuCount));
+        return new RunSettings
+        {
+            SolutionDirectory = ParseString(configElement, nameof(SolutionDirectory)),
+            ResultsDirectory = ParseString(configElement, nameof(ResultsDirectory)),
+            CollectSourceInformation = ParseBool(configElement, nameof(CollectSourceInformation)),
+            TargetFrameworkVersion = ParseString(configElement, nameof(TargetFrameworkVersion)),
+            TargetPlatform = ParseString(configElement, nameof(TargetPlatform)),
+            BatchSize = ParseInt(configElement, nameof(BatchSize)),
+            DesignMode = ParseBool(configElement, nameof(DesignMode)),
+            MaxCpuCount = ParseInt(configElement, nameof(MaxCpuCount))
+        };
 
-        return settings;
+        //settings.SolutionDirectory = ParseString(configElement, nameof(SolutionDirectory));
+        //settings.ResultsDirectory = ParseString(configElement, nameof(ResultsDirectory));
+        //settings.CollectSourceInformation = ParseBool(configElement, nameof(CollectSourceInformation));
+        //settings.TargetFrameworkVersion = ParseString(configElement, nameof(TargetFrameworkVersion));
+        //settings.TargetPlatform = ParseString(configElement, nameof(TargetPlatform));
+        //settings.BatchSize = ParseInt(configElement, nameof(BatchSize));
+        //settings.DesignMode = ParseBool(configElement, nameof(DesignMode));
+        //settings.MaxCpuCount = ParseInt(configElement, nameof(MaxCpuCount));
+
+        //return settings;
     }
 
     private static bool ParseBool(XContainer xml, string name, bool defaultValue = false)
