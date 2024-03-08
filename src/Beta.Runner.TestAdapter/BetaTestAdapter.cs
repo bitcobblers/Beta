@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Reflection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
@@ -22,13 +21,12 @@ public class BetaTestAdapter(IAssemblySourceFilter sourceFilter)
     {
         System.Diagnostics.Debugger.Launch();
         System.Diagnostics.Debugger.Break();
-
     }
 
     public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext discoveryContext, IMessageLogger logger,
                               ITestCaseDiscoverySink discoverySink)
     {
-        var logHelper = new InternalLogger(logger, Stopwatch.StartNew());
+        var logHelper = new InternalLogger(logger);
         var settings = RunSettings.Parse(discoveryContext.RunSettings?.SettingsXml);
         PrintBanner(logHelper, settings);
 
@@ -36,7 +34,7 @@ public class BetaTestAdapter(IAssemblySourceFilter sourceFilter)
         {
             foreach (var testCase in DiscoverTests(logHelper, source, settings))
             {
-                logHelper.Log(TestMessageLevel.Informational, "*** BETA *** Discovered Test " + testCase.FullyQualifiedName);
+                logHelper.Log(LogLevel.Info, "*** BETA *** Discovered Test " + testCase.FullyQualifiedName);
                 discoverySink.SendTestCase(testCase);
             }
         }
@@ -44,15 +42,22 @@ public class BetaTestAdapter(IAssemblySourceFilter sourceFilter)
 
     public void RunTests(IEnumerable<TestCase>? tests, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
     {
-        var logHelper = new InternalLogger(frameworkHandle, Stopwatch.StartNew());
+        var logHelper = new InternalLogger(frameworkHandle);
         var settings = RunSettings.Parse(runContext?.RunSettings?.SettingsXml);
 
-        logHelper.Log(TestMessageLevel.Informational, "*** BETA *** Running Tests");
+        logHelper.Log(LogLevel.Info, "*** BETA *** Running Tests");
+
+        foreach (var test in tests ?? Array.Empty<TestCase>())
+        {
+            logHelper.Log(LogLevel.Info, "*** BETA *** Executing {0}", test.FullyQualifiedName);
+        }
+
+        logHelper.Log(LogLevel.Info, "*** BETA *** Running Tests");
     }
 
     public void RunTests(IEnumerable<string>? sources, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
     {
-        var logHelper = new InternalLogger(frameworkHandle, Stopwatch.StartNew());
+        var logHelper = new InternalLogger(frameworkHandle);
         var settings = RunSettings.Parse(runContext?.RunSettings?.SettingsXml);
         PrintBanner(logHelper, settings);
 
@@ -68,13 +73,13 @@ public class BetaTestAdapter(IAssemblySourceFilter sourceFilter)
 
     private static void PrintBanner(InternalLogger logger, RunSettings settings)
     {
-        logger.Log(TestMessageLevel.Informational,
+        logger.Log(LogLevel.Info,
             "*** BETA *** Target Framework Version: " + settings.TargetFrameworkVersion);
     }
 
     private IEnumerable<TestCase> DiscoverTests(InternalLogger logger, string source, RunSettings settings)
     {
-        logger.Log(TestMessageLevel.Informational, "*** BETA *** Discovering Tests in " + source);
+        logger.Log(LogLevel.Info, "*** BETA *** Discovering Tests in " + source);
 
         try
         {
@@ -88,14 +93,13 @@ public class BetaTestAdapter(IAssemblySourceFilter sourceFilter)
         }
         finally
         {
-            logger.Log(TestMessageLevel.Informational, "*** BETA *** Discovered Tests in " + source);
+            logger.Log(LogLevel.Info, "*** BETA *** Discovered Tests in " + source);
         }
     }
 
-    // scan assembly for public classes implementing TestContainer
     public IEnumerable<TestCase> ScanAssembly(InternalLogger logger, string assemblyPath, RunSettings settings)
     {
-        logger.Log(TestMessageLevel.Informational, "*** BETA *** Scanning Assembly " + assemblyPath);
+        logger.Log(LogLevel.Info, "*** BETA *** Scanning Assembly " + assemblyPath);
 
         try
         {
@@ -128,7 +132,7 @@ public class BetaTestAdapter(IAssemblySourceFilter sourceFilter)
         }
         finally
         {
-            logger.Log(TestMessageLevel.Informational, "*** BETA *** Scanned Assembly " + assemblyPath);
+            logger.Log(LogLevel.Info, "*** BETA *** Scanned Assembly " + assemblyPath);
         }
     }
 }

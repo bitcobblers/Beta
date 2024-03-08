@@ -3,28 +3,35 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 
 namespace Beta.Runner.TestAdapter;
 
-public class InternalLogger(IMessageLogger? logger, Stopwatch stopwatch)
+public class InternalLogger : CoreLogger
 {
-    public void Log(string format, params object?[] args)
+    private readonly IMessageLogger? _logger;
+
+    public InternalLogger(IMessageLogger? logger, string scope = "*")
+        : this(logger, scope, Stopwatch.StartNew())
     {
-        Log(TestMessageLevel.Informational, format, args);
     }
 
-    public void Log(TestMessageLevel level, string format, params object?[] args)
+    private InternalLogger(IMessageLogger? logger, string scope, Stopwatch stopwatch)
+        : base(scope, stopwatch) =>
+        this._logger = logger;
+
+
+    public override void Log(LogLevel level, string message)
     {
-        SendMessage(level, string.Format(format, args));
+        var testMessageLevel = level switch
+        {
+            LogLevel.Info => TestMessageLevel.Informational,
+            LogLevel.Warn => TestMessageLevel.Warning,
+            LogLevel.Error => TestMessageLevel.Error,
+            _ => TestMessageLevel.Informational,
+        };
+
+        _logger?.SendMessage(testMessageLevel, message);
     }
 
-    private void SendMessage(TestMessageLevel level, string message)
+    public override ICoreLogger CreateScope(string newScope)
     {
-        SendMessage(level, null, message);
-    }
-
-    private void SendMessage(TestMessageLevel level, string? assemblyName, string message)
-    {
-        var assemblyPath = assemblyName is not null ? string.Empty : Path.GetFileNameWithoutExtension(assemblyName);
-        var elapsed = stopwatch.Elapsed.ToString(@"hh\:mm\:ss\.ff");
-
-        logger?.SendMessage(level, $"[Beta {elapsed}] {assemblyPath}:{message}");
+        return new InternalLogger(_logger, $"{Scope}/{newScope}", Stopwatch);
     }
 }
