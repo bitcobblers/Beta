@@ -2,9 +2,21 @@
 
 public class DiaSessionManager : IDisposable
 {
-    private readonly Dictionary<string, DiaSessionWrapper> _sessions = new();
+    private readonly Func<string, DiaSessionWrapper> _createSession;
+    private readonly Dictionary<string, DiaSessionWrapper> _sessions;
 
     private bool _disposed;
+
+    public DiaSessionManager()
+    : this(assemblyFilePath => new DiaSessionWrapper(assemblyFilePath))
+    {
+    }
+
+    internal DiaSessionManager(Func<string, DiaSessionWrapper> createSession)
+    {
+        _createSession = createSession;
+        _sessions = new Dictionary<string, DiaSessionWrapper>();
+    }
 
     ~DiaSessionManager()
     {
@@ -24,7 +36,7 @@ public class DiaSessionManager : IDisposable
             return session;
         }
 
-        session = new DiaSessionWrapper(assemblyFilePath);
+        session = _createSession(assemblyFilePath);
         _sessions[assemblyFilePath] = session;
 
         return session;

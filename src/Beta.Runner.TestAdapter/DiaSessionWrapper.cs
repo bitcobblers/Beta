@@ -22,7 +22,7 @@ public class DiaSessionWrapper : IDisposable
         }
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
