@@ -63,7 +63,7 @@ public class TestContainerTests
             container.Prepare();
 
             // Assert
-            container.ServicesProvider.ShouldNotBeNull();
+            container.ServicesProvider.Value.ShouldNotBeNull();
         }
 
         [Fact]
@@ -76,7 +76,7 @@ public class TestContainerTests
             container.Prepare();
 
             // Assert
-            container.ServicesProvider!.GetService<StubType>().ShouldNotBeNull();
+            container.ServicesProvider.Value!.GetService<StubType>().ShouldNotBeNull();
         }
 
         private class StubType;

@@ -6,7 +6,7 @@ namespace Beta;
 
 public class TestContainer
 {
-    internal IServiceProvider? ServicesProvider { get; private set; }
+    internal AsyncLocal<IServiceProvider?> ServicesProvider { get; } = new();
 
     private IEnumerable<MethodInfo> FindTestMethod(Func<MethodInfo, bool> predicate)
     {
@@ -53,9 +53,14 @@ public class TestContainer
 
     public void Prepare()
     {
+        if (ServicesProvider.Value is not null)
+        {
+            return;
+        }
+
         var services = new ServiceCollection();
         ConfigureServices(services);
-        ServicesProvider = services.BuildServiceProvider();
+        ServicesProvider.Value = services.BuildServiceProvider();
     }
 
     protected virtual void ConfigureServices(IServiceCollection services)
@@ -67,13 +72,13 @@ public class TestContainer
     [PublicAPI]
     protected Step<T> Require<T>() where T : notnull
     {
-        return new Step<T>(() => ServicesProvider!.GetRequiredService<T>());
+        return new Step<T>(() => ServicesProvider.Value!.GetRequiredService<T>());
     }
 
     [PublicAPI]
     protected Step<object> Require(Type type)
     {
-        return new Step<object>(() => ServicesProvider!.GetRequiredService(type));
+        return new Step<object>(() => ServicesProvider.Value!.GetRequiredService(type));
     }
 
     // ---
@@ -81,12 +86,12 @@ public class TestContainer
     [PublicAPI]
     protected BetaTest Test<T>(Func<Proof<T>> apply, [CallerMemberName] string testName = "")
     {
-        return new BetaTest(this, null, testName, apply);
+        return new BetaTest(this, testName, apply);
     }
 
     protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply, [CallerMemberName] string testName = "")
     {
         return from scenario in scenarios
-               select new BetaTest(this, scenario, testName, () => apply(scenario));
+               select new BetaTest<TInput>(this, scenario, testName, apply);
     }
 }
