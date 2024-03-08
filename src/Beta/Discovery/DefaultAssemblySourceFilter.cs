@@ -1,4 +1,4 @@
-namespace Beta.Runner.TestAdapter;
+namespace Beta.Discovery;
 
 public class DefaultAssemblySourceFilter(IFrameworkMatcher matcher) : IAssemblySourceFilter
 {
@@ -16,10 +16,10 @@ public class DefaultAssemblySourceFilter(IFrameworkMatcher matcher) : IAssemblyS
         "beta.testadapter.dll"
     };
 
-    public bool ShouldInclude(string assemblyPath, RunSettings settings)
+    public bool ShouldInclude(string assemblyPath, string? frameworkVersion)
     {
         return !PlatformAssemblies.Contains(Path.GetFileName(assemblyPath)) &&
-               matcher.IsMatch(settings.TargetFrameworkVersion) &&
+               matcher.IsMatch(frameworkVersion) &&
                File.Exists(assemblyPath);
     }
 }

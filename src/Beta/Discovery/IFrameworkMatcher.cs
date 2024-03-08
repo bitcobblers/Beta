@@ -1,4 +1,4 @@
-namespace Beta.Runner.TestAdapter;
+namespace Beta.Discovery;
 
 public interface IFrameworkMatcher
 {
