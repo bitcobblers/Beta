@@ -12,13 +12,15 @@ namespace Beta.Runner.TestAdapter;
 [Category("managed")]
 [DefaultExecutorUri(ExecutorUri)]
 [ExtensionUri(ExecutorUri)]
-public class BetaTestAdapter
-    : ITestDiscoverer, ITestExecutor
+public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
 {
     private const string ExecutorUri = "executor://Beta";
 
-    public void DiscoverTests(IEnumerable<string> sources, IDiscoveryContext discoveryContext, IMessageLogger logger,
-                              ITestCaseDiscoverySink discoverySink)
+    public void DiscoverTests(
+        IEnumerable<string> sources,
+        IDiscoveryContext discoveryContext,
+        IMessageLogger logger,
+        ITestCaseDiscoverySink discoverySink)
     {
         System.Diagnostics.Debugger.Launch();
 
@@ -33,10 +35,24 @@ public class BetaTestAdapter
         }
     }
 
-    public void RunTests(IEnumerable<TestCase>? tests, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
+    public void RunTests(
+        IEnumerable<string>? sources,
+        IRunContext? runContext,
+        IFrameworkHandle? frameworkHandle)
     {
         var logHelper = new InternalLogger(frameworkHandle);
         var settings = RunSettings.Parse(runContext?.RunSettings?.SettingsXml);
+
+        PrintBanner(logHelper, settings);
+        RunTests(RunDiscovery(logHelper, sources, settings), runContext, frameworkHandle);
+    }
+
+    public void RunTests(
+        IEnumerable<TestCase>? tests,
+        IRunContext? runContext,
+        IFrameworkHandle? frameworkHandle)
+    {
+        var logHelper = new InternalLogger(frameworkHandle);
 
         logHelper.Log(LogLevel.Info, "Running Tests");
 
@@ -48,15 +64,6 @@ public class BetaTestAdapter
         logHelper.Log(LogLevel.Info, "Running Tests");
     }
 
-    public void RunTests(IEnumerable<string>? sources, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
-    {
-        var logHelper = new InternalLogger(frameworkHandle);
-        var settings = RunSettings.Parse(runContext?.RunSettings?.SettingsXml);
-
-        PrintBanner(logHelper, settings);
-        RunTests(RunDiscovery(logHelper, sources, settings), runContext, frameworkHandle);
-    }
-
     public void Cancel()
     {
     }
@@ -66,7 +73,10 @@ public class BetaTestAdapter
         logger.Log(LogLevel.Info, $"Target Framework Version: {settings.TargetFrameworkVersion}");
     }
 
-    private IEnumerable<TestCase> RunDiscovery(ICoreLogger logger, IEnumerable<string>? sources, RunSettings settings)
+    private IEnumerable<TestCase> RunDiscovery(
+        ICoreLogger logger,
+        IEnumerable<string>? sources,
+        RunSettings settings)
     {
         var discoverer = new TestDiscoverer(logger);
         using var diaSessionManager = new DiaSessionManager();
