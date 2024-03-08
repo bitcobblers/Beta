@@ -7,7 +7,7 @@ public class InternalLogger : CoreLogger
 {
     private readonly IMessageLogger? _logger;
 
-    public InternalLogger(IMessageLogger? logger, string scope = "*")
+    public InternalLogger(IMessageLogger? logger, string scope = "/")
         : this(logger, scope, Stopwatch.StartNew())
     {
     }
@@ -15,7 +15,6 @@ public class InternalLogger : CoreLogger
     private InternalLogger(IMessageLogger? logger, string scope, Stopwatch stopwatch)
         : base(scope, stopwatch) =>
         this._logger = logger;
-
 
     public override void Log(LogLevel level, string message)
     {
@@ -27,11 +26,12 @@ public class InternalLogger : CoreLogger
             _ => TestMessageLevel.Informational,
         };
 
-        _logger?.SendMessage(testMessageLevel, message);
+        _logger?.SendMessage(testMessageLevel, FormatMessage(message));
     }
 
-    public override ICoreLogger CreateScope(string newScope)
-    {
-        return new InternalLogger(_logger, $"{Scope}/{newScope}", Stopwatch);
-    }
+    public override ICoreLogger CreateScope(string newScope) =>
+        new InternalLogger(_logger, FormatScope(newScope), Stopwatch);
+
+    private static string FormatScope(string newScope) =>
+        newScope.StartsWith("/") ? newScope : $"/{newScope}";
 }

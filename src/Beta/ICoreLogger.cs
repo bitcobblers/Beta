@@ -10,7 +10,6 @@ public enum LogLevel
 public interface ICoreLogger
 {
     void Log(LogLevel level, string message);
-    void Log(LogLevel level, string format, params object?[] args);
 
     ICoreLogger CreateScope(string newScope);
 }
