@@ -29,7 +29,8 @@ public class TestDiscoverer(
 
         foreach (var discoveredTest in from type in assembly.GetTypes()
                                        where type.IsPublic && type.IsClass && type.IsAssignableTo(typeof(TestContainer))
-                                       let container = (TestContainer)Activator.CreateInstance(type)
+                                       let container = (TestContainer?)Activator.CreateInstance(type)
+                                       where container is not null
                                        from test in container.Discover()
                                        select test)
         {
