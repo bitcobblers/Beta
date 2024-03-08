@@ -33,7 +33,7 @@ public class RunSettings
             return settings;
         }
 
-        var configElement = parsed.Element("RunConfiguration");
+        var configElement = parsed.Root?.Element("RunConfiguration");
 
         if (configElement == null)
         {
