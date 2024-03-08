@@ -34,7 +34,7 @@ public class TestDiscoverer(
                                        from test in container.Discover()
                                        select test)
         {
-            scanLogger.Log(LogLevel.Info, $"Discovered test: {discoveredTest.Name}");
+            scanLogger.Log(LogLevel.Info, $"Discovered test: {discoveredTest.TestName}");
             yield return discoveredTest;
         }
     }
