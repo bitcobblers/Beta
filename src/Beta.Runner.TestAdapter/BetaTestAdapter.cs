@@ -3,6 +3,7 @@ using Beta.Discovery;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using Newtonsoft.Json;
 
 namespace Beta.Runner.TestAdapter;
 
@@ -15,6 +16,17 @@ namespace Beta.Runner.TestAdapter;
 public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
 {
     private const string ExecutorUri = "executor://Beta";
+
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
+
+    public static TestProperty TestCaseProperty { get; } =
+        TestProperty.Register("BetaTestCase", "Beta Test Case", typeof(string), typeof(BetaTestAdapter));
+
+    public static TestProperty TestContainerProperty { get; } =
+        TestProperty.Register("BetaTestContainer", "Beta Test Container", typeof(string), typeof(BetaTestAdapter));
+
+    public static TestProperty TestMethodProper { get; } =
+        TestProperty.Register("BetaTestMethod", "Beta Test Method", typeof(string), typeof(BetaTestAdapter));
 
     public void DiscoverTests(
         IEnumerable<string> sources,
@@ -51,19 +63,63 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
         IFrameworkHandle? frameworkHandle)
     {
         var logHelper = new InternalLogger(frameworkHandle);
+        var allTests = tests ?? Array.Empty<TestCase>();
 
         logHelper.Log(LogLevel.Info, "Running Tests");
 
-        foreach (var test in tests ?? Array.Empty<TestCase>())
+        Parallel.ForEachAsync(allTests, _cancellationTokenSource.Token, async (test, token) =>
         {
-            logHelper.Log(LogLevel.Info, $"Executing {test.FullyQualifiedName}");
-        }
+            if (token.IsCancellationRequested)
+            {
+                frameworkHandle?.RecordResult(new TestResult(test)
+                {
+                    Outcome = TestOutcome.None
+                });
 
-        logHelper.Log(LogLevel.Info, "Running Tests");
+                return;
+            }
+
+            var options = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
+            var outcome = TestOutcome.None;
+
+            var input = test.GetPropertyValue<string>(TestCaseProperty, null);
+            var containerType = test.GetPropertyValue<string>(TestContainerProperty, null);
+            var method = test.GetPropertyValue<string>(TestMethodProper, null);
+
+            var deserializedInput = input == null ?
+                null :
+                JsonConvert.DeserializeObject(input, options);
+
+            var container = Activator.CreateInstance(Type.GetType(containerType)) as TestContainer;
+            var methodInfo = container?.GetType().GetMethod(method);
+            var betaTest = methodInfo?.Invoke(container, null) as BetaTest;
+
+            try
+            {
+                frameworkHandle?.RecordStart(test);
+
+                container.Prepare();
+                var result = betaTest.Apply(deserializedInput);
+
+                outcome = TestOutcome.Passed;
+            }
+            finally
+            {
+                frameworkHandle?.RecordEnd(test, outcome);
+            }
+
+            logHelper.Log(LogLevel.Info, $"Executing {test.FullyQualifiedName}");
+            await Task.CompletedTask;
+        }).Wait();
     }
 
     public void Cancel()
     {
+        _cancellationTokenSource.Cancel();
     }
 
     private static void PrintBanner(ICoreLogger logger, RunSettings settings)
@@ -94,6 +150,11 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
             {
                 foreach (var input in betaTest.Input)
                 {
+                    var options = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+
                     var testCase = new TestCase
                     {
                         Id = Guid.NewGuid(),
@@ -105,7 +166,10 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
                         LineNumber = navInfo?.MinLineNumber ?? 0,
                     };
 
-                    // testCase.SetPropertyValue("Input", input);
+                    testCase.SetPropertyValue(TestCaseProperty, JsonConvert.SerializeObject(input, options));
+                    testCase.SetPropertyValue(TestContainerProperty, betaTest.Method.DeclaringType.AssemblyQualifiedName);
+                    testCase.SetPropertyValue(TestMethodProper, betaTest.MethodName);
+
                     yield return testCase;
                 }
             }
@@ -121,7 +185,6 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
                     Source = betaTest.Assembly.Location,
                     LineNumber = navInfo?.MinLineNumber ?? 0,
                 };
-
 
                 yield return testCase;
             }

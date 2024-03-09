@@ -20,7 +20,7 @@ public class CalculatorDemo : TestContainer
             select result.ShouldBe(3));
     }
 
-    public IEnumerable<BetaTest> AddTestMany()
+    public BetaTest AddTestMany()
     {
         return Test(AdditionInput, i =>
             from calculator in Gather(() => Task.FromResult(new Calculator()))
