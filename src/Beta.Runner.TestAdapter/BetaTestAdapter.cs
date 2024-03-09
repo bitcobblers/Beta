@@ -90,11 +90,14 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
             var containerType = test.GetPropertyValue<string>(TestContainerProperty, null);
             var method = test.GetPropertyValue<string>(TestMethodProper, null);
 
-            var deserializedInput = input == null ?
-                null :
-                JsonConvert.DeserializeObject(input, options);
+            if (containerType == null || method == null)
+            {
+                return;
+            }
 
-            var container = Activator.CreateInstance(Type.GetType(containerType)) as TestContainer;
+            var deserializedInput = input == null ? null : JsonConvert.DeserializeObject(input, options);
+
+            var container = Activator.CreateInstance(Type.GetType(containerType)!) as TestContainer;
             var methodInfo = container?.GetType().GetMethod(method);
             var betaTest = methodInfo?.Invoke(container, null) as BetaTest;
 
@@ -102,8 +105,8 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
             {
                 frameworkHandle?.RecordStart(test);
 
-                container.Prepare();
-                var result = betaTest.Apply(deserializedInput);
+                container?.Prepare();
+                _ = betaTest?.Apply(deserializedInput!);
 
                 outcome = TestOutcome.Passed;
             }
@@ -163,11 +166,12 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
                         ExecutorUri = new Uri(ExecutorUri),
                         FullyQualifiedName = fullyQualifiedName,
                         Source = betaTest.Assembly.Location,
-                        LineNumber = navInfo?.MinLineNumber ?? 0,
+                        LineNumber = navInfo?.MinLineNumber ?? 0
                     };
 
                     testCase.SetPropertyValue(TestCaseProperty, JsonConvert.SerializeObject(input, options));
-                    testCase.SetPropertyValue(TestContainerProperty, betaTest.Method.DeclaringType.AssemblyQualifiedName);
+                    testCase.SetPropertyValue(TestContainerProperty,
+                        betaTest.Method?.DeclaringType?.AssemblyQualifiedName);
                     testCase.SetPropertyValue(TestMethodProper, betaTest.MethodName);
 
                     yield return testCase;
@@ -183,7 +187,7 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
                     ExecutorUri = new Uri(ExecutorUri),
                     FullyQualifiedName = fullyQualifiedName,
                     Source = betaTest.Assembly.Location,
-                    LineNumber = navInfo?.MinLineNumber ?? 0,
+                    LineNumber = navInfo?.MinLineNumber ?? 0
                 };
 
                 yield return testCase;
