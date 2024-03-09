@@ -22,8 +22,8 @@ public class ProofTests
     {
     }
 
-    [Fact]
-    public void Bar()
-    {
-    }
+    //[Fact]
+    //public void Bar()
+    //{
+    //}
 }
