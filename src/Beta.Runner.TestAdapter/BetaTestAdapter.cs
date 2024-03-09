@@ -22,8 +22,6 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
         IMessageLogger logger,
         ITestCaseDiscoverySink discoverySink)
     {
-        System.Diagnostics.Debugger.Launch();
-
         var logHelper = new InternalLogger(logger);
         var settings = RunSettings.Parse(discoveryContext.RunSettings?.SettingsXml);
 
@@ -86,22 +84,47 @@ public class BetaTestAdapter : ITestDiscoverer, ITestExecutor
             yield break;
         }
 
-        foreach (var testCase in discoverer.DiscoverTests(sources, settings.TargetFrameworkVersion))
+        foreach (var betaTest in discoverer.DiscoverTests(sources, settings.TargetFrameworkVersion))
         {
-            var session = diaSessionManager.GetSession(testCase.Assembly.Location);
-            var navInfo = session.GetNavigationData(testCase.Method);
-            var fullyQualifiedName = testCase.Method?.DeclaringType?.FullName + "." + testCase.Method?.Name;
+            var session = diaSessionManager.GetSession(betaTest.Assembly.Location);
+            var navInfo = session.GetNavigationData(betaTest.Method);
+            var fullyQualifiedName = betaTest.DeclaringType + "." + betaTest.MethodName;
 
-            yield return new TestCase
+            if (betaTest.Input is not null)
             {
-                Id = testCase.Id,
-                CodeFilePath = navInfo?.FileName,
-                DisplayName = testCase.Name,
-                ExecutorUri = new Uri(ExecutorUri),
-                FullyQualifiedName = fullyQualifiedName,
-                Source = testCase.Assembly.Location,
-                LineNumber = navInfo?.MinLineNumber ?? 0,
-            };
+                foreach (var input in betaTest.Input)
+                {
+                    var testCase = new TestCase
+                    {
+                        Id = Guid.NewGuid(),
+                        CodeFilePath = navInfo?.FileName,
+                        DisplayName = $"{betaTest.TestName}({input})",
+                        ExecutorUri = new Uri(ExecutorUri),
+                        FullyQualifiedName = fullyQualifiedName,
+                        Source = betaTest.Assembly.Location,
+                        LineNumber = navInfo?.MinLineNumber ?? 0,
+                    };
+
+                    // testCase.SetPropertyValue("Input", input);
+                    yield return testCase;
+                }
+            }
+            else
+            {
+                var testCase = new TestCase
+                {
+                    Id = Guid.NewGuid(),
+                    CodeFilePath = navInfo?.FileName,
+                    DisplayName = betaTest.TestName,
+                    ExecutorUri = new Uri(ExecutorUri),
+                    FullyQualifiedName = fullyQualifiedName,
+                    Source = betaTest.Assembly.Location,
+                    LineNumber = navInfo?.MinLineNumber ?? 0,
+                };
+
+
+                yield return testCase;
+            }
         }
     }
 }

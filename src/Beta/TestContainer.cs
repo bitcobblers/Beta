@@ -25,7 +25,7 @@ public class TestContainer
         foreach (var discoveredTest in from method in FindTestMethod(m =>
                                            m.ReturnType.IsAssignableTo(typeof(BetaTest)))
                                        let test =
-                                           method.Invoke(this, Array.Empty<object>()) as BetaTest
+                                           method.Invoke(this, null) as BetaTest
                                        where test is not null
                                        select test with
                                        {
@@ -35,20 +35,20 @@ public class TestContainer
             yield return discoveredTest;
         }
 
-        foreach (var discoveredTest in from method in FindTestMethod(m =>
-                                           m.ReturnType.IsAssignableTo(typeof(IEnumerable<BetaTest>)))
-                                       let tests =
-                                           method.Invoke(this, Array.Empty<object>()) as IEnumerable<BetaTest>
-                                       where tests is not null
-                                       from test in tests
-                                       where test is not null
-                                       select test with
-                                       {
-                                           Method = method
-                                       })
-        {
-            yield return discoveredTest;
-        }
+        //foreach (var discoveredTest in from method in FindTestMethod(m =>
+        //                                   m.ReturnType.IsAssignableTo(typeof(IEnumerable<BetaTest>)))
+        //                               let tests =
+        //                                   method.Invoke(this, null) as IEnumerable<BetaTest>
+        //                               where tests is not null
+        //                               from test in tests
+        //                               where test is not null
+        //                               select test with
+        //                               {
+        //                                   Method = method
+        //                               })
+        //{
+        //    yield return discoveredTest;
+        //}
     }
 
     public void Prepare()
@@ -89,9 +89,10 @@ public class TestContainer
         return new BetaTest(this, testName, apply);
     }
 
-    protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply, [CallerMemberName] string testName = "")
+    protected BetaTest<TInput> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply, [CallerMemberName] string testName = "")
     {
-        return from scenario in scenarios
-               select new BetaTest<TInput>(this, scenario, testName, apply);
+        //return from scenario in scenarios
+        //       select new BetaTest<TInput>(this, scenario, testName, apply);
+        return new BetaTest<TInput>(this, scenarios, testName, apply);
     }
 }

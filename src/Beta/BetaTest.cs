@@ -3,27 +3,24 @@
 namespace Beta;
 
 [PublicAPI]
-public record BetaTest(TestContainer Instance, string TestName, Func<Proof> Proof)
+public record BetaTest(TestContainer Container, IEnumerable<object>? Input, string TestName, Func<object, Proof> Apply)
 {
-    public Guid Id { get; } = Guid.NewGuid();
-    public Assembly Assembly => Instance.GetType().Assembly;
-    public string? DeclaringType => Instance.GetType().FullName;
+    public Assembly Assembly => Container.GetType().Assembly;
+    public string? DeclaringType => Container.GetType().FullName;
     public string? MethodName => Method?.Name;
 
     public MethodBase? Method { get; set; }
-    public object? Input { get; }
 
-    protected BetaTest(TestContainer instance, object? input, string testName, Func<Proof> proof)
-        : this(instance, testName, proof)
+    public BetaTest(TestContainer container, string testName, Func<Proof> apply)
+        : this(container, null, testName, _ => apply())
     {
-        Input = input;
     }
 }
 
 public record BetaTest<TInput> : BetaTest
 {
-    public BetaTest(TestContainer container, TInput input, string testName, Func<TInput, Proof> apply)
-        : base(container, input, testName, () => apply(input))
+    public BetaTest(TestContainer container, IEnumerable<TInput> input, string testName, Func<TInput, Proof> apply)
+        : base(container, (IEnumerable<object>)input, testName, o => apply((TInput)o))
     {
     }
 }
