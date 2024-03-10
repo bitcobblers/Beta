@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Beta.Engine.Api\Beta.Engine.Api.csproj" />
+        <ProjectReference Include="..\Beta.Engine.Core\Beta.Engine.Core.csproj" />
+    </ItemGroup>
+
+</Project>

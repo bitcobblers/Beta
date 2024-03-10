@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Beta.Engine.Api\Beta.Engine.Api.csproj" />
+        <ProjectReference Include="..\..\src\Beta.Engine\Beta.Engine.csproj" />
+    </ItemGroup>
+
+</Project>
