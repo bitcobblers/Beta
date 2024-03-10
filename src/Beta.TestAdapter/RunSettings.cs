@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace Beta.Runner.TestAdapter;
+namespace Beta.TestAdapter;
 
 public record RunSettings
 {

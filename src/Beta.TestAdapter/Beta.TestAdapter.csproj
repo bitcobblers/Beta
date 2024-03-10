@@ -2,8 +2,10 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <LangVersion>12</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
+
 
     <ItemGroup>
         <PackageReference Include="Microsoft.TestPlatform.ObjectModel" />
@@ -11,11 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Beta\Beta.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <InternalsVisibleTo Include="Beta.Tests" Key="$(BetaPublicKey)" />
+        <InternalsVisibleTo Include="Beta.TestAdapter.Tests" Key="$(BetaPublicKey)" />
     </ItemGroup>
 
 </Project>

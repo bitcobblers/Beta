@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Beta.Discovery;
+namespace Beta.TestAdapter.Discovery;
 
 public class NetCoreFrameworkMatcher : IFrameworkMatcher
 {

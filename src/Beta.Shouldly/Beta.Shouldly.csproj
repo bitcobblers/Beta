@@ -1,9 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+    </PropertyGroup>
+
     <ItemGroup>
-      <PackageReference Include="Shouldly" />
+        <PackageReference Include="Shouldly" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Beta\Beta.csproj" />
+        <ProjectReference Include="..\Beta\Beta.csproj" />
     </ItemGroup>
 </Project>

@@ -1,6 +1,4 @@
-﻿using Beta.Runner.TestAdapter;
-
-namespace Beta.Tests.TestAdapter;
+﻿namespace Beta.TestAdapter.Tests;
 
 public class DiaSessionManagerTests
 {
@@ -41,7 +39,7 @@ public class DiaSessionManagerTests
         var handler = A.Fake<Func<string, DiaSessionWrapper>>();
 
         A.CallTo(() => handler.Invoke(A<string>._))
-            .ReturnsNextFromSequence(session1, session2);
+         .ReturnsNextFromSequence(session1, session2);
 
 
         var manager = new DiaSessionManager(handler);

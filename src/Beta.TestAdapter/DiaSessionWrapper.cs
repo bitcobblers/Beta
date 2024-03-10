@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Navigation;
 
-namespace Beta.Runner.TestAdapter;
+namespace Beta.TestAdapter;
 
 public class DiaSessionWrapper : IDisposable
 {
@@ -42,9 +42,9 @@ public class DiaSessionWrapper : IDisposable
 
         var attr = method.GetCustomAttribute<AsyncStateMachineAttribute>()?.StateMachineType;
 
-        return attr is { FullName: not null } ?
-            _session.GetNavigationDataForMethod(attr.FullName, "MoveNext") :
-            _session.GetNavigationDataForMethod(method.DeclaringType.FullName, method.Name);
+        return attr is { FullName: not null }
+            ? _session.GetNavigationDataForMethod(attr.FullName, "MoveNext")
+            : _session.GetNavigationDataForMethod(method.DeclaringType.FullName, method.Name);
     }
 
     protected virtual void Dispose(bool disposing)

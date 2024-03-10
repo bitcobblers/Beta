@@ -1,4 +1,4 @@
-﻿namespace Beta.Runner.TestAdapter;
+﻿namespace Beta.TestAdapter;
 
 public class DiaSessionManager : IDisposable
 {
@@ -8,7 +8,7 @@ public class DiaSessionManager : IDisposable
     private bool _disposed;
 
     public DiaSessionManager()
-    : this(assemblyFilePath => new DiaSessionWrapper(assemblyFilePath))
+        : this(assemblyFilePath => new DiaSessionWrapper(assemblyFilePath))
     {
     }
 
@@ -18,15 +18,15 @@ public class DiaSessionManager : IDisposable
         _sessions = new Dictionary<string, DiaSessionWrapper>();
     }
 
-    ~DiaSessionManager()
-    {
-        Dispose(false);
-    }
-
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    ~DiaSessionManager()
+    {
+        Dispose(false);
     }
 
     public DiaSessionWrapper GetSession(string assemblyFilePath)

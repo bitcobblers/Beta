@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Beta.Runner.TestAdapter;
-
-namespace Beta.Tests.TestAdapter;
+﻿namespace Beta.TestAdapter.Tests;
 
 public class RunSettingsTests
 {

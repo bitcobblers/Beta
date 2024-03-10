@@ -1,15 +1,14 @@
-﻿using Beta.Runner.TestAdapter;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 
-namespace Beta.Tests.TestAdapter;
+namespace Beta.TestAdapter.Tests;
 
-public class InternalLoggerTests
+public class TestLoggerTests
 {
     [Fact]
     public void DefaultScopeIsSlash()
     {
         // Arrange.
-        var logger = new InternalLogger(null);
+        var logger = new TestLogger();
 
         // Assert.
         logger.Scope.ShouldBe("/");
@@ -19,7 +18,7 @@ public class InternalLoggerTests
     public void SingleChildScopeIsFormattedCorrectly()
     {
         // Arrange.
-        var logger = new InternalLogger(null);
+        var logger = new TestLogger();
 
         // Act.
         var child = logger.CreateScope("child");
@@ -32,7 +31,7 @@ public class InternalLoggerTests
     public void MultipleChildScopesAreFormattedCorrectly()
     {
         // Arrange.
-        var logger = new InternalLogger(null);
+        var logger = new TestLogger();
 
         // Act.
         var child = logger.CreateScope("child");
@@ -49,7 +48,7 @@ public class InternalLoggerTests
     public void CanMapLogLevelToTestMessageLevel(LogLevel level, TestMessageLevel expected)
     {
         // Arrange.
-        var actual = InternalLogger.ToTestMessageLevel(level);
+        var actual = TestLogger.ToTestMessageLevel(level);
 
         // Assert.
         actual.ShouldBe(expected);
