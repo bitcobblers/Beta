@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Beta.Runner.TestAdapter;
 
 [ExtensionUri(ExecutorUri)]
-public class BetaTestExecutor : ITestExecutor
+public class BetaTestExecutor : BetaTestAdapter, ITestExecutor
 {
     public const string ExecutorUri = "executor://Beta";
 
@@ -38,9 +38,9 @@ public class BetaTestExecutor : ITestExecutor
 
             var outcome = TestOutcome.None;
 
-            var input = test.GetPropertyValue<string>(BetaTestProperties.TestCaseProperty, null);
-            var containerType = test.GetPropertyValue<string>(BetaTestProperties.TestContainerProperty, null);
-            var method = test.GetPropertyValue<string>(BetaTestProperties.TestMethodProper, null);
+            var input = test.GetPropertyValue<string>(TestCaseProperty, null);
+            var containerType = test.GetPropertyValue<string>(TestContainerProperty, null);
+            var method = test.GetPropertyValue<string>(TestMethodProper, null);
 
             if (containerType == null || method == null)
             {
@@ -86,10 +86,5 @@ public class BetaTestExecutor : ITestExecutor
     public void Cancel()
     {
         _cancellationTokenSource.Cancel();
-    }
-
-    private static void PrintBanner(ICoreLogger logger, RunSettings settings)
-    {
-        logger.Log(LogLevel.Info, $"Target Framework Version: {settings.TargetFrameworkVersion}");
     }
 }

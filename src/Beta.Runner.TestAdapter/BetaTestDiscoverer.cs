@@ -12,7 +12,7 @@ namespace Beta.Runner.TestAdapter;
 [FileExtension(".exe")]
 [Category("managed")]
 [DefaultExecutorUri(BetaTestExecutor.ExecutorUri)]
-public class BetaTestDiscoverer : ITestDiscoverer
+public class BetaTestDiscoverer : BetaTestAdapter, ITestDiscoverer
 {
     /// <inheritdoc />
     public void DiscoverTests(
@@ -30,11 +30,6 @@ public class BetaTestDiscoverer : ITestDiscoverer
         {
             discoverySink.SendTestCase(testCase);
         }
-    }
-
-    private static void PrintBanner(ICoreLogger logger, RunSettings settings)
-    {
-        logger.Log(LogLevel.Info, $"Target Framework Version: {settings.TargetFrameworkVersion}");
     }
 
     public static IEnumerable<TestCase> RunDiscovery(
@@ -76,11 +71,11 @@ public class BetaTestDiscoverer : ITestDiscoverer
                         LineNumber = navInfo?.MinLineNumber ?? 0
                     };
 
-                    testCase.SetPropertyValue(BetaTestProperties.TestCaseProperty,
+                    testCase.SetPropertyValue(TestCaseProperty,
                         JsonConvert.SerializeObject(input, options));
-                    testCase.SetPropertyValue(BetaTestProperties.TestContainerProperty,
+                    testCase.SetPropertyValue(TestContainerProperty,
                         betaTest.Method?.DeclaringType?.AssemblyQualifiedName);
-                    testCase.SetPropertyValue(BetaTestProperties.TestMethodProper, betaTest.MethodName);
+                    testCase.SetPropertyValue(TestMethodProper, betaTest.MethodName);
 
                     yield return testCase;
                 }
