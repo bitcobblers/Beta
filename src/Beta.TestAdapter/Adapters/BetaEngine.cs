@@ -8,6 +8,4 @@ public interface IBetaEngine
     void Stop();
 }
 
-public class BetaEngine
-{
-}
+public class BetaEngine;

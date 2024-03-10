@@ -15,9 +15,10 @@ public class BetaTestExecutor : BetaTestAdapter, ITestExecutor
     {
         Initialize(runContext, frameworkHandle);
 
-        var allTests = tests ?? Array.Empty<TestCase>();
 
-        _logger.Info("Running Tests");
+        Logger.Info("Running Tests");
+
+        //        var allTests = tests ?? Array.Empty<TestCase>();
 
         // Parallel.ForEachAsync(allTests, _cancellationTokenSource.Token, async (test, token) =>
         // {

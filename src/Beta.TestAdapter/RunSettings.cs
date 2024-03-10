@@ -17,7 +17,6 @@ public record RunSettings
 
     public static RunSettings Parse(string? xmlContent)
     {
-        RunSettings settings = new();
         XDocument parsed;
 
         if (string.IsNullOrWhiteSpace(xmlContent))
