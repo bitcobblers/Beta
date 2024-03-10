@@ -16,4 +16,8 @@
         <InternalsVisibleTo Include="Beta.TestAdapter.Tests" Key="$(BetaPublicKey)" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Beta.Engine\Beta.Engine.csproj" />
+    </ItemGroup>
+
 </Project>
