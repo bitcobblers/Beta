@@ -1,10 +1,16 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+﻿using Beta.TestAdapter.Adapters;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 
 namespace Beta.TestAdapter;
 
 public class BetaTestAdapter
 {
+    private readonly BetaEngine _engine = new();
+
+    protected ITestLogger _logger = new TestLogger();
+
     public static TestProperty TestCaseProperty { get; } =
         TestProperty.Register("BetaTestCase", "Beta Test Case", typeof(string), typeof(BetaTestAdapter));
 
@@ -14,16 +20,14 @@ public class BetaTestAdapter
     public static TestProperty TestMethodProper { get; } =
         TestProperty.Register("BetaTestMethod", "Beta Test Method", typeof(string), typeof(BetaTestAdapter));
 
-    protected ITestLogger Logger { get; private set; } = new TestLogger();
-
-    protected void InitializeLogger(IMessageLogger? logger, LogLevel verbosity = LogLevel.Info)
+    protected void Initialize(IDiscoveryContext? context, IMessageLogger? logger)
     {
-        Logger = new TestLogger(logger, verbosity);
+        _logger = new TestLogger(logger, LogLevel.Debug);
     }
 
     protected void PrintBanner(RunSettings settings)
     {
-        Logger.Info($"Target Framework Version: {settings.TargetFrameworkVersion}");
+        _logger.Info($"Target Framework Version: {settings.TargetFrameworkVersion}");
     }
 
     protected IEnumerable<TestCase> RunDiscovery(

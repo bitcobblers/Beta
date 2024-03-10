@@ -21,7 +21,7 @@ public class BetaTestDiscoverer : BetaTestAdapter, ITestDiscoverer
     {
         var settings = RunSettings.Parse(discoveryContext.RunSettings?.SettingsXml);
 
-        InitializeLogger(logger);
+        Initialize(discoveryContext, logger);
         PrintBanner(settings);
 
         foreach (var testCase in RunDiscovery(sources, settings))

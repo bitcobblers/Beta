@@ -13,11 +13,11 @@ public class BetaTestExecutor : BetaTestAdapter, ITestExecutor
     /// <inheritdoc />
     public void RunTests(IEnumerable<TestCase>? tests, IRunContext? runContext, IFrameworkHandle? frameworkHandle)
     {
-        InitializeLogger(frameworkHandle);
+        Initialize(runContext, frameworkHandle);
 
         var allTests = tests ?? Array.Empty<TestCase>();
 
-        Logger.Info("Running Tests");
+        _logger.Info("Running Tests");
 
         // Parallel.ForEachAsync(allTests, _cancellationTokenSource.Token, async (test, token) =>
         // {
@@ -77,7 +77,7 @@ public class BetaTestExecutor : BetaTestAdapter, ITestExecutor
     {
         var settings = RunSettings.Parse(runContext?.RunSettings?.SettingsXml);
 
-        InitializeLogger(frameworkHandle);
+        Initialize(runContext, frameworkHandle);
         PrintBanner(settings);
         RunTests(RunDiscovery(sources, settings), runContext, frameworkHandle);
     }
