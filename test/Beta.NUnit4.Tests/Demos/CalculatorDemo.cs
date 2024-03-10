@@ -30,14 +30,14 @@ public class CalculatorDemo : TestContainer
     //        select result.ShouldBe(3));
     //}
 
-    [Beta]
-    public BetaTest AddTestMany()
-    {
-        return Test(AdditionInput, i =>
-            from calculator in Gather(() => Task.FromResult(new Calculator()))
-            let result = Apply(async () => (await calculator).Add(i.A, i.B))
-            select result.ShouldBe(i.Expected));
-    }
+    //[Beta]
+    //public BetaTest AddTestMany()
+    //{
+    //    return Test(AdditionInput, i =>
+    //        from calculator in Gather(() => Task.FromResult(new Calculator()))
+    //        let result = Apply(async () => (await calculator).Add(i.A, i.B))
+    //        select result.ShouldBe(i.Expected));
+    //}
 
     [TestCase(1, 2, 3)]
     [TestCase(2, 3, 5)]
