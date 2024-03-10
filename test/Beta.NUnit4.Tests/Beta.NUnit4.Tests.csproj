@@ -1,13 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <RootNamespace>Beta.NUnit4.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,7 +10,7 @@
         <PackageReference Include="NUnit3TestAdapter" />
         <PackageReference Include="NUnit.Analyzers" />
     </ItemGroup>
-
+    
     <ItemGroup>
         <ProjectReference Include="..\..\src\Beta.FakeItEasy\Beta.FakeItEasy.csproj" />
         <ProjectReference Include="..\..\src\Beta.NUnit4\Beta.NUnit4.csproj" />

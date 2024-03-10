@@ -15,12 +15,6 @@ public sealed class BetaAttribute : NUnitAttribute, IWrapTestMethod, ITestBuilde
 {
     private readonly NUnitTestCaseBuilder _builder = new();
 
-    public BetaAttribute()
-    {
-        Debugger.Launch();
-        Debugger.Break();
-    }
-
     public string? Feature { get; set; }
 
     /// <inheritdoc />
@@ -35,7 +29,41 @@ public sealed class BetaAttribute : NUnitAttribute, IWrapTestMethod, ITestBuilde
     /// <inheritdoc />
     public IEnumerable<TestMethod> BuildFrom(IMethodInfo method, Test? suite)
     {
-        throw new NotImplementedException();
+        // System.Diagnostics.Debugger.Launch();
+
+
+        var clsInfo = method.MethodInfo.DeclaringType;
+        var isContainer = clsInfo?.IsAssignableTo(typeof(TestContainer)) ?? false;
+        var returnsBeta = method.MethodInfo.ReturnType == typeof(BetaTest);
+        var instance = clsInfo!.GetConstructor(Type.EmptyTypes)?.Invoke(null);
+
+        if (!isContainer || !returnsBeta || instance == null)
+        {
+            yield break;
+        }
+
+        if (method.MethodInfo.Invoke(instance, null) is not BetaTest betaTest)
+        {
+            yield break;
+        }
+
+        if (betaTest.Input == null)
+        {
+            yield return _builder.BuildTestMethod(method, suite, null);
+        }
+        else
+        {
+            foreach (var input in betaTest.Input)
+            {
+                var parameters = new TestCaseParameters(new[] { input });
+                yield return _builder.BuildTestMethod(method, suite, parameters);
+
+                //var testName = $"{betaTest.TestName}({input})";
+                //var test = _builder.BuildTestMethod(method, suite, new object[] { input });
+                //test.Name = testName;
+                //yield return test;
+            }
+        }
     }
 
     /// <inheritdoc />
