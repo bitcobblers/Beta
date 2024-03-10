@@ -1,24 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.msbuild" />
-        <PackageReference Include="FakeItEasy" />
-        <PackageReference Include="GitHubActionsTestLogger" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="Shouldly" />
-        <PackageReference Include="System.Linq.Async" />
+	    <PackageReference Include="System.Linq.Async" />
         <PackageReference Include="xunit" />
         <PackageReference Include="xunit.runner.visualstudio" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Beta.FakeItEasy\Beta.FakeItEasy.csproj" />
-        <ProjectReference Include="..\..\src\Beta.Shouldly\Beta.Shouldly.csproj" />
-        <ProjectReference Include="..\..\src\Beta\Beta.csproj" />
+      <ProjectReference Include="..\..\src\Beta.FakeItEasy\Beta.FakeItEasy.csproj" />
+      <ProjectReference Include="..\..\src\Beta.Shouldly\Beta.Shouldly.csproj" />
+      <ProjectReference Include="..\..\src\Beta\Beta.csproj" />
     </ItemGroup>
 
     <ItemGroup>

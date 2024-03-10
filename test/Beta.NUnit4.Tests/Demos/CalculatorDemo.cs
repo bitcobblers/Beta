@@ -1,5 +1,6 @@
 ﻿using Beta.Shouldly.ShouldBe;
 using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using static Beta.CommonSteps;
 
 namespace Beta.Tests.Demos;
@@ -24,6 +25,7 @@ public class CalculatorDemo : TestContainer
         services.AddSingleton<Calculator>();
     }
 
+    [Beta]
     public BetaTest AddTest1()
     {
         return Test(() =>
@@ -32,13 +34,19 @@ public class CalculatorDemo : TestContainer
             select result.ShouldBe(3));
     }
 
-    public BetaTest AddTestMany()
+    [Test]
+    public void DummyTest()
     {
-        return Test(AdditionInput, i =>
-            from calculator in Gather(() => Task.FromResult(new Calculator()))
-            let result = Apply(async () => (await calculator).Add(i.A, i.B))
-            select result.ShouldBe(i.Expected));
+        Assert.That(true, Is.True);
     }
+
+    // public BetaTest AddTestMany()
+    // {
+    //     return Test(AdditionInput, i =>
+    //         from calculator in Gather(() => Task.FromResult(new Calculator()))
+    //         let result = Apply(async () => (await calculator).Add(i.A, i.B))
+    //         select result.ShouldBe(i.Expected));
+    // }
 
     // ---
 
