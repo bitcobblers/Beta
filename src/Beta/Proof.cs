@@ -1,10 +1,15 @@
 namespace Beta;
 
-public delegate ProofResult ProofHandler<in T>(T actual);
-
-public class Proof<T>(Task<T> actual)
+public abstract class Proof
 {
-    private readonly List<ProofHandler<T>> _handlers = [];
+    public delegate ProofResult ProofHandler<in T>(T actual);
+
+    public abstract IAsyncEnumerable<ProofResult> Test();
+}
+
+public class Proof<T>(Task<T> actual) : Proof
+{
+    private readonly List<ProofHandler<T>> _handlers = new();
 
     public Proof(T given) : this(Task.FromResult(given))
     {
@@ -12,13 +17,7 @@ public class Proof<T>(Task<T> actual)
 
     public Task<T> Actual => actual;
 
-    public Proof<T> Assert(ProofHandler<T> assert)
-    {
-        _handlers.Add(assert);
-        return this;
-    }
-
-    public async IAsyncEnumerable<ProofResult> Test()
+    public override async IAsyncEnumerable<ProofResult> Test()
     {
         var actualValue = await actual;
 
@@ -26,5 +25,11 @@ public class Proof<T>(Task<T> actual)
         {
             yield return handler(actualValue);
         }
+    }
+
+    public Proof<T> Assert(ProofHandler<T> assert)
+    {
+        _handlers.Add(assert);
+        return this;
     }
 }

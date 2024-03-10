@@ -1,6 +1,4 @@
-﻿// ReSharper disable UnusedType.Local
-// ReSharper disable UnusedMember.Local
-
+﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta.Tests;
@@ -23,19 +21,6 @@ public class TestContainerTests
         }
 
         [Fact]
-        public void ReturnsMultipleTests()
-        {
-            // Arrange
-            var container = new StubWithEnumerableTests();
-
-            // Act
-            var tests = container.Discover().ToArray();
-
-            // Assert
-            tests.Length.ShouldBe(2);
-        }
-
-        [Fact]
         public void ReturnsNoTests()
         {
             // Arrange
@@ -52,22 +37,14 @@ public class TestContainerTests
         {
             public BetaTest SingleTest()
             {
-                return Test(new Proof<int>(42));
-            }
-        }
-
-        private class StubWithEnumerableTests : TestContainer
-        {
-            public IEnumerable<BetaTest> MultipleTests()
-            {
-                return Test(
-                    new EnumerableScenarioSource<int>([1, 2]),
-                    x => new Proof<int>(x));
+                return Test(() => new Proof<int>(42));
             }
         }
 
         private class StubWithNoTests : TestContainer
         {
+            [UsedImplicitly]
+            [SuppressMessage("Performance", "CA1822:Mark members as static")]
             public void NotATest()
             {
             }
@@ -160,90 +137,6 @@ public class TestContainerTests
             public new Step<object> Require(Type type)
             {
                 return base.Require(type);
-            }
-        }
-    }
-
-    public class GatherMethod : TestContainerTests
-    {
-        [Fact]
-        public void CanGatherFromValue()
-        {
-            // Arrange
-            var container = new StubContainer();
-
-            // Act
-            var step = container.Gather(42);
-
-            // Assert
-            step.Evaluate().ShouldBe(42);
-        }
-
-        [Fact]
-        public void CanGatherFromHandler()
-        {
-            // Arrange
-            var container = new StubContainer();
-
-            // Act
-            var step = container.Gather(() => 42);
-
-            // Assert
-            step.Evaluate().ShouldBe(42);
-        }
-
-        private class StubContainer : TestContainer
-        {
-            public new Step<T> Gather<T>(T value)
-            {
-                return base.Gather(value);
-            }
-
-            public new Step<T> Gather<T>(Func<T> handler)
-            {
-                return base.Gather(handler);
-            }
-        }
-    }
-
-    public class ApplyMethod : TestContainerTests
-    {
-        [Fact]
-        public async Task CanApplyFromHandler()
-        {
-            // Arrange
-            var container = new StubContainer();
-
-            // Act
-            var proof = container.Apply(() => 42);
-
-            // Assert
-            (await proof.Actual).ShouldBe(42);
-        }
-
-        [Fact]
-        public async Task CanApplyFromAsyncHandler()
-        {
-            // Arrange
-            var container = new StubContainer();
-
-            // Act
-            var proof = container.Apply(() => Task.FromResult(42));
-
-            // Assert
-            (await proof.Actual).ShouldBe(42);
-        }
-
-        private class StubContainer : TestContainer
-        {
-            public new Proof<T> Apply<T>(Func<T> handler)
-            {
-                return base.Apply(handler);
-            }
-
-            public new Proof<T> Apply<T>(Func<Task<T>> handler)
-            {
-                return base.Apply(handler);
             }
         }
     }

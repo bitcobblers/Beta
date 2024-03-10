@@ -1,18 +1,26 @@
-﻿namespace Beta;
+﻿using System.Reflection;
 
-#pragma warning disable CS9113 // Parameter is unread.
-public abstract class BetaTest(object instance)
-#pragma warning restore CS9113 // Parameter is unread.
+namespace Beta;
+
+[PublicAPI]
+public record BetaTest(TestContainer Container, IEnumerable<object>? Input, string TestName, Func<object, Proof> Apply)
 {
-    public abstract Task Prove();
+    public BetaTest(TestContainer container, string testName, Func<Proof> apply)
+        : this(container, null, testName, _ => apply())
+    {
+    }
+
+    public Assembly Assembly => Container.GetType().Assembly;
+    public string? DeclaringType => Container.GetType().FullName;
+    public string? MethodName => Method?.Name;
+
+    public MethodBase? Method { get; set; }
 }
 
-#pragma warning disable CS9113 // Parameter is unread.
-public class BetaTest<T>(object instance, Proof<T> test) : BetaTest(instance)
-#pragma warning restore CS9113 // Parameter is unread.
+public record BetaTest<TInput> : BetaTest
 {
-    public override Task Prove()
+    public BetaTest(TestContainer container, IEnumerable<TInput> input, string testName, Func<TInput, Proof> apply)
+        : base(container, (IEnumerable<object>)input, testName, o => apply((TInput)o))
     {
-        throw new NotImplementedException();
     }
 }

@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta;
@@ -21,28 +22,27 @@ public class TestContainer
     [IgnoreDiscovery]
     public IEnumerable<BetaTest> Discover()
     {
-        foreach (var test in from method in FindTestMethod(method => method.ReturnType.IsAssignableTo(typeof(BetaTest)))
-                             let test = method.Invoke(this, []) as BetaTest
-                             where test is not null
-                             select test)
+        foreach (var discoveredTest in from method in FindTestMethod(m =>
+                                           m.ReturnType.IsAssignableTo(typeof(BetaTest)))
+                                       let test =
+                                           method.Invoke(this, null) as BetaTest
+                                       where test is not null
+                                       select test with
+                                       {
+                                           Method = method
+                                       })
         {
-            yield return test;
-        }
-
-        foreach (var test in from method in FindTestMethod(method =>
-                                 method.ReturnType.IsAssignableTo(typeof(IEnumerable<BetaTest>)))
-                             let tests = method.Invoke(this, []) as IEnumerable<BetaTest>
-                             where tests is not null
-                             from test in tests
-                             where test is not null
-                             select test)
-        {
-            yield return test;
+            yield return discoveredTest;
         }
     }
 
     public void Prepare()
     {
+        if (ServicesProvider is not null)
+        {
+            return;
+        }
+
         var services = new ServiceCollection();
         ConfigureServices(services);
         ServicesProvider = services.BuildServiceProvider();
@@ -66,48 +66,17 @@ public class TestContainer
         return new Step<object>(() => ServicesProvider!.GetRequiredService(type));
     }
 
-    [PublicAPI]
-    protected Step<T> Gather<T>(T value)
-    {
-        return new Step<T>(() => value);
-    }
-
-    [PublicAPI]
-    protected Step<T> Gather<T>(Func<T> handler)
-    {
-        return new Step<T>(handler);
-    }
-
-    [PublicAPI]
-    protected Proof<T> Apply<T>(Func<T> handler)
-    {
-        return new Proof<T>(handler());
-    }
-
-    [PublicAPI]
-    protected Proof<T> Apply<T>(Func<Task<T>> handler)
-    {
-        return new Proof<T>(handler());
-    }
-
     // ---
 
     [PublicAPI]
-    protected BetaTest Test<T>(Proof<T> proof)
+    protected BetaTest Test<T>(Func<Proof<T>> apply, [CallerMemberName] string testName = "")
     {
-        return new BetaTest<T>(this, proof);
+        return new BetaTest(this, testName, apply);
     }
 
-    [PublicAPI]
-    protected IEnumerable<BetaTest> Test<TInput, T>(IScenarioSource<TInput> scenarios, Func<TInput, Proof<T>> apply)
+    protected BetaTest<TInput> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply,
+                                               [CallerMemberName] string testName = "")
     {
-        return from scenario in scenarios
-               select Test(apply(scenario));
-    }
-
-    protected IEnumerable<BetaTest> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply)
-    {
-        return from scenario in scenarios
-               select Test(apply(scenario));
+        return new BetaTest<TInput>(this, scenarios, testName, apply);
     }
 }
