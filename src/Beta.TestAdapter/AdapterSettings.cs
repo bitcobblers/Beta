@@ -67,6 +67,11 @@ public class AdapterSettings : IAdapterSettings
 {
     private const string RandomSeedFile = "beta_random_seed.tmp";
 
+    public AdapterSettings()
+        : this("<RunSettings />")
+    {
+    }
+
     public AdapterSettings(IDiscoveryContext? context)
         : this(context?.RunSettings?.SettingsXml)
     {
