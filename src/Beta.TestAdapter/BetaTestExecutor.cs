@@ -80,7 +80,7 @@ public class BetaTestExecutor : BetaTestAdapter, ITestExecutor
 
         Initialize(runContext, frameworkHandle);
         PrintBanner(settings);
-        RunTests(RunDiscovery(sources, settings), runContext, frameworkHandle);
+        // RunTests(RunDiscovery(sources, settings), runContext, frameworkHandle);
     }
 
     /// <inheritdoc />

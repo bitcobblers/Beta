@@ -94,7 +94,7 @@ public class AdapterSettings : IAdapterSettings
 
     public IDictionary<string, string> TestProperties { get; }
 
-    public string? SetTestOutputFolder(string workDirectory)
+    public string? SetTestOutputFolder(string? workDirectory)
     {
         if (!BetaConfiguration.UseTestOutputXml)
         {
@@ -113,7 +113,7 @@ public class AdapterSettings : IAdapterSettings
                 BetaConfiguration.TestOutputFolder = Path.Combine(resultsDir, testOutputXml);
                 break;
             case OutputXmlFolderMode.RelativeToWorkFolder:
-                BetaConfiguration.TestOutputFolder = Path.Combine(workDirectory, testOutputXml);
+                BetaConfiguration.TestOutputFolder = Path.Combine(workDirectory ?? string.Empty, testOutputXml);
                 break;
             case OutputXmlFolderMode.AsSpecified:
                 BetaConfiguration.TestOutputFolder = testOutputXml;

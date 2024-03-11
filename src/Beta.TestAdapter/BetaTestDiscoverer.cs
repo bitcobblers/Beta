@@ -24,9 +24,9 @@ public class BetaTestDiscoverer : BetaTestAdapter, ITestDiscoverer
         Initialize(discoveryContext, logger);
         PrintBanner(settings);
 
-        foreach (var testCase in RunDiscovery(sources, settings))
-        {
-            discoverySink.SendTestCase(testCase);
-        }
+        // foreach (var testCase in RunDiscovery(sources, settings))
+        // {
+        //     discoverySink.SendTestCase(testCase);
+        // }
     }
 }

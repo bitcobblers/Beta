@@ -297,7 +297,9 @@ public class AdapterSettingsTests
 
         settings.SetTestOutputFolder(settings.BetaConfiguration.WorkDirectory);
 
-        settings.BetaConfiguration.TestOutputFolder.ShouldContain("/my/work/dir");
+        settings.BetaConfiguration.TestOutputFolder
+                .ShouldNotBeNull()
+                .ShouldContain("/my/work/dir");
     }
 
     /// <summary>
@@ -334,8 +336,14 @@ public class AdapterSettingsTests
 
         settings.SetTestOutputFolder(settings.BetaConfiguration.WorkDirectory);
 
-        settings.BetaConfiguration.TestOutputFolder.ShouldContain(@"\my/testoutput/dir");
-        settings.BetaConfiguration.TestOutputFolder.ShouldStartWith(@"C:\");
+        settings.BetaConfiguration.TestOutputFolder
+                .ShouldNotBeNull()
+                .ShouldContain(@"\my/testoutput/dir");
+
+        settings.BetaConfiguration.TestOutputFolder
+                .ShouldNotBeNull()
+                .ShouldStartWith(@"C:\");
+
         Path.IsPathRooted(settings.BetaConfiguration.TestOutputFolder).ShouldBeTrue();
     }
 
