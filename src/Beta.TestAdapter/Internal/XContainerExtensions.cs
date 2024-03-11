@@ -42,4 +42,9 @@ public static class XContainerExtensions
     {
         return container?.Element(name)?.Value ?? defaultValue;
     }
+
+    public static char ParseChar(XContainer? container, string name, char defaultValue)
+    {
+        return container?.Element(name)?.Value?.FirstOrDefault() ?? defaultValue;
+    }
 }

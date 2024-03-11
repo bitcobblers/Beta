@@ -65,44 +65,16 @@ public enum OutputXmlFolderMode
 
 public class AdapterSettings : IAdapterSettings
 {
-    private const string RANDOM_SEED_FILE = "beta_random_seed.tmp";
-    private readonly ITestLogger _logger;
+    private const string RandomSeedFile = "beta_random_seed.tmp";
 
-    #region Constructor
-
-    public AdapterSettings(ITestLogger logger)
+    public AdapterSettings(IDiscoveryContext? context)
+        : this(context?.RunSettings?.SettingsXml)
     {
-        _logger = logger;
     }
 
-    #endregion
-
-    public BetaDiagnosticConfigurationSettings BetaDiagnosticConfiguration { get; }
-
-    public BetaConfigurationSettings BetaConfiguration { get; private set; }
-
-    public RunConfigurationSettings RunConfiguration { get; private set; }
-
-    public IDictionary<string, string> TestProperties { get; private set; }
-
-    #region Public Methods
-
-    public void Load(IDiscoveryContext context, TestLogger testLogger)
+    public AdapterSettings(string? settingsXml)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context), "Load called with null context");
-        }
-
-        Load(context.RunSettings?.SettingsXml);
-    }
-
-    public void Load(string settingsXml)
-    {
-        if (string.IsNullOrEmpty(settingsXml))
-        {
-            settingsXml = "<RunSettings />";
-        }
+        settingsXml = string.IsNullOrWhiteSpace(settingsXml) ? "<RunSettings />" : settingsXml;
 
         // Visual Studio already gives a good error message if the .runsettings
         // file is poorly formed, so we don't need to do anything more.
@@ -110,39 +82,82 @@ public class AdapterSettings : IAdapterSettings
 
         RunConfiguration = RunConfigurationSettings.Parse(doc.Root?.Element("RunConfiguration"));
         BetaConfiguration = BetaConfigurationSettings.Parse(doc.Root, RunConfiguration);
-        TestProperties = UpdateTestProperties(doc.Root);
-
-        _logger.Verbosity = BetaConfiguration.Verbosity;
+        BetaDiagnosticConfiguration = BetaDiagnosticConfigurationSettings.Parse(doc.Root, BetaConfiguration);
+        TestProperties = LoadTestProperties(doc.Root);
     }
 
-    public string SetTestOutputFolder(string workDirectory)
+    public BetaDiagnosticConfigurationSettings BetaDiagnosticConfiguration { get; }
+
+    public BetaConfigurationSettings BetaConfiguration { get; }
+
+    public RunConfigurationSettings RunConfiguration { get; }
+
+    public IDictionary<string, string> TestProperties { get; }
+
+    public string? SetTestOutputFolder(string workDirectory)
     {
         if (!BetaConfiguration.UseTestOutputXml)
         {
             return "";
         }
 
+        var resultsDir = RunConfiguration.ResultsDirectory ?? string.Empty;
+        var testOutputXml = BetaConfiguration.TestOutputXml ?? string.Empty;
+
         switch (BetaConfiguration.OutputXmlFolderMode)
         {
             case OutputXmlFolderMode.UseResultDirectory:
-                BetaConfiguration.TestOutputFolder = RunConfiguration?.ResultsDirectory;
-                return BetaConfiguration.TestOutputFolder;
+                BetaConfiguration.TestOutputFolder = resultsDir;
+                break;
             case OutputXmlFolderMode.RelativeToResultDirectory:
-                BetaConfiguration.TestOutputFolder =
-                    Path.Combine(RunConfiguration?.ResultsDirectory, BetaConfiguration.TestOutputXml);
-                return BetaConfiguration.TestOutputFolder;
+                BetaConfiguration.TestOutputFolder = Path.Combine(resultsDir, testOutputXml);
+                break;
             case OutputXmlFolderMode.RelativeToWorkFolder:
-                BetaConfiguration.TestOutputFolder = Path.Combine(workDirectory, BetaConfiguration.TestOutputXml);
-                return BetaConfiguration.TestOutputFolder;
+                BetaConfiguration.TestOutputFolder = Path.Combine(workDirectory, testOutputXml);
+                break;
             case OutputXmlFolderMode.AsSpecified:
-                BetaConfiguration.TestOutputFolder = BetaConfiguration.TestOutputXml;
-                return BetaConfiguration.TestOutputFolder;
+                BetaConfiguration.TestOutputFolder = testOutputXml;
+                break;
             default:
                 return "";
         }
+
+        return BetaConfiguration.TestOutputFolder;
     }
 
-    private IDictionary<string, string> UpdateTestProperties(XContainer? container)
+    public void SaveRandomSeed(string dirname)
+    {
+        try
+        {
+            var path = Path.Combine(dirname, RandomSeedFile);
+            File.WriteAllText(path, BetaConfiguration.RandomSeed.ToString());
+        }
+        catch (Exception)
+        {
+            // _logger.Warning("Failed to save random seed.", ex);
+        }
+    }
+
+    public void RestoreRandomSeed(string dirname)
+    {
+        var fullPath = Path.Combine(dirname, RandomSeedFile);
+        if (!File.Exists(fullPath))
+        {
+            return;
+        }
+
+        try
+        {
+            var value = File.ReadAllText(fullPath);
+            BetaConfiguration.RandomSeed = int.Parse(value);
+        }
+        catch (Exception)
+        {
+            // _logger.Warning("Unable to restore random seed.", ex);
+        }
+    }
+
+    private IDictionary<string, string> LoadTestProperties(XContainer? container)
     {
         var testProperties = new Dictionary<string, string>();
 
@@ -164,63 +179,29 @@ public class AdapterSettings : IAdapterSettings
 
         return testProperties;
     }
-
-    public void SaveRandomSeed(string dirname)
-    {
-        try
-        {
-            var path = Path.Combine(dirname, RANDOM_SEED_FILE);
-            File.WriteAllText(path, BetaConfiguration.RandomSeed.Value.ToString());
-        }
-        catch (Exception ex)
-        {
-            _logger.Warning("Failed to save random seed.", ex);
-        }
-    }
-
-    public void RestoreRandomSeed(string dirname)
-    {
-        var fullPath = Path.Combine(dirname, RANDOM_SEED_FILE);
-        if (!File.Exists(fullPath))
-        {
-            return;
-        }
-
-        try
-        {
-            var value = File.ReadAllText(fullPath);
-            BetaConfiguration.RandomSeed = int.Parse(value);
-        }
-        catch (Exception ex)
-        {
-            _logger.Warning("Unable to restore random seed.", ex);
-        }
-    }
-
-    #endregion
 }
 
 public record BetaConfigurationSettings
 {
-    public InternalTraceLevel TraceLevel { get; set; }
+    public InternalTraceLevel TraceLevel { get; private init; }
 
-    public string WorkDirectory { get; init; }
+    public string? WorkDirectory { get; init; }
 
-    public string Where { get; init; }
-    public string TestOutputXml { get; init; }
-    public string TestOutputXmlFileName { get; init; }
+    public string? Where { get; init; }
+    public string? TestOutputXml { get; init; }
+    public string? TestOutputXmlFileName { get; init; }
 
     public bool UseTestOutputXml => !string.IsNullOrEmpty(TestOutputXml) ||
                                     OutputXmlFolderMode == OutputXmlFolderMode.UseResultDirectory;
 
     public OutputXmlFolderMode OutputXmlFolderMode { get; init; } = OutputXmlFolderMode.RelativeToWorkFolder;
 
-    public string TestOutputFolder { get; set; } = "";
+    public string? TestOutputFolder { get; set; }
 
     public bool NewOutputXmlFileForEachRun { get; init; }
     public int DefaultTimeout { get; init; }
 
-    public int NumberOfTestWorkers { get; init; } = -1;
+    public int NumberOfTestWorkers { get; init; }
 
     public bool ShadowCopyFiles { get; init; }
 
@@ -228,36 +209,39 @@ public record BetaConfigurationSettings
 
     public bool UseVsKeepEngineRunning { get; init; }
 
-    public string BasePath { get; init; }
+    public string? BasePath { get; init; }
 
-    public string PrivateBinPath { get; init; }
+    public string? PrivateBinPath { get; init; }
 
-    public int? RandomSeed { get; set; } = new Random().Next();
+    public int? RandomSeed { get; set; }
+
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public bool RandomSeedSpecified { get; init; }
 
     public bool InProcDataCollectorsAvailable { get; init; }
 
     public bool SynchronousEvents { get; init; }
 
-    public string DomainUsage { get; init; }
+    public string? DomainUsage { get; init; }
 
     public bool ShowInternalProperties { get; init; }
 
+    // ReSharper disable once InconsistentNaming
     public bool UseParentFQNForParametrizedTests { get; init; }
 
-    public bool UseNUnitIdforTestCaseId { get; init; } // default is false.
-    public int ConsoleOut { get; init; } = 2;
+    public bool UseNUnitIdforTestCaseId { get; init; }
+    public int ConsoleOut { get; init; }
     public bool StopOnError { get; init; }
 
-    public DiscoveryMethod DiscoveryMethod { get; init; } = DiscoveryMethod.Current;
-    public bool SkipNonTestAssemblies { get; init; } = true;
-    public int AssemblySelectLimit { get; init; } = 2000;
-    public bool UseNUnitFilter { get; init; } = true;
-    public bool IncludeStackTraceForSuites { get; init; } = true;
+    public DiscoveryMethod DiscoveryMethod { get; init; }
+    public bool SkipNonTestAssemblies { get; init; }
+    public int AssemblySelectLimit { get; init; }
+    public bool UseNUnitFilter { get; init; }
+    public bool IncludeStackTraceForSuites { get; init; }
 
-    public VsTestCategoryType VsTestCategoryType { get; init; } = VsTestCategoryType.NUnit;
+    public VsTestCategoryType VsTestCategoryType { get; init; }
 
-    public string DefaultTestNamePattern { get; set; }
+    public string? DefaultTestNamePattern { get; init; }
 
     public bool PreFilter { get; init; }
 
@@ -265,11 +249,11 @@ public record BetaConfigurationSettings
 
     public bool UseTestNameInConsoleOutput { get; init; }
 
-    public DisplayNameOptions DisplayName { get; init; } = DisplayNameOptions.Name;
+    public DisplayNameOptions DisplayName { get; init; }
 
-    public char FullnameSeparator { get; init; } = ':';
+    public char FullnameSeparator { get; init; }
 
-    public ExplicitModeEnum ExplicitMode { get; init; } = ExplicitModeEnum.Strict;
+    public ExplicitModeEnum ExplicitMode { get; init; }
     public bool SkipExecutionWhenNoTests { get; init; }
     public bool EnsureAttachmentFileScheme { get; private set; }
 
@@ -277,7 +261,22 @@ public record BetaConfigurationSettings
     {
         if (container == null)
         {
-            return new BetaConfigurationSettings();
+            return new BetaConfigurationSettings
+            {
+                OutputXmlFolderMode = OutputXmlFolderMode.RelativeToWorkFolder,
+                TestOutputFolder = string.Empty,
+                NumberOfTestWorkers = -1,
+                RandomSeed = new Random().Next(),
+                ConsoleOut = 2,
+                DiscoveryMethod = DiscoveryMethod.Current,
+                SkipNonTestAssemblies = true,
+                AssemblySelectLimit = 2000,
+                IncludeStackTraceForSuites = true,
+                VsTestCategoryType = VsTestCategoryType.NUnit,
+                DisplayName = DisplayNameOptions.Name,
+                FullnameSeparator = ':',
+                ExplicitMode = ExplicitModeEnum.Strict
+            };
         }
 
         var nunitElement = container.Element("NUnit");
@@ -292,7 +291,6 @@ public record BetaConfigurationSettings
             WorkDirectory = ParseString(nunitElement, nameof(WorkDirectory)),
             Where = ParseString(nunitElement, nameof(Where)),
             DefaultTimeout = ParseInt(nunitElement, nameof(DefaultTimeout), 0),
-            //NumberOfTestWorkers = ParseInt(container, nameof(NumberOfTestWorkers), -1),
             ShadowCopyFiles = ParseBool(nunitElement, nameof(ShadowCopyFiles), false),
             UseVsKeepEngineRunning = ParseBool(nunitElement, nameof(UseVsKeepEngineRunning), false),
             BasePath = ParseString(nunitElement, nameof(BasePath)),
@@ -321,28 +319,26 @@ public record BetaConfigurationSettings
             ExplicitMode = ParseEnum(nunitElement, nameof(ExplicitMode), ExplicitModeEnum.Strict),
 
             DisplayName = ParseEnum(nunitElement, nameof(DisplayName), DisplayNameOptions.Name),
-            FullnameSeparator = ParseString(nunitElement, nameof(FullnameSeparator), ":")[0],
+            FullnameSeparator = ParseChar(nunitElement, nameof(FullnameSeparator), ':'),
             PreFilter = ParseBool(nunitElement, nameof(PreFilter), false),
             VsTestCategoryType = ParseEnum(nunitElement, nameof(VsTestCategoryType), VsTestCategoryType.NUnit),
             MapWarningTo = ParseEnum(nunitElement, nameof(MapWarningTo), TestOutcome.Skipped),
             UseTestNameInConsoleOutput = ParseBool(nunitElement, nameof(UseTestNameInConsoleOutput), false),
 
-            InProcDataCollectorsAvailable =
-                CountElements(inProcDataCollectorElement, "InProcDataCollector") > 0,
+            InProcDataCollectorsAvailable = CountElements(inProcDataCollectorElement, "InProcDataCollector") > 0,
 
-            DomainUsage = runSettings.DisableAppDomain ? "None" : null
+            DomainUsage = runSettings.DisableAppDomain ? "None" : string.Empty
         };
 
         return settings with
         {
             OutputXmlFolderMode = ParseOutputXmlFolderMode(nunitElement, settings),
-            NumberOfTestWorkers = ParseNumTestWorkers(container, settings, runSettings),
+            NumberOfTestWorkers = ParseNumTestWorkers(container, runSettings),
             SynchronousEvents = ParseSynchronousEvents(inProcDataCollectorElement, runSettings)
         };
     }
 
-    private static int ParseNumTestWorkers(XContainer? container, BetaConfigurationSettings betaSettings,
-                                           RunConfigurationSettings runSettings)
+    private static int ParseNumTestWorkers(XContainer? container, RunConfigurationSettings runSettings)
     {
         var numTestWorkers = ParseInt(container?.Element("NUnit"), nameof(NumberOfTestWorkers), -1);
         var hasLiveUnitTestingDataCollector =
@@ -350,7 +346,7 @@ public record BetaConfigurationSettings
                 ?.Element("InProcDataCollectionRunSettings")
                 ?.Element("InProcDataCollectors")
                 ?.Elements("InProcDataCollector")
-                ?.Any(e => e.Attribute("uri")?.Value == "InProcDataCollector://Microsoft/LiveUnitTesting/1.0") ?? false;
+                .Any(e => e.Attribute("uri")?.Value == "InProcDataCollector://Microsoft/LiveUnitTesting/1.0") ?? false;
 
         if (runSettings.CollectDataForEachTestSeparately || hasLiveUnitTestingDataCollector)
         {
@@ -433,7 +429,7 @@ public record BetaDiagnosticConfigurationSettings
 
 public record RunConfigurationSettings
 {
-    public int MaxCpuCount { get; init; } = -1;
+    public int MaxCpuCount { get; init; }
 
     public string? ResultsDirectory { get; init; }
 
@@ -443,7 +439,7 @@ public record RunConfigurationSettings
 
     public string? TestAdapterPaths { get; init; }
 
-    public bool CollectSourceInformation { get; init; } = true;
+    public bool CollectSourceInformation { get; init; }
 
     public bool DisableAppDomain { get; init; }
 
@@ -464,7 +460,11 @@ public record RunConfigurationSettings
     {
         if (container == null)
         {
-            return new RunConfigurationSettings();
+            return new RunConfigurationSettings
+            {
+                MaxCpuCount = -1,
+                CollectSourceInformation = true
+            };
         }
 
         return new RunConfigurationSettings

@@ -1,76 +1,58 @@
-﻿using Beta.TestAdapter.Tests.Fakes;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Beta.TestAdapter.Tests;
 
 public class AdapterSettingsTests
 {
-    private readonly IAdapterSettings _settings;
-
-    public AdapterSettingsTests()
-    {
-        var testLogger = new TestLogger(new MessageLoggerStub());
-
-        _settings = new AdapterSettings(testLogger);
-    }
-
-    [Fact]
-    public void NullContextThrowsException()
-    {
-        Should.Throw<ArgumentNullException>(() => _settings.Load((IDiscoveryContext)null));
-    }
-
     [InlineData(null)]
     [InlineData("")]
     [InlineData("<RunSettings />")]
     [Theory]
     public void DefaultSettings(string xml)
     {
-        _settings.Load(xml);
+        var settings = new AdapterSettings(xml);
 
         Assert.Multiple(() =>
         {
-            _settings.RunConfiguration.MaxCpuCount.ShouldBe(-1);
-            _settings.RunConfiguration.ResultsDirectory.ShouldBeNull();
-            _settings.RunConfiguration.TargetFrameworkVersion.ShouldBeNull();
-            _settings.RunConfiguration.TargetPlatform.ShouldBeNull();
-            _settings.RunConfiguration.TestAdapterPaths.ShouldBeNull();
-            _settings.RunConfiguration.CollectSourceInformation.ShouldBeTrue();
-            _settings.RunConfiguration.DisableAppDomain.ShouldBeFalse();
-            _settings.RunConfiguration.DisableParallelization.ShouldBeFalse();
-            _settings.RunConfiguration.DesignMode.ShouldBeFalse();
+            settings.RunConfiguration.MaxCpuCount.ShouldBe(-1);
+            settings.RunConfiguration.ResultsDirectory.ShouldBeNull();
+            settings.RunConfiguration.TargetFrameworkVersion.ShouldBeNull();
+            settings.RunConfiguration.TargetPlatform.ShouldBeNull();
+            settings.RunConfiguration.TestAdapterPaths.ShouldBeNull();
+            settings.RunConfiguration.CollectSourceInformation.ShouldBeTrue();
+            settings.RunConfiguration.DisableAppDomain.ShouldBeFalse();
+            settings.RunConfiguration.DisableParallelization.ShouldBeFalse();
+            settings.RunConfiguration.DesignMode.ShouldBeFalse();
 
-            _settings.TestProperties.ShouldBeEmpty();
+            settings.TestProperties.ShouldBeEmpty();
 
-            _settings.BetaConfiguration.TraceLevel.ShouldBe(Engine.InternalTraceLevel.Off);
-            _settings.BetaConfiguration.WorkDirectory.ShouldBeNull();
-            _settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(-1);
-            _settings.BetaConfiguration.DefaultTimeout.ShouldBe(0);
-            _settings.BetaConfiguration.Verbosity.ShouldBe(0);
-            _settings.BetaConfiguration.ShadowCopyFiles.ShouldBeFalse();
-            _settings.BetaConfiguration.UseVsKeepEngineRunning.ShouldBeFalse();
-            _settings.BetaConfiguration.BasePath.ShouldBeNull();
-            _settings.BetaConfiguration.PrivateBinPath.ShouldBeNull();
-            _settings.BetaConfiguration.RandomSeed.ShouldNotBeNull();
-            _settings.BetaConfiguration.SynchronousEvents.ShouldBeFalse();
-            _settings.BetaConfiguration.DomainUsage.ShouldBeNull();
-            _settings.BetaConfiguration.InProcDataCollectorsAvailable.ShouldBeFalse();
-            _settings.BetaConfiguration.UseTestOutputXml.ShouldBeFalse();
-            _settings.BetaConfiguration.NewOutputXmlFileForEachRun.ShouldBeFalse();
-            _settings.BetaConfiguration.PreFilter.ShouldBeFalse();
-            _settings.BetaConfiguration.ShadowCopyFiles.ShouldBeFalse();
-            _settings.BetaConfiguration.TraceLevel.ShouldBe(Engine.InternalTraceLevel.Off);
-            _settings.BetaConfiguration.FullnameSeparator.ShouldBe(':');
-            _settings.BetaConfiguration.DisplayName.ShouldBe(DisplayNameOptions.Name);
-            _settings.BetaConfiguration.MapWarningTo.ShouldBe(TestOutcome.Skipped);
+            settings.BetaConfiguration.TraceLevel.ShouldBe(Engine.InternalTraceLevel.Off);
+            settings.BetaConfiguration.WorkDirectory.ShouldBeNull();
+            settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(-1);
+            settings.BetaConfiguration.DefaultTimeout.ShouldBe(0);
+            settings.BetaConfiguration.Verbosity.ShouldBe(0);
+            settings.BetaConfiguration.ShadowCopyFiles.ShouldBeFalse();
+            settings.BetaConfiguration.UseVsKeepEngineRunning.ShouldBeFalse();
+            settings.BetaConfiguration.BasePath.ShouldBeNull();
+            settings.BetaConfiguration.PrivateBinPath.ShouldBeNull();
+            settings.BetaConfiguration.RandomSeed.ShouldNotBeNull();
+            settings.BetaConfiguration.SynchronousEvents.ShouldBeFalse();
+            settings.BetaConfiguration.DomainUsage.ShouldBeNullOrWhiteSpace();
+            settings.BetaConfiguration.InProcDataCollectorsAvailable.ShouldBeFalse();
+            settings.BetaConfiguration.UseTestOutputXml.ShouldBeFalse();
+            settings.BetaConfiguration.NewOutputXmlFileForEachRun.ShouldBeFalse();
+            settings.BetaConfiguration.PreFilter.ShouldBeFalse();
+            settings.BetaConfiguration.ShadowCopyFiles.ShouldBeFalse();
+            settings.BetaConfiguration.FullnameSeparator.ShouldBe(':');
+            settings.BetaConfiguration.DisplayName.ShouldBe(DisplayNameOptions.Name);
+            settings.BetaConfiguration.MapWarningTo.ShouldBe(TestOutcome.Skipped);
         });
     }
 
     [Fact]
     public void ResultsDirectorySetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -79,13 +61,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.RunConfiguration.ResultsDirectory.ShouldBe("./myresults");
+        settings.RunConfiguration.ResultsDirectory.ShouldBe("./myresults");
     }
 
     [Fact]
     public void MaxCpuCountSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                  <RunConfiguration>
@@ -94,13 +76,13 @@ public class AdapterSettingsTests
              </RunSettings>
             """);
 
-        _settings.RunConfiguration.MaxCpuCount.ShouldBe(42);
+        settings.RunConfiguration.MaxCpuCount.ShouldBe(42);
     }
 
     [Fact]
     public void TargetFrameworkVersionSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
              <RunSettings>
                  <RunConfiguration>
@@ -109,13 +91,13 @@ public class AdapterSettingsTests
              </RunSettings>
             """);
 
-        _settings.RunConfiguration.TargetFrameworkVersion.ShouldBe("Framework45");
+        settings.RunConfiguration.TargetFrameworkVersion.ShouldBe("Framework45");
     }
 
     [Fact]
     public void TargetPlatformSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -124,13 +106,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.RunConfiguration.TargetPlatform.ShouldBe("x86");
+        settings.RunConfiguration.TargetPlatform.ShouldBe("x86");
     }
 
     [Fact]
     public void TestAdapterPathsSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -139,13 +121,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.RunConfiguration.TestAdapterPaths.ShouldBe("/first/path;/second/path");
+        settings.RunConfiguration.TestAdapterPaths.ShouldBe("/first/path;/second/path");
     }
 
     [Fact]
     public void CollectSourceInformationSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -154,13 +136,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.RunConfiguration.CollectSourceInformation.ShouldBeFalse();
+        settings.RunConfiguration.CollectSourceInformation.ShouldBeFalse();
     }
 
     [Fact]
     public void DisableAppDomainSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -169,13 +151,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.RunConfiguration.DisableAppDomain.ShouldBeTrue();
+        settings.RunConfiguration.DisableAppDomain.ShouldBeTrue();
     }
 
     [Fact]
     public void DisableParallelizationSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -184,13 +166,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
+        settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
     }
 
     [Fact]
     public void UpdateNumberOfTestWorkersWhenConflictingSettings()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -203,10 +185,10 @@ public class AdapterSettingsTests
             """);
 
         // When there's a conflicting values in DisableParallelization and NumberOfTestWorkers. Override the NumberOfTestWorkers.
-        _settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
+        settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
 
         // Do not override the NumberOfTestWorkers when DisableParallelization is False
-        _settings.Load(
+        var settings2 = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -217,10 +199,10 @@ public class AdapterSettingsTests
                 </NUnit>
             </RunSettings>
             """);
-        _settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
+        settings2.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
 
         // Do not override the NumberOfTestWorkers when DisableParallelization is not defined
-        _settings.Load(
+        var settings3 = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -230,13 +212,13 @@ public class AdapterSettingsTests
                 </NUnit>
             </RunSettings>
             """);
-        _settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(12);
+        settings3.BetaConfiguration.NumberOfTestWorkers.ShouldBe(12);
     }
 
     [Fact]
     public void DesignModeSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -245,13 +227,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.RunConfiguration.DesignMode.ShouldBeTrue();
+        settings.RunConfiguration.DesignMode.ShouldBeTrue();
     }
 
     [Fact]
     public void TestRunParameterSettings()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <TestRunParameters>
@@ -261,15 +243,15 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.TestProperties.Count.ShouldBe(2);
-        _settings.TestProperties["Answer"].ShouldBe("42");
-        _settings.TestProperties["Question"].ShouldBe("Why?");
+        settings.TestProperties.Count.ShouldBe(2);
+        settings.TestProperties["Answer"].ShouldBe("42");
+        settings.TestProperties["Question"].ShouldBe("Why?");
     }
 
     [Fact]
     public void InternalTraceLevel()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -278,13 +260,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.TraceLevel.ShouldBe(Engine.InternalTraceLevel.Debug);
+        settings.BetaConfiguration.TraceLevel.ShouldBe(Engine.InternalTraceLevel.Debug);
     }
 
     [Fact]
     public void WorkDirectorySetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -293,7 +275,7 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.WorkDirectory.ShouldBe("/my/work/dir");
+        settings.BetaConfiguration.WorkDirectory.ShouldBe("/my/work/dir");
     }
 
     /// <summary>
@@ -302,7 +284,7 @@ public class AdapterSettingsTests
     [Fact]
     public void TestOutputSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -313,9 +295,9 @@ public class AdapterSettingsTests
             """);
 
 
-        _settings.SetTestOutputFolder(_settings.BetaConfiguration.WorkDirectory);
+        settings.SetTestOutputFolder(settings.BetaConfiguration.WorkDirectory);
 
-        _settings.BetaConfiguration.TestOutputFolder.ShouldContain("/my/work/dir");
+        settings.BetaConfiguration.TestOutputFolder.ShouldContain("/my/work/dir");
     }
 
     /// <summary>
@@ -324,7 +306,7 @@ public class AdapterSettingsTests
     [Fact]
     public void TestNewOutputXmlFileForEachRunSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -333,13 +315,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.NewOutputXmlFileForEachRun.ShouldBeTrue();
+        settings.BetaConfiguration.NewOutputXmlFileForEachRun.ShouldBeTrue();
     }
 
     [Fact]
     public void TestOutputSettingWithWorkDir()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -350,11 +332,11 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.SetTestOutputFolder(_settings.BetaConfiguration.WorkDirectory);
+        settings.SetTestOutputFolder(settings.BetaConfiguration.WorkDirectory);
 
-        _settings.BetaConfiguration.TestOutputFolder.ShouldContain(@"\my/testoutput/dir");
-        _settings.BetaConfiguration.TestOutputFolder.ShouldStartWith(@"C:\");
-        Path.IsPathRooted(_settings.BetaConfiguration.TestOutputFolder).ShouldBeTrue();
+        settings.BetaConfiguration.TestOutputFolder.ShouldContain(@"\my/testoutput/dir");
+        settings.BetaConfiguration.TestOutputFolder.ShouldStartWith(@"C:\");
+        Path.IsPathRooted(settings.BetaConfiguration.TestOutputFolder).ShouldBeTrue();
     }
 
     /// <summary>
@@ -363,21 +345,21 @@ public class AdapterSettingsTests
     [Fact]
     public void TestOutputSettingWithUseResultDirectory()
     {
-        _settings.Load("""
-                       <RunSettings>
-                           <RunConfiguration>
-                               <ResultsDirectory>c:\whatever\results</ResultsDirectory>
-                           </RunConfiguration>
-                           <NUnit>
-                               <WorkDirectory>C:\AnotherWhatever</WorkDirectory>
-                               <TestOutputXml>my/testoutput/dir</TestOutputXml>
-                               <OutputXmlFolderMode>UseResultDirectory</OutputXmlFolderMode>
-                           </NUnit>
-                       </RunSettings>
-                       """);
-        _settings.SetTestOutputFolder(_settings.BetaConfiguration.WorkDirectory);
+        var settings = new AdapterSettings("""
+                                           <RunSettings>
+                                               <RunConfiguration>
+                                                   <ResultsDirectory>c:\whatever\results</ResultsDirectory>
+                                               </RunConfiguration>
+                                               <NUnit>
+                                                   <WorkDirectory>C:\AnotherWhatever</WorkDirectory>
+                                                   <TestOutputXml>my/testoutput/dir</TestOutputXml>
+                                                   <OutputXmlFolderMode>UseResultDirectory</OutputXmlFolderMode>
+                                               </NUnit>
+                                           </RunSettings>
+                                           """);
+        settings.SetTestOutputFolder(settings.BetaConfiguration.WorkDirectory);
 
-        _settings.BetaConfiguration.TestOutputFolder.ShouldBe(@"c:\whatever\results");
+        settings.BetaConfiguration.TestOutputFolder.ShouldBe(@"c:\whatever\results");
     }
 
     /// <summary>
@@ -386,7 +368,7 @@ public class AdapterSettingsTests
     [Fact]
     public void TestOutputSettingAsSpecified()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -395,16 +377,16 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.SetTestOutputFolder(_settings.BetaConfiguration.WorkDirectory);
+        settings.SetTestOutputFolder(settings.BetaConfiguration.WorkDirectory);
 
-        _settings.BetaConfiguration.TestOutputFolder.ShouldBe(@"c:\whatever");
-        _settings.BetaConfiguration.OutputXmlFolderMode.ShouldBe(OutputXmlFolderMode.AsSpecified);
+        settings.BetaConfiguration.TestOutputFolder.ShouldBe(@"c:\whatever");
+        settings.BetaConfiguration.OutputXmlFolderMode.ShouldBe(OutputXmlFolderMode.AsSpecified);
     }
 
     [Fact]
     public void NumberOfTestWorkersSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -413,13 +395,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(12);
+        settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(12);
     }
 
     [Fact]
     public void DefaultTimeoutSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -428,13 +410,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.DefaultTimeout.ShouldBe(5000);
+        settings.BetaConfiguration.DefaultTimeout.ShouldBe(5000);
     }
 
     [Fact]
     public void ShadowCopySetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -443,13 +425,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.ShadowCopyFiles.ShouldBeTrue();
+        settings.BetaConfiguration.ShadowCopyFiles.ShouldBeTrue();
     }
 
     [Fact]
     public void VerbositySetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -458,13 +440,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.Verbosity.ShouldBe(1);
+        settings.BetaConfiguration.Verbosity.ShouldBe(1);
     }
 
     [Fact]
     public void UseVsKeepEngineRunningSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -473,13 +455,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.UseVsKeepEngineRunning.ShouldBeTrue();
+        settings.BetaConfiguration.UseVsKeepEngineRunning.ShouldBeTrue();
     }
 
     [Fact]
     public void PreFilterCanBeSet()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -488,14 +470,14 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.PreFilter.ShouldBeTrue();
+        settings.BetaConfiguration.PreFilter.ShouldBeTrue();
     }
 
 
     [Fact]
     public void BasePathSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -504,14 +486,14 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.BasePath.ShouldBe("..");
+        settings.BetaConfiguration.BasePath.ShouldBe("..");
     }
 
 
     [Fact]
     public void VsTestCategoryTypeSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -520,13 +502,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.VsTestCategoryType.ShouldBe(VsTestCategoryType.MsTest);
+        settings.BetaConfiguration.VsTestCategoryType.ShouldBe(VsTestCategoryType.MsTest);
     }
 
     [Fact]
     public void VsTestCategoryTypeSettingWithGarbage()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -535,14 +517,14 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.VsTestCategoryType.ShouldBe(VsTestCategoryType.NUnit);
+        settings.BetaConfiguration.VsTestCategoryType.ShouldBe(VsTestCategoryType.NUnit);
     }
 
 
     [Fact]
     public void PrivateBinPathSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -551,13 +533,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.PrivateBinPath.ShouldBe("dir1;dir2");
+        settings.BetaConfiguration.PrivateBinPath.ShouldBe("dir1;dir2");
     }
 
     [Fact]
     public void RandomSeedSetting()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -566,13 +548,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.RandomSeed.ShouldBe(12345);
+        settings.BetaConfiguration.RandomSeed.ShouldBe(12345);
     }
 
     [Fact]
     public void DefaultTestNamePattern()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -581,13 +563,13 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.DefaultTestNamePattern.ShouldBe("{m}{a:1000}");
+        settings.BetaConfiguration.DefaultTestNamePattern.ShouldBe("{m}{a:1000}");
     }
 
     [Fact]
     public void CollectDataForEachTestSeparately()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <RunConfiguration>
@@ -601,16 +583,16 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.DomainUsage.ShouldBeNull();
-        _settings.BetaConfiguration.SynchronousEvents.ShouldBeTrue();
-        _settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
-        _settings.BetaConfiguration.InProcDataCollectorsAvailable.ShouldBeTrue();
+        settings.BetaConfiguration.DomainUsage.ShouldBeNullOrWhiteSpace();
+        settings.BetaConfiguration.SynchronousEvents.ShouldBeTrue();
+        settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
+        settings.BetaConfiguration.InProcDataCollectorsAvailable.ShouldBeTrue();
     }
 
     [Fact]
     public void InProcDataCollector()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <InProcDataCollectionRunSettings>
@@ -621,16 +603,16 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.DomainUsage.ShouldBeNull();
-        _settings.BetaConfiguration.SynchronousEvents.ShouldBeFalse();
-        _settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(-1);
-        _settings.BetaConfiguration.InProcDataCollectorsAvailable.ShouldBeTrue();
+        settings.BetaConfiguration.DomainUsage.ShouldBeNullOrWhiteSpace();
+        settings.BetaConfiguration.SynchronousEvents.ShouldBeFalse();
+        settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(-1);
+        settings.BetaConfiguration.InProcDataCollectorsAvailable.ShouldBeTrue();
     }
 
     [Fact]
     public void LiveUnitTestingDataCollector()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <InProcDataCollectionRunSettings>
@@ -641,16 +623,16 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.DomainUsage.ShouldBeNull();
-        _settings.BetaConfiguration.SynchronousEvents.ShouldBeTrue();
-        _settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
-        _settings.BetaConfiguration.InProcDataCollectorsAvailable.ShouldBeTrue();
+        settings.BetaConfiguration.DomainUsage.ShouldBeNullOrWhiteSpace();
+        settings.BetaConfiguration.SynchronousEvents.ShouldBeTrue();
+        settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(0);
+        settings.BetaConfiguration.InProcDataCollectorsAvailable.ShouldBeTrue();
     }
 
     [Fact]
     public void WhereCanBeSet()
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             """
             <RunSettings>
                 <NUnit>
@@ -659,7 +641,7 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        _settings.BetaConfiguration.Where.ShouldBe(
+        settings.BetaConfiguration.Where.ShouldBe(
             "cat == SomeCategory and namespace == SomeNamespace or cat != SomeOtherCategory");
     }
 
@@ -670,7 +652,7 @@ public class AdapterSettingsTests
     [Theory]
     public void MapWarningToTests(string setting, TestOutcome outcome)
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             $"""
              <RunSettings>
                 <NUnit>
@@ -679,14 +661,14 @@ public class AdapterSettingsTests
              </RunSettings>
              """);
 
-        _settings.BetaConfiguration.MapWarningTo.ShouldBe(outcome);
+        settings.BetaConfiguration.MapWarningTo.ShouldBe(outcome);
     }
 
     [InlineData("garbage")]
     [Theory]
     public void MapWarningToTestsFailing(string setting)
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             $"""
              <RunSettings>
                 <NUnit>
@@ -695,7 +677,7 @@ public class AdapterSettingsTests
              </RunSettings>
              """);
 
-        _settings.BetaConfiguration.MapWarningTo.ShouldBe(TestOutcome.Skipped);
+        settings.BetaConfiguration.MapWarningTo.ShouldBe(TestOutcome.Skipped);
     }
 
     [InlineData("Name", DisplayNameOptions.Name)]
@@ -705,7 +687,7 @@ public class AdapterSettingsTests
     [Theory]
     public void MapDisplayNameTests(string setting, DisplayNameOptions outcome)
     {
-        _settings.Load(
+        var settings = new AdapterSettings(
             $"""
               <RunSettings>
                  <NUnit>
@@ -714,7 +696,7 @@ public class AdapterSettingsTests
              </RunSettings>
              """);
 
-        _settings.BetaConfiguration.DisplayName.ShouldBe(outcome);
+        settings.BetaConfiguration.DisplayName.ShouldBe(outcome);
     }
 
     [InlineData(":")]
@@ -725,7 +707,7 @@ public class AdapterSettingsTests
     {
         var expected = setting[0];
 
-        _settings.Load(
+        var settings = new AdapterSettings(
             $"""
              <RunSettings>
                 <NUnit>
@@ -734,6 +716,6 @@ public class AdapterSettingsTests
              </RunSettings>
              """);
 
-        _settings.BetaConfiguration.FullnameSeparator.ShouldBe(expected);
+        settings.BetaConfiguration.FullnameSeparator.ShouldBe(expected);
     }
 }

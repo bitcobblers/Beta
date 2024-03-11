@@ -1,6 +1,4 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
-
-namespace Beta.TestAdapter;
+﻿namespace Beta.TestAdapter;
 
 public interface IAdapterSettings
 {
@@ -12,10 +10,7 @@ public interface IAdapterSettings
 
     IDictionary<string, string> TestProperties { get; }
 
-    void Load(IDiscoveryContext context, TestLogger testLogger = null);
-
-    void Load(string settingsXml);
     void SaveRandomSeed(string dirname);
     void RestoreRandomSeed(string dirname);
-    string SetTestOutputFolder(string workDirectory);
+    string? SetTestOutputFolder(string workDirectory);
 }
