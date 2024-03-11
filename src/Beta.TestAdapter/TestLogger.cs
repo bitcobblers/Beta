@@ -13,7 +13,7 @@ public enum LogLevel
 
 public interface ITestLogger
 {
-    int Verbosity { get; }
+    int Verbosity { get; set; }
     string Scope { get; }
 
     void Debug(string message);
@@ -33,7 +33,7 @@ public class TestLogger(string scope, Stopwatch stopwatch, IMessageLogger? logge
     {
     }
 
-    public TestLogger(IMessageLogger? logger, LogLevel verbosity)
+    public TestLogger(IMessageLogger? logger, LogLevel verbosity = LogLevel.Debug)
         : this("/", Stopwatch.StartNew(), logger)
     {
         Verbosity = (int)verbosity;
@@ -49,7 +49,7 @@ public class TestLogger(string scope, Stopwatch stopwatch, IMessageLogger? logge
     public string Scope => scope;
 
     /// <inheritdoc />
-    public int Verbosity { get; }
+    public int Verbosity { get; set; }
 
     /// <inheritdoc />
     public void Debug(string message)
