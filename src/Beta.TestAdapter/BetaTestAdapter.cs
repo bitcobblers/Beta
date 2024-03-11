@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 
 namespace Beta.TestAdapter;
@@ -7,27 +6,64 @@ namespace Beta.TestAdapter;
 public class BetaTestAdapter
 {
     protected ITestLogger Logger = new TestLogger();
-    protected IAdapterSettings? Settings;
+    protected IAdapterSettings Settings = new AdapterSettings();
 
-    public static TestProperty TestCaseProperty { get; } =
-        TestProperty.Register("BetaTestCase", "Beta Test Case", typeof(string), typeof(BetaTestAdapter));
-
-    public static TestProperty TestContainerProperty { get; } =
-        TestProperty.Register("BetaTestContainer", "Beta Test Container", typeof(string), typeof(BetaTestAdapter));
-
-    public static TestProperty TestMethodProper { get; } =
-        TestProperty.Register("BetaTestMethod", "Beta Test Method", typeof(string), typeof(BetaTestAdapter));
+    private List<string> ForbiddenFolders { get; set; }
 
     protected void Initialize(IDiscoveryContext? context, IMessageLogger? logger)
     {
         Logger = new TestLogger(logger);
-        Settings = new AdapterSettings(context);
+
+        try
+        {
+            Settings = new AdapterSettings(context);
+            ForbiddenFolders = InitializeForbiddenFolders().ToList();
+            SetCurrentWorkingDirectory();
+        }
+        catch (Exception ex)
+        {
+            Logger.Warning("Error initializing RunSettings.  The default settings will be used.", ex);
+        }
     }
 
     protected void PrintBanner(RunSettings settings)
     {
         Logger.Info($"Target Framework Version: {settings.TargetFrameworkVersion}");
     }
+
+    private static IEnumerable<string> InitializeForbiddenFolders()
+    {
+        return new[]
+               {
+                   Environment.GetEnvironmentVariable("ProgramW6432"),
+                   Environment.GetEnvironmentVariable("ProgramFiles(x86)"),
+                   Environment.GetEnvironmentVariable("windir")
+               }
+               .Where(folder => folder != null)
+               .Where(o => !string.IsNullOrEmpty(o))
+               .Select(o => o?.ToLower() + @"\");
+    }
+
+    private void SetCurrentWorkingDirectory()
+    {
+        var dir = Directory.GetCurrentDirectory();
+        var foundForbiddenFolder = CheckDirectory(dir);
+
+        if (foundForbiddenFolder)
+        {
+            Directory.SetCurrentDirectory(Path.GetTempPath());
+        }
+    }
+
+    /// <summary>
+    ///     If a directory matches one of the forbidden folders, then we should reroute, so we return true in that case.
+    /// </summary>
+    private bool CheckDirectory(string dir)
+    {
+        var checkDir = dir.EndsWith("\\") ? dir : dir + "\\";
+        return ForbiddenFolders.Any(o => checkDir.StartsWith(o, StringComparison.OrdinalIgnoreCase));
+    }
+
 
     // protected IEnumerable<TestCase> RunDiscovery(
     //     IEnumerable<string>? sources,
