@@ -8,4 +8,11 @@
         <ProjectReference Include="..\Beta.Engine.Api\Beta.Engine.Api.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="TestCentric.Metadata" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="Beta.Engine.Core.Tests" Key="$(BetaPublicKey)" />
+    </ItemGroup>
 </Project>

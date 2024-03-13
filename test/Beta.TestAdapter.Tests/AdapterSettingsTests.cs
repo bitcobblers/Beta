@@ -26,7 +26,7 @@ public class AdapterSettingsTests
 
             settings.TestProperties.ShouldBeEmpty();
 
-            settings.BetaConfiguration.TraceLevel.ShouldBe(Engine.InternalTraceLevel.Off);
+            settings.BetaConfiguration.TraceLevel.ShouldBe(Beta.Engine.InternalTraceLevel.Off);
             settings.BetaConfiguration.WorkDirectory.ShouldBeNull();
             settings.BetaConfiguration.NumberOfTestWorkers.ShouldBe(-1);
             settings.BetaConfiguration.DefaultTimeout.ShouldBe(0);
@@ -260,7 +260,7 @@ public class AdapterSettingsTests
             </RunSettings>
             """);
 
-        settings.BetaConfiguration.TraceLevel.ShouldBe(Engine.InternalTraceLevel.Debug);
+        settings.BetaConfiguration.TraceLevel.ShouldBe(Beta.Engine.InternalTraceLevel.Debug);
     }
 
     [Fact]

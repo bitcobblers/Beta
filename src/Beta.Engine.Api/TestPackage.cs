@@ -1,4 +1,4 @@
-﻿namespace Beta.Engine.Api;
+﻿namespace Beta.Engine;
 
 [Serializable]
 public class TestPackage

@@ -1,6 +1,4 @@
-﻿using Beta.Engine.Api;
-
-namespace Beta.Engine.Tests.Api;
+﻿namespace Beta.Engine.Tests.Api;
 
 public class TestPackageTests
 {
