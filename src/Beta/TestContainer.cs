@@ -14,26 +14,19 @@ public class TestContainer
 
         return from method in GetType().GetMethods(flags)
                where method.GetParameters().Length == 0
-               where method.GetCustomAttribute<IgnoreDiscoveryAttribute>() is null
                where predicate(method)
                select method;
     }
 
-    [IgnoreDiscovery]
     public IEnumerable<BetaTest> Discover()
     {
-        foreach (var discoveredTest in from method in FindTestMethod(m =>
-                                           m.ReturnType.IsAssignableTo(typeof(BetaTest)))
-                                       let test =
-                                           method.Invoke(this, null) as BetaTest
-                                       where test is not null
-                                       select test with
-                                       {
-                                           Method = method
-                                       })
-        {
-            yield return discoveredTest;
-        }
+        return from method in FindTestMethod(m => m.ReturnType.IsAssignableTo(typeof(BetaTest)))
+               let test = method.Invoke(this, null) as BetaTest
+               where test is not null
+               select test with
+               {
+                   Method = method
+               };
     }
 
     public void Prepare()
