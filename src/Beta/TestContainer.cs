@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,27 +6,6 @@ namespace Beta;
 public class TestContainer
 {
     internal IServiceProvider? ServicesProvider { get; private set; }
-
-    private IEnumerable<MethodInfo> FindTestMethod(Func<MethodInfo, bool> predicate)
-    {
-        const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
-
-        return from method in GetType().GetMethods(flags)
-               where method.GetParameters().Length == 0
-               where predicate(method)
-               select method;
-    }
-
-    public IEnumerable<BetaTest> Discover()
-    {
-        return from method in FindTestMethod(m => m.ReturnType.IsAssignableTo(typeof(BetaTest)))
-               let test = method.Invoke(this, null) as BetaTest
-               where test is not null
-               select test with
-               {
-                   Method = method
-               };
-    }
 
     public void Prepare()
     {
@@ -62,14 +40,10 @@ public class TestContainer
     // ---
 
     [PublicAPI]
-    protected BetaTest Test<T>(Func<Proof<T>> apply, [CallerMemberName] string testName = "")
-    {
-        return new BetaTest(this, testName, apply);
-    }
+    protected BetaTest Test<T>(Func<Proof<T>> apply, [CallerMemberName] string testName = "") =>
+        new(this, testName, apply);
 
     protected BetaTest<TInput> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply,
-                                               [CallerMemberName] string testName = "")
-    {
-        return new BetaTest<TInput>(this, scenarios, testName, apply);
-    }
+                                               [CallerMemberName] string testName = "") =>
+        new(this, scenarios, testName, apply);
 }
