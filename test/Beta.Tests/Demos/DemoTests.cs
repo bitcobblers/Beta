@@ -16,7 +16,7 @@ public class DemoTests(ITestOutputHelper output)
             from test in aggregator.Aggregate([typeof(CalculatorDemo)])
             group test by test.Container
             into g
-            select new TestSuite
+            select new
             {
                 Instance = g.Key,
                 Tests = g.ToArray()

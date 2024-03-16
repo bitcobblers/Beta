@@ -15,9 +15,3 @@ public interface ITestDiscoverer
     /// <returns>A collection of tests found in the type.</returns>
     IEnumerable<BetaTest> Discover(Type type);
 }
-
-public class TestSuite
-{
-    public object Instance { get; init; }
-    public BetaTest[] Tests { get; init; }
-}
