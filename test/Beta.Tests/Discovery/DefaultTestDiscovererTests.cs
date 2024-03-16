@@ -23,7 +23,6 @@ public class DefaultTestDiscovererTests
     {
         // Arrange
         var discoverer = new DefaultTestDiscoverer();
-        var container = new StubWithNoTests();
 
         // Act
         var tests = discoverer.Discover(typeof(StubWithNoTests)).ToArray();
