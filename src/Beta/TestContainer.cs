@@ -43,7 +43,8 @@ public class TestContainer
     protected BetaTest Test<T>(Func<Proof<T>> apply, [CallerMemberName] string testName = "") =>
         new(this, testName, apply);
 
-    protected BetaTest<TInput> Test<TInput, T>(IEnumerable<TInput> scenarios, Func<TInput, Proof<T>> apply,
+    protected BetaTest<TInput> Test<TInput, T>(IEnumerable<TInput> scenarios,
+                                               Func<TInput, Proof<T>> apply,
                                                [CallerMemberName] string testName = "") =>
         new(this, scenarios, testName, apply);
 }
