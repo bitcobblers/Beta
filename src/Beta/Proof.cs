@@ -15,8 +15,6 @@ public class Proof<T>(Task<T> actual) : Proof
     {
     }
 
-    public Task<T> Actual => actual;
-
     public override async IAsyncEnumerable<ProofResult> Test()
     {
         var actualValue = await actual;

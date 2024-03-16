@@ -4,7 +4,7 @@ public class TestContainerProcessor : ITestSuiteProcessor
 {
     /// <inheritdoc />
     public void PreProcess(object instance) =>
-        (instance as TestContainer)?.Prepare();
+        (instance as TestContainer)?.Initialize();
 
     /// <inheritdoc />
     public void PostProcess(object instance)

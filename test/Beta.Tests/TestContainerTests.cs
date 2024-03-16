@@ -13,7 +13,7 @@ public class TestContainerTests
             var container = new TestContainer();
 
             // Act
-            container.Prepare();
+            container.Initialize();
 
             // Assert
             container.ServicesProvider.ShouldNotBeNull();
@@ -26,7 +26,7 @@ public class TestContainerTests
             var container = new StubThatRegistersService();
 
             // Act
-            container.Prepare();
+            container.Initialize();
 
             // Assert
             container.ServicesProvider!.GetService<StubType>().ShouldNotBeNull();
@@ -50,7 +50,7 @@ public class TestContainerTests
         {
             // Arrange
             var container = new StubContainer();
-            container.Prepare();
+            container.Initialize();
 
             // Act
             var step = container.Require<StubType>();
@@ -64,7 +64,7 @@ public class TestContainerTests
         {
             // Arrange
             var container = new StubContainer();
-            container.Prepare();
+            container.Initialize();
 
             // Act
             var step = container.Require(typeof(StubType));

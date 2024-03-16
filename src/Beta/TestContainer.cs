@@ -7,7 +7,7 @@ public class TestContainer
 {
     internal IServiceProvider? ServicesProvider { get; private set; }
 
-    public void Prepare()
+    public void Initialize()
     {
         if (ServicesProvider is not null)
         {
@@ -25,21 +25,26 @@ public class TestContainer
 
     // ---
 
-    [PublicAPI]
-    protected Step<T> Require<T>() where T : notnull
-    {
-        return new Step<T>(() => ServicesProvider!.GetRequiredService<T>());
-    }
+    protected Step<T> Require<T>() where T : notnull =>
+        new(() => ServicesProvider!.GetRequiredService<T>());
 
-    [PublicAPI]
-    protected Step<object> Require(Type type)
-    {
-        return new Step<object>(() => ServicesProvider!.GetRequiredService(type));
-    }
+    protected Step<object> Require(Type type) =>
+        new(() => ServicesProvider!.GetRequiredService(type));
+
+    protected static Step<T> Gather<T>(T value) =>
+        CommonSteps.Gather(value);
+
+    protected static Step<T> Gather<T>(Func<T> handler) =>
+        CommonSteps.Gather(handler);
+
+    protected static Proof<T> Apply<T>(Func<T> handler) =>
+        CommonSteps.Apply(handler);
+
+    protected static Proof<T> Apply<T>(Func<Task<T>> handler) =>
+        CommonSteps.Apply(handler);
 
     // ---
 
-    [PublicAPI]
     protected BetaTest Test<T>(Func<Proof<T>> apply, [CallerMemberName] string testName = "") =>
         new(this, testName, apply);
 
