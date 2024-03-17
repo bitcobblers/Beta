@@ -32,16 +32,16 @@ public class TestContainer
         new(() => ServicesProvider!.GetRequiredService(type));
 
     protected static Step<T> Gather<T>(T value) =>
-        CommonSteps.Gather(value);
+        new(() => value);
 
     protected static Step<T> Gather<T>(Func<T> handler) =>
-        CommonSteps.Gather(handler);
+        new(handler);
 
     protected static Proof<T> Apply<T>(Func<T> handler) =>
-        CommonSteps.Apply(handler);
+        new(handler());
 
     protected static Proof<T> Apply<T>(Func<Task<T>> handler) =>
-        CommonSteps.Apply(handler);
+        new(handler());
 
     // ---
 

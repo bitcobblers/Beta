@@ -1,6 +1,5 @@
 ﻿using Beta.Shouldly.ShouldBe;
 using Microsoft.Extensions.DependencyInjection;
-using static Beta.CommonSteps;
 
 namespace Beta.Tests.Demos;
 
