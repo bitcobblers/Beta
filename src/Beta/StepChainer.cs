@@ -1,16 +1,12 @@
 namespace Beta;
 
-public static class StepResultChainer
+public static class StepChainer
 {
-    public static TestResult<TResult> Select<TIn, TResult>(this Step<TIn> input, Func<TIn, TResult> selector)
-    {
-        return new TestResult<TResult>(selector(input.Evaluate()));
-    }
+    public static TestResult<TResult> Select<TIn, TResult>(this Step<TIn> input, Func<TIn, TResult> selector) =>
+        new(selector(input.Evaluate()));
 
-    public static TResult Select<TIn, TResult>(this TestResult<TIn> input, Func<TIn, TResult> selector)
-    {
-        return selector(input.Value);
-    }
+    public static TResult Select<TIn, TResult>(this TestResult<TIn> input, Func<TIn, TResult> selector) =>
+        selector(input.Value);
 
     public static Step<TResult> SelectMany<TFirst, TSecond, TResult>(
         this Step<TFirst> input,

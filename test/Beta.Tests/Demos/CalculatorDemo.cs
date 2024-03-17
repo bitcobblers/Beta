@@ -35,9 +35,10 @@ public class CalculatorDemo : TestContainer
     public BetaTest AddTestMany()
     {
         return Test(AdditionInput, i =>
-            from calculator in Gather(() => Task.FromResult(new Calculator()))
-            let result = Apply(async () => (await calculator).Add(i.A, i.B))
-            select result.ShouldBe(i.Expected));
+                from calculator in Gather(() => Task.FromResult(new Calculator()))
+                let result = Apply(async () => (await calculator).Add(i.A, i.B))
+                select result.ShouldBe(i.Expected))
+            .SetTrait("foo", "bar");
     }
 
     // ---
@@ -46,9 +47,6 @@ public class CalculatorDemo : TestContainer
 
     public class Calculator
     {
-        public int Add(int a, int b)
-        {
-            return a + b;
-        }
+        public int Add(int a, int b) => a + b;
     }
 }
