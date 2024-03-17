@@ -1,6 +1,6 @@
 ﻿namespace Beta.Tests;
 
-public class StepResultChainerTests
+public class StepChainerTests
 {
     [Fact]
     public void SelectWithStepReturnsTestResult()
