@@ -1,7 +1,13 @@
 ﻿name: CICD
 on:
   push:
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE"
   pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "LICENSE"
   workflow_dispatch:
 
 jobs:
@@ -16,15 +22,15 @@ jobs:
     uses: ./.github/workflows/_qodana.yml
     secrets: inherit
 
-#  codeql:
-#    if: ${{ github.ref_type=='tag' || github.ref_name=='main' }}
-#    uses: ./.github/workflows/_codeql.yml
+  #  codeql:
+  #    if: ${{ github.ref_type=='tag' || github.ref_name=='main' }}
+  #    uses: ./.github/workflows/_codeql.yml
 
-#  docfx:
-#    if: ${{ github.ref_type=='tag' || github.ref_name=='main' }}
-#    needs: [test, codeql]
-#    uses: ./.github/workflows/_docfx.yml
-#    secrets: inherit
+  #  docfx:
+  #    if: ${{ github.ref_type=='tag' || github.ref_name=='main' }}
+  #    needs: [test, codeql]
+  #    uses: ./.github/workflows/_docfx.yml
+  #    secrets: inherit
 
   nuget:
     if: ${{ github.ref_type=='tag' || github.ref_name=='main' }}
