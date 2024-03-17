@@ -1,4 +1,4 @@
-namespace Beta.Discovery;
+namespace Beta.Execution;
 
 public class TestContainerProcessor : ITestSuiteProcessor
 {

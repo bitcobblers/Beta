@@ -9,7 +9,8 @@ public class DefaultTestDiscovererTests
     public void ReturnsSingleTest()
     {
         // Arrange
-        var discoverer = new DefaultTestDiscoverer();
+        var activator = new DefaultTestContainerActivator();
+        var discoverer = new DefaultTestDiscoverer(activator);
 
         // Act
         var tests = discoverer.Discover(typeof(StubWithTest));
@@ -22,7 +23,8 @@ public class DefaultTestDiscovererTests
     public void ReturnsNoTests()
     {
         // Arrange
-        var discoverer = new DefaultTestDiscoverer();
+        var activator = new DefaultTestContainerActivator();
+        var discoverer = new DefaultTestDiscoverer(activator);
 
         // Act
         var tests = discoverer.Discover(typeof(StubWithNoTests)).ToArray();

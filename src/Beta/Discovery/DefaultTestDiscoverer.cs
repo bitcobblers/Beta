@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace Beta.Discovery;
 
-public class DefaultTestDiscoverer : ITestDiscoverer
+public class DefaultTestDiscoverer(ITestContainerActivator activator) : ITestDiscoverer
 {
     /// <inheritdoc />
     public bool IsSuite(Type type) =>
@@ -11,19 +11,16 @@ public class DefaultTestDiscoverer : ITestDiscoverer
         type.GetMethods().Any(IsTest);
 
     /// <inheritdoc />
-    public IEnumerable<BetaTest> Discover(Type type)
-    {
-        var instance = Activator.CreateInstance(type);
-
-        return from method in type.GetMethods()
-               where IsTest(method)
-               let test = method.Invoke(instance, null) as BetaTest
-               where test is not null
-               select test with
-               {
-                   Method = method
-               };
-    }
+    public IEnumerable<BetaTest> Discover(Type type) =>
+        from method in type.GetMethods()
+        where IsTest(method)
+        let instance = activator.Create(type)
+        let test = method.Invoke(instance, null) as BetaTest
+        where test is not null
+        select test with
+        {
+            Method = method
+        };
 
     private static bool IsTest(MethodInfo method) =>
         method is { IsPublic: true, IsStatic: false } &&

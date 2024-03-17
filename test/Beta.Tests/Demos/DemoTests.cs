@@ -1,4 +1,5 @@
 ﻿using Beta.Discovery;
+using Beta.Execution;
 using Xunit.Abstractions;
 
 namespace Beta.Tests.Demos;
@@ -8,7 +9,8 @@ public class DemoTests(ITestOutputHelper output)
     [Fact]
     public async Task RunTestsFromType()
     {
-        var discoverer = new DefaultTestDiscoverer();
+        var activator = new DefaultTestContainerActivator();
+        var discoverer = new DefaultTestDiscoverer(activator);
         var aggregator = new DefaultTestSuiteAggregator([discoverer]);
         var processors = new[] { new TestContainerProcessor() };
 

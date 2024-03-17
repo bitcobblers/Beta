@@ -31,13 +31,23 @@ public record BetaTest(object Container, IEnumerable<object>? Input, string Test
     /// <summary>
     ///     Gets the unique identifier for the test.
     /// </summary>
-    public Guid Id { get; } = Guid.NewGuid();
+    public Guid Id { get; init; } = Guid.NewGuid();
 
     /// <summary>
     ///     Gets the inputs as a key-value pair.
     /// </summary>
     public Dictionary<Guid, object> Inputs { get; } =
         (Input ?? Array.Empty<object>()).ToDictionary(_ => Guid.NewGuid());
+
+    /// <summary>
+    ///     Gets the FQN of the container for the test.
+    /// </summary>
+    public string FullyQualifiedTypeName { get; } = Container.GetType().FullName!;
+
+    /// <summary>
+    ///     Gets or sets the skip reason for this test.
+    /// </summary>
+    public string? SkipReason { get; private set; } = string.Empty;
 
     /// <summary>
     ///     Gets the method of the test.
@@ -49,10 +59,21 @@ public record BetaTest(object Container, IEnumerable<object>? Input, string Test
     /// </summary>
     /// <param name="name">The name of the trait.</param>
     /// <param name="value">The value of the trait</param>
-    /// <returns></returns>
+    /// <returns>The current test.</returns>
     public BetaTest SetTrait(string name, string value)
     {
         Traits[name] = value;
+        return this;
+    }
+
+    /// <summary>
+    ///     Marks the test as skipped.
+    /// </summary>
+    /// <param name="reason">The reason for skipping the test.</param>
+    /// <returns>The current test.</returns>
+    public BetaTest Skip(string reason)
+    {
+        SkipReason = reason;
         return this;
     }
 
