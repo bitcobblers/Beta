@@ -19,5 +19,5 @@ public record BetaTestResult(Guid Id)
     /// <summary>
     ///     Gets the text output for the test.
     /// </summary>
-    public string Output { get; init; }
+    public string Output { get; init; } = string.Empty;
 }

@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Beta.Internal;
 
 namespace Beta;
 
@@ -20,7 +21,7 @@ public class Proof<T>(Task<T> actual) : Proof
     public override async IAsyncEnumerable<ProofResult> Test(
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var actualValue = await actual;
+        var actualValue = await actual.NoMarshal();
 
         foreach (var handler in _handlers.TakeWhile(handler => !cancellationToken.IsCancellationRequested))
         {

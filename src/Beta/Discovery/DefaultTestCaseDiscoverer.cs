@@ -19,25 +19,28 @@ public class DefaultTestCaseDiscoverer(ITestContainerActivator activator) : ITes
             return from input in test.Input
                    let testCaseInstance = activator.Create(method.DeclaringType!)
                    let testCase = (BetaTest)method.Invoke(testCaseInstance, [])!
-                   select new Test
+                   select new Test(testCaseInstance, method, () => testCase.Apply(input))
                    {
-                       TestClassName = method.DeclaringType!.FullName!,
-                       Instance = testCaseInstance,
-                       Method = method,
-                       Input = string.Empty, // <-- Need to serialize from input
-                       Apply = () => testCase.Apply(input)
+                       Input = string.Empty // <-- Need to serialize from input
                    };
+            // {
+            //     TestClassName = method.DeclaringType!.FullName!,
+            //     Instance = testCaseInstance,
+            //     Method = method,
+            //     Input = string.Empty, // <-- Need to serialize from input
+            //     Apply = () => testCase.Apply(input)
+            // };
         }
 
         return new[]
         {
-            new Test
-            {
-                TestClassName = method.DeclaringType!.FullName!,
-                Instance = instance,
-                Method = method,
-                Apply = () => test.Apply(null!)
-            }
+            new Test(instance, method, () => test.Apply(null!))
+            // {
+            //     TestClassName = method.DeclaringType!.FullName!,
+            //     Instance = instance,
+            //     Method = method,
+            //     Apply = () => test.Apply(null!)
+            // }
         };
     }
 }

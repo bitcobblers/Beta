@@ -9,6 +9,7 @@ namespace Beta.Execution;
 /// <param name="logger">The internal logger to use.</param>
 /// <param name="processors">The suite processors to use.</param>
 /// <param name="listener">The test listener to use.</param>
+// ReSharper disable once ParameterTypeCanBeEnumerable.Local
 public class DefaultTestRunner(ILogger logger, ITestSuiteProcessor[] processors, ITestListener listener) : ITestRunner
 {
     /// <inheritdoc />
@@ -36,16 +37,25 @@ public class DefaultTestRunner(ILogger logger, ITestSuiteProcessor[] processors,
             foreach (var test in suite.Tests)
             {
                 processors.ForEach(p => p.PreProcess(test.Instance));
+                var result = new BetaTestResult(test.Id);
+                var outcome = TestOutcome.Passed;
 
                 try
                 {
                     //await RunTest(test, cancellationToken);
                     await foreach (var proofResult in test.Apply().Test(cancellationToken))
                     {
-                        // result.Results.Add(proofResult);
-                        // listener.OnUpdate(result.Id, proofResult);
+                        result.Results.Add(proofResult);
+                        listener.OnUpdate(result.Id, proofResult);
                         logger.Log(proofResult.ToString());
+
+                        if (proofResult.Success == false)
+                        {
+                            outcome = TestOutcome.Failed;
+                        }
                     }
+
+                    listener.OnFinish(test.Id, DateTime.UtcNow, outcome, string.Empty);
                 }
                 finally
                 {
