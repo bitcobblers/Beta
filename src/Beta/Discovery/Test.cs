@@ -2,6 +2,9 @@ using System.Reflection;
 
 namespace Beta.Discovery;
 
+/// <summary>
+///     Defines a single test that can be executed by the runner.
+/// </summary>
 public class Test
 {
     /// <summary>

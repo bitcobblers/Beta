@@ -1,5 +1,8 @@
 namespace Beta.Execution;
 
+/// <summary>
+///     Defines a processor that can do pre/post processing of a test class.
+/// </summary>
 public interface ITestSuiteProcessor
 {
     /// <summary>

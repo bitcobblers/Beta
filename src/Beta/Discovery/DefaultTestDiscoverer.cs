@@ -2,6 +2,10 @@ using System.Reflection;
 
 namespace Beta.Discovery;
 
+/// <summary>
+///     Defines the default test suite discoverer
+/// </summary>
+/// <param name="testCaseDiscoverer"></param>
 public class DefaultTestDiscoverer(ITestCaseDiscoverer testCaseDiscoverer)
     : ITestDiscoverer
 {

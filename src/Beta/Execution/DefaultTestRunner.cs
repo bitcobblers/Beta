@@ -3,8 +3,15 @@ using Beta.Internal;
 
 namespace Beta.Execution;
 
+/// <summary>
+///     Defines the default test runner.
+/// </summary>
+/// <param name="logger">The internal logger to use.</param>
+/// <param name="processors">The suite processors to use.</param>
+/// <param name="listener">The test listener to use.</param>
 public class DefaultTestRunner(ILogger logger, ITestSuiteProcessor[] processors, ITestListener listener) : ITestRunner
 {
+    /// <inheritdoc />
     public async Task Run(IEnumerable<Test> tests, ITestFilter filter, CancellationToken cancellationToken)
     {
         var suites =
@@ -47,48 +54,4 @@ public class DefaultTestRunner(ILogger logger, ITestSuiteProcessor[] processors,
             }
         });
     }
-
-    // private async Task RunTest(Test test, CancellationToken cancellationToken)
-    // {
-    //     var result = new BetaTestResult(test.Id);
-    //
-    //     listener.OnStart(result.Id, DateTime.UtcNow);
-    //
-    //     try
-    //     {
-    //         if (test.SkipReason != null)
-    //         {
-    //             listener.OnFinish(result.Id, DateTime.UtcNow, TestOutcome.Skipped, test.SkipReason);
-    //         }
-    //
-    //         if (test.Input == null)
-    //         {
-    //             await foreach (var proofResult in test.Apply(null!).Test(cancellationToken))
-    //             {
-    //                 result.Results.Add(proofResult);
-    //                 listener.OnUpdate(result.Id, proofResult);
-    //             }
-    //         }
-    //         else
-    //         {
-    //             foreach (var input in test.Input)
-    //             {
-    //                 await foreach (var proofResult in test.Apply(input).Test(cancellationToken))
-    //                 {
-    //                     result.Results.Add(proofResult);
-    //                     listener.OnUpdate(result.Id, proofResult);
-    //                 }
-    //             }
-    //         }
-    //
-    //         var outcome = result.Results.Count == 0 ? TestOutcome.Inconclusive :
-    //             result.Results.All(r => r.Success) ? TestOutcome.Passed : TestOutcome.Failed;
-    //
-    //         listener.OnFinish(result.Id, DateTime.UtcNow, outcome, "");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         listener.OnFinish(result.Id, DateTime.UtcNow, TestOutcome.Error, ex.ToString());
-    //     }
-    // }
 }

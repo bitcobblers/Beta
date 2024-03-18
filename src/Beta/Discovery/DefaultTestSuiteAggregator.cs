@@ -1,5 +1,9 @@
 namespace Beta.Discovery;
 
+/// <summary>
+///     Defines the default test suite aggregator.
+/// </summary>
+/// <param name="discoverers"></param>
 // ReSharper disable once ParameterTypeCanBeEnumerable.Local
 public class DefaultTestSuiteAggregator(ITestDiscoverer[] discoverers) : ITestSuiteAggregator
 {

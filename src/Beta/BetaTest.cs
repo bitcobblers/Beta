@@ -3,7 +3,7 @@
 namespace Beta;
 
 /// <summary>
-///     Defines a single test.
+///     Defines a single test or test suite.
 /// </summary>
 /// <param name="Container">The instance of the type holding the test.</param>
 /// <param name="Input">The optional input for the test.</param>

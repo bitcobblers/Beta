@@ -1,5 +1,8 @@
 ﻿namespace Beta.Internal;
 
+/// <summary>
+///     Defines common extensions used by Beta.
+/// </summary>
 internal static class CommonExtensions
 {
     /// <summary>

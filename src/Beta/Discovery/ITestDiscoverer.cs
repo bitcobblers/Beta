@@ -1,5 +1,8 @@
 ﻿namespace Beta.Discovery;
 
+/// <summary>
+///     Defines a discoverer that can find tests in a given type.
+/// </summary>
 public interface ITestDiscoverer
 {
     /// <summary>

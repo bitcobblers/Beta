@@ -2,6 +2,10 @@ using System.Reflection;
 
 namespace Beta.Discovery;
 
+/// <summary>
+///     Defines the default test case discoverer.
+/// </summary>
+/// <param name="activator"></param>
 public class DefaultTestCaseDiscoverer(ITestContainerActivator activator) : ITestCaseDiscoverer
 {
     /// <inheritdoc />
