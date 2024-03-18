@@ -8,6 +8,5 @@ public class DefaultTestContainerActivator : ITestContainerActivator
     /// <inheritdoc />
     public object Create(Type type) =>
         Activator.CreateInstance(type) ??
-        throw new TestContainerActivationFailedException(
-            "Activator.CreateInstance() returned null.");
+        throw new TestContainerActivationFailedException("Activator.CreateInstance() returned null.");
 }

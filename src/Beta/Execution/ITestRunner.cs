@@ -1,3 +1,5 @@
+using Beta.Discovery;
+
 namespace Beta.Execution;
 
 /// <summary>
@@ -12,5 +14,5 @@ public interface ITestRunner
     /// <param name="filter">The filter used to exclude tests.</param>
     /// <param name="cancellationToken">The cancellation token use to use for async support.</param>
     /// <returns>An awaitable task for the execution.</returns>
-    Task Run(IEnumerable<BetaTest> tests, ITestFilter filter, CancellationToken cancellationToken);
+    Task Run(IEnumerable<Test> tests, ITestFilter filter, CancellationToken cancellationToken);
 }

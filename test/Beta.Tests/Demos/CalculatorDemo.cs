@@ -23,22 +23,17 @@ public class CalculatorDemo : TestContainer
         services.AddSingleton<Calculator>();
     }
 
-    public BetaTest AddTest1()
-    {
-        return Test(() =>
+    public BetaTest AdditionTest() =>
+        Test(() =>
             from calculator in Require<Calculator>()
             let result = Apply(() => calculator.Add(1, 2))
             select result.ShouldBe(3));
-    }
 
-    public BetaTest AddTestMany()
-    {
-        return Test(AdditionInput, i =>
-                from calculator in Gather(() => Task.FromResult(new Calculator()))
-                let result = Apply(async () => (await calculator).Add(i.A, i.B))
-                select result.ShouldBe(i.Expected))
-            .SetTrait("foo", "bar");
-    }
+    public BetaTest AddTestMany() =>
+        Test(AdditionInput, i =>
+            from calculator in Gather(() => Task.FromResult(new Calculator()))
+            let result = Apply(async () => (await calculator).Add(i.A, i.B))
+            select result.ShouldBe(i.Expected));
 
     // ---
 
