@@ -12,5 +12,5 @@ public interface ITestAssemblyExplorer
     /// </summary>
     /// <param name="assembly">The assembly to explore.</param>
     /// <returns>A flat list of all the tests found in the assembly.</returns>
-    IEnumerable<BetaTest> Explore(Assembly assembly);
+    IEnumerable<Test> Explore(Assembly assembly);
 }

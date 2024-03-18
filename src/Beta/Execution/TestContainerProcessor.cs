@@ -1,5 +1,8 @@
-namespace Beta.Discovery;
+namespace Beta.Execution;
 
+/// <summary>
+///     Defines the processor that can initialize a <see cref="TestContainer" /> instance.
+/// </summary>
 public class TestContainerProcessor : ITestSuiteProcessor
 {
     /// <inheritdoc />

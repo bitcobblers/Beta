@@ -1,5 +1,8 @@
 namespace Beta.Discovery;
 
+/// <summary>
+///     Defines an aggregator that can turn a collection of types into a flat list of tests.
+/// </summary>
 public interface ITestSuiteAggregator
 {
     /// <summary>
@@ -7,5 +10,5 @@ public interface ITestSuiteAggregator
     /// </summary>
     /// <param name="types">The types to scan for test suites</param>
     /// <returns>A collection of discovered tests</returns>
-    IEnumerable<BetaTest> Aggregate(IEnumerable<Type> types);
+    IEnumerable<Test> Aggregate(IEnumerable<Type> types);
 }

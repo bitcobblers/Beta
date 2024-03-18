@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Beta.Discovery;
 
 namespace Beta.Tests.Discovery;
@@ -9,10 +10,15 @@ public class DefaultTestDiscovererTests
     public void ReturnsSingleTest()
     {
         // Arrange
-        var discoverer = new DefaultTestDiscoverer();
+        var testCaseDiscoverer = A.Fake<ITestCaseDiscoverer>();
+        var discoverer = new DefaultTestDiscoverer(testCaseDiscoverer);
+
+        A.CallTo(() =>
+             testCaseDiscoverer.Discover(A<MethodInfo>._))
+         .Returns(new[] { A.Dummy<Test>() });
 
         // Act
-        var tests = discoverer.Discover(typeof(StubWithTest));
+        var tests = discoverer.Discover(typeof(StubWithTest)).ToArray();
 
         // Assert
         tests.ShouldHaveSingleItem();
@@ -22,7 +28,8 @@ public class DefaultTestDiscovererTests
     public void ReturnsNoTests()
     {
         // Arrange
-        var discoverer = new DefaultTestDiscoverer();
+        var testCaseDiscoverer = A.Fake<ITestCaseDiscoverer>();
+        var discoverer = new DefaultTestDiscoverer(testCaseDiscoverer);
 
         // Act
         var tests = discoverer.Discover(typeof(StubWithNoTests)).ToArray();
