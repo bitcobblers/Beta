@@ -16,6 +16,7 @@
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageVersion Include="Microsoft.TestPlatform.ObjectModel" Version="17.9.0" />
     <PackageVersion Include="Shouldly" Version="4.2.1" PrivateAssets="compile" />
     <PackageVersion Include="System.Linq.Async" Version="6.0.1" />
     <PackageVersion Include="xunit" Version="2.7.0" />
