@@ -68,12 +68,14 @@ public class BetaEngineAdapter(ITestLogger logger)
 
     private Assembly LoadTestAssembly(string assemblyPath) =>
         MaybeThrows(
+            logger,
             $"Loading test assembly: {assemblyPath}",
             () => _loadContext.LoadFromAssemblyPath(assemblyPath),
             "Unable to load test assembly: {0}");
 
     private Assembly LoadBetaAssembly(Assembly assembly) =>
         MaybeThrows(
+            logger,
             "Loading beta assembly.",
             () =>
             {
@@ -102,6 +104,7 @@ public class BetaEngineAdapter(ITestLogger logger)
     private object CreateController(string typeName, object[] args)
     {
         return MaybeThrows(
+            logger,
             "Creating controller instance.",
             () =>
             {
@@ -132,6 +135,7 @@ public class BetaEngineAdapter(ITestLogger logger)
     /// <returns>The result of the method (if any).</returns>
     private object? Execute(string methodName, object[] args) =>
         MaybeThrows(
+            logger,
             $"Executing method {methodName}.",
             () => _controllerType.GetMethod(methodName)?.Invoke(_controllerInstance, args),
             "Unable to execute method {methodName}: {0}");
@@ -139,13 +143,14 @@ public class BetaEngineAdapter(ITestLogger logger)
     /// <summary>
     ///     Utility method to execute code and trap/wrap exceptions.
     /// </summary>
+    /// <param name="logger">The logger to use.</param>
     /// <param name="message">The debug message to log before performing the action.</param>
     /// <param name="getValue">The action to perform.</param>
     /// <param name="formattedMessage">A formatted error message if an exception is thrown.</param>
     /// <typeparam name="T">The type to return.</typeparam>
     /// <returns>The result of the action.</returns>
     /// <exception cref="BetaEngineLoadFailedException">Wraps any exception that is thrown by the block.</exception>
-    private T MaybeThrows<T>(string message, Func<T> getValue, string formattedMessage)
+    internal static T MaybeThrows<T>(ITestLogger logger, string message, Func<T> getValue, string formattedMessage)
     {
         logger.Debug(message);
 
