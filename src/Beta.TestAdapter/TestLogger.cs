@@ -28,7 +28,7 @@ public class TestLogger(string scope, Stopwatch stopwatch, IMessageLogger? logge
     }
 
     /// <inheritdoc />
-    public int Verbosity { get; } = verbosity;
+    public int Verbosity => verbosity;
 
     /// <inheritdoc />
     public string Scope => scope;

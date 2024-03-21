@@ -79,10 +79,10 @@ public class BetaEngineAdapter(ITestLogger logger)
         from test in (IEnumerable<XElement>)Execute(ControllerMethods.Query, [])!
         let fragment = new
         {
-            Id = test.Attribute("id").Value,
-            ClassName = test.Element("className").Value,
-            MethodName = test.Element("methodName").Value,
-            Input = test.Element("input").Value
+            Id = test.Attribute("id")?.Value!,
+            ClassName = test.Element("className")?.Value!,
+            MethodName = test.Element("methodName")?.Value!,
+            Input = test.Element("input")?.Value!
         }
         select new TestCase
         {
