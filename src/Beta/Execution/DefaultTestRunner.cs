@@ -10,7 +10,8 @@ namespace Beta.Execution;
 /// <param name="processors">The suite processors to use.</param>
 /// <param name="listener">The test listener to use.</param>
 // ReSharper disable once ParameterTypeCanBeEnumerable.Local
-public class DefaultTestRunner(ILogger logger, ITestSuiteProcessor[] processors, ITestListener listener) : ITestRunner
+public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> processors, ITestListener listener)
+    : ITestRunner
 {
     /// <inheritdoc />
     public async Task Run(IEnumerable<Test> tests, ITestFilter filter, CancellationToken cancellationToken)

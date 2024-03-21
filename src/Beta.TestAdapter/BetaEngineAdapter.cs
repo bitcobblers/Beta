@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -24,11 +25,13 @@ public class BetaControllerNotFoundException(string message)
 /// <param name="logger">The internal logger to use.</param>
 public class BetaEngineAdapter(ITestLogger logger)
 {
+    private const string ControllerName = "Beta.Engine.BetaEngineController";
+
     private readonly Assembly _betaAssembly;
     private readonly object _controllerInstance;
     private readonly Type _controllerType;
+
     private readonly AssemblyLoadContext _loadContext;
-    private readonly Assembly _testAssembly;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BetaEngineAdapter" /> class.
@@ -47,24 +50,61 @@ public class BetaEngineAdapter(ITestLogger logger)
             return customLoadContext?.LoadFallback(assemblyName);
         };
 
-        _testAssembly = LoadTestAssembly(assemblyPath);
-        _betaAssembly = LoadBetaAssembly(_testAssembly);
-        _controllerInstance = CreateController("Beta.Engine.BetaEngine", [_testAssembly]);
+        var testAssembly = LoadTestAssembly(assemblyPath);
+        _betaAssembly = LoadBetaAssembly(testAssembly);
+        _controllerInstance = CreateController(ControllerName, [testAssembly]);
         _controllerType = _controllerInstance.GetType();
     }
 
-    public IEnumerable<TestCase> Discover()
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="BetaEngineAdapter" /> class.
+    /// </summary>
+    /// <param name="controllerInstance">The controller instance.</param>
+    /// <param name="logger">The logger to use.</param>
+    /// <remarks>
+    ///     This constructor is only intended for testing.
+    /// </remarks>
+    internal BetaEngineAdapter(object controllerInstance, ITestLogger logger)
+        : this(logger)
     {
-        yield break;
+        _controllerInstance = controllerInstance;
+        _controllerType = controllerInstance.GetType();
     }
 
-    public void Run()
-    {
-    }
+    /// <summary>
+    ///     Queries the controller for discovered tests.
+    /// </summary>
+    /// <returns>A collection of tests.</returns>
+    public IEnumerable<TestCase> Query() =>
+        from test in (IEnumerable<XElement>)Execute(ControllerMethods.Query, [])!
+        let fragment = new
+        {
+            Id = test.Attribute("id").Value,
+            ClassName = test.Element("className").Value,
+            MethodName = test.Element("methodName").Value,
+            Input = test.Element("input").Value
+        }
+        select new TestCase
+        {
+            Id = Guid.Parse(fragment.Id),
+            FullyQualifiedName = $"{fragment.ClassName}.{fragment.MethodName}",
+            ExecutorUri = new Uri(VsTestDiscoverer.ExecutorUri),
+            Source = "",
+            CodeFilePath = "",
+            LineNumber = 0
+        };
 
-    public void Stop()
-    {
-    }
+    /// <summary>
+    ///     Instructs the controller to begin executing tests.
+    /// </summary>
+    public void Run() =>
+        Execute(ControllerMethods.Run, []);
+
+    /// <summary>
+    ///     Instructs the controller to stop executing tests.
+    /// </summary>
+    public void Stop() =>
+        Execute(ControllerMethods.Stop, []);
 
     private Assembly LoadTestAssembly(string assemblyPath) =>
         MaybeThrows(
@@ -101,9 +141,8 @@ public class BetaEngineAdapter(ITestLogger logger)
     /// <param name="args">The arguments to pass to the controller.</param>
     /// <returns>An instance to the controller.</returns>
     /// <exception cref="BetaEngineLoadFailedException">Thrown if unable to create the controller.</exception>
-    private object CreateController(string typeName, object[] args)
-    {
-        return MaybeThrows(
+    private object CreateController(string typeName, object[] args) =>
+        MaybeThrows(
             logger,
             "Creating controller instance.",
             () =>
@@ -125,7 +164,6 @@ public class BetaEngineAdapter(ITestLogger logger)
                 return instance;
             },
             "Unable to create controller instance: {0}");
-    }
 
     /// <summary>
     ///     Executes a method against the controller.
@@ -133,7 +171,7 @@ public class BetaEngineAdapter(ITestLogger logger)
     /// <param name="methodName">The name of the method to execute.</param>
     /// <param name="args">The arguments to pass into the method.</param>
     /// <returns>The result of the method (if any).</returns>
-    private object? Execute(string methodName, object[] args) =>
+    internal object? Execute(string methodName, object[] args) =>
         MaybeThrows(
             logger,
             $"Executing method {methodName}.",
@@ -172,9 +210,9 @@ public class BetaEngineAdapter(ITestLogger logger)
     private static class ControllerMethods
     {
         /// <summary>
-        ///     Performs discovery of tests in the assembly.
+        ///     Queries for discovered tests.
         /// </summary>
-        public const string Discover = "Discover";
+        public const string Query = "Query";
 
         /// <summary>
         ///     Runs the tests in the assembly.
