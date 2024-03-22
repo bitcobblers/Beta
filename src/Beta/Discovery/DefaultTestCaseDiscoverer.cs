@@ -21,7 +21,7 @@ public class DefaultTestCaseDiscoverer(ITestContainerActivator activator) : ITes
                    let testCase = (BetaTest)method.Invoke(testCaseInstance, [])!
                    select new Test(testCaseInstance, method, () => testCase.Apply(input))
                    {
-                       Input = string.Empty // <-- Need to serialize from input
+                       Input = input.ToString() // TODO: Use a better way to serialize this.
                    };
             // {
             //     TestClassName = method.DeclaringType!.FullName!,
