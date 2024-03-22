@@ -28,10 +28,11 @@ public class VsTestDiscoverer : VsTestAdapter, ITestDiscoverer
                 ? source
                 : Path.Combine(Directory.GetCurrentDirectory(), source);
 
-            var engineAdapter = new BetaEngineAdapter(assemblyPath, Logger);
+            using var engineAdapter = new BetaEngineAdapter(assemblyPath, Logger);
 
             foreach (var testCase in engineAdapter.Query())
             {
+                Logger.Debug($"Discovered test [{testCase.DisplayName}].");
                 discoverySink.SendTestCase(testCase);
             }
         }

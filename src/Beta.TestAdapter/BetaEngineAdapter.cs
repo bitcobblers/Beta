@@ -23,15 +23,19 @@ public class BetaControllerNotFoundException(string message)
 ///     Defines an adapter for calling the beta engine from the test assembly's referenced engine.
 /// </summary>
 /// <param name="logger">The internal logger to use.</param>
-public class BetaEngineAdapter(ITestLogger logger)
+public class BetaEngineAdapter(ITestLogger logger) : IDisposable
 {
     private const string ControllerName = "Beta.Engine.BetaEngineController";
 
+    private readonly string _assemblyPath;
     private readonly Assembly _betaAssembly;
     private readonly object _controllerInstance;
     private readonly Type _controllerType;
+    private readonly NavigationDataProvider _navigationDataProvider;
 
     private readonly AssemblyLoadContext _loadContext;
+
+    private bool _disposed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BetaEngineAdapter" /> class.
@@ -41,8 +45,9 @@ public class BetaEngineAdapter(ITestLogger logger)
     public BetaEngineAdapter(string assemblyPath, ITestLogger logger)
         : this(logger)
     {
-        assemblyPath = Path.GetFullPath(assemblyPath);
-        _loadContext = new CustomAssemblyLoadContext(assemblyPath);
+        _assemblyPath = Path.GetFullPath(assemblyPath);
+        _loadContext = new CustomAssemblyLoadContext(_assemblyPath);
+        _navigationDataProvider = new NavigationDataProvider(_assemblyPath);
 
         _loadContext.Resolving += (context, assemblyName) =>
         {
@@ -50,11 +55,16 @@ public class BetaEngineAdapter(ITestLogger logger)
             return customLoadContext?.LoadFallback(assemblyName);
         };
 
-        var testAssembly = LoadTestAssembly(assemblyPath);
+        var testAssembly = LoadTestAssembly(_assemblyPath);
         _betaAssembly = LoadBetaAssembly(testAssembly);
         _controllerInstance = CreateController(ControllerName, [testAssembly]);
         _controllerType = _controllerInstance.GetType();
     }
+
+    /// <summary>
+    /// Finalizes an instance of the <see cref="BetaEngineAdapter"/> class.
+    /// </summary>
+    ~BetaEngineAdapter() => Dispose(false);
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BetaEngineAdapter" /> class.
@@ -84,14 +94,18 @@ public class BetaEngineAdapter(ITestLogger logger)
             MethodName = test.Element("methodName")?.Value!,
             Input = test.Element("input")?.Value!
         }
+        let fqn = $"{fragment.ClassName}.{fragment.MethodName}"
+        let navData = _navigationDataProvider.Get(fragment.ClassName, fragment.MethodName)
+        where navData is not null
         select new TestCase
         {
             Id = Guid.Parse(fragment.Id),
-            FullyQualifiedName = $"{fragment.ClassName}.{fragment.MethodName}",
+            FullyQualifiedName = fqn,
+            DisplayName = string.IsNullOrWhiteSpace(fragment.Input) ? fqn : $"{fqn}({fragment.Input})",
             ExecutorUri = new Uri(VsTestDiscoverer.ExecutorUri),
-            Source = "",
-            CodeFilePath = "",
-            LineNumber = 0
+            Source = _assemblyPath,
+            CodeFilePath = navData.FileName,
+            LineNumber = navData.LineNumber,
         };
 
     /// <summary>
@@ -105,6 +119,28 @@ public class BetaEngineAdapter(ITestLogger logger)
     /// </summary>
     public void Stop() =>
         Execute(ControllerMethods.Stop, []);
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Disposes of any resources used by the adapter.
+    /// </summary>
+    /// <param name="disposing">True if the dispose method was called by user code.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing && !_disposed)
+        {
+            _loadContext.Unload();
+            _navigationDataProvider.Dispose();
+        }
+
+        _disposed = true;
+    }
 
     private Assembly LoadTestAssembly(string assemblyPath) =>
         MaybeThrows(
@@ -124,13 +160,10 @@ public class BetaEngineAdapter(ITestLogger logger)
                      where reference.Name == "Beta"
                      select reference).FirstOrDefault();
 
-                if (betaRef == null)
-                {
-                    throw new BetaReferenceNotFoundException(
-                        $"Could not find reference to Beta assembly in {assembly.FullName}");
-                }
-
-                return _loadContext.LoadFromAssemblyName(betaRef);
+                return betaRef == null
+                    ? throw new BetaReferenceNotFoundException(
+                        $"Could not find reference to Beta assembly in {assembly.FullName}")
+                    : _loadContext.LoadFromAssemblyName(betaRef);
             },
             "Unable to load beta assembly: {0}");
 
