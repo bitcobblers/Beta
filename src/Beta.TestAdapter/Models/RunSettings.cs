@@ -10,7 +10,7 @@ public class RunSettings
     /// <summary>
     ///     Gets the common run configuration used by vstest.
     /// </summary>
-    public RunConfiguration Configuration { get; init; } = new();
+    public RunConfiguration Configuration { get; private init; } = new();
 
     /// <summary>
     ///     Parses an XML string into a settings object.
