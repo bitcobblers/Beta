@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Xml.Linq;
-using Beta;
 using Beta.Internal.Discovery;
 using Beta.Internal.Execution;
 using Beta.Sdk.Interfaces;

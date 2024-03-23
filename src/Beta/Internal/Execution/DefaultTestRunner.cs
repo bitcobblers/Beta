@@ -1,5 +1,3 @@
-using Beta;
-using Beta.Internal;
 using Beta.Sdk.Abstractions;
 using Beta.Sdk.Interfaces;
 

@@ -1,5 +1,4 @@
 using System.Reflection;
-using Beta;
 using Beta.Sdk.Abstractions;
 using Beta.Sdk.Interfaces;
 
