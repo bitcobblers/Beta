@@ -3,6 +3,7 @@ using Beta;
 
 namespace mock_assembly;
 
+[PublicAPI]
 [ExcludeFromCodeCoverage]
 public class SampleTests : TestContainer
 {
