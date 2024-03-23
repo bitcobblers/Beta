@@ -14,7 +14,7 @@ public record BetaTestResult(Guid Id)
     /// <summary>
     ///     Gets the proof results associated with the test.
     /// </summary>
-    public List<ProofResult> Results { get; init; } = [];
+    public List<ProofResult> Results { get; } = [];
 
     /// <summary>
     ///     Gets the text output for the test.
