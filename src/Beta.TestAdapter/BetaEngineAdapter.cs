@@ -90,7 +90,7 @@ public sealed class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
             Id = Guid.Parse(fragment.Id),
             FullyQualifiedName = fqn,
             DisplayName = string.IsNullOrWhiteSpace(fragment.Input) ? fqn : $"{fqn}({fragment.Input})",
-            ExecutorUri = new Uri(VsTestDiscoverer.ExecutorUri),
+            ExecutorUri = new Uri(VsTestExecutor.ExecutorUri),
             Source = _assemblyPath,
             CodeFilePath = navData.FileName,
             LineNumber = navData.LineNumber
