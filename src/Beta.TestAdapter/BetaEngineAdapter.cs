@@ -25,7 +25,7 @@ public class BetaControllerNotFoundException(string message)
 /// <param name="logger">The internal logger to use.</param>
 public class BetaEngineAdapter(ITestLogger logger) : IDisposable
 {
-    private const string ControllerName = "Beta.Engine.BetaEngineController";
+    private const string ControllerName = "Beta.Internal.BetaEngineController";
 
     private readonly string _assemblyPath;
     private readonly Assembly _betaAssembly;
