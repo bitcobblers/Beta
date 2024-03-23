@@ -79,7 +79,7 @@ public class TestLogger(string scope, Stopwatch stopwatch, IMessageLogger? logge
             LogLevel.Info => TestMessageLevel.Informational,
             LogLevel.Warn => TestMessageLevel.Warning,
             LogLevel.Error => TestMessageLevel.Error,
-            var _ => TestMessageLevel.Informational
+            _ => TestMessageLevel.Informational
         };
     }
 

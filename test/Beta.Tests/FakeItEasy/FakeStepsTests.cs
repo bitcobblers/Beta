@@ -22,6 +22,7 @@ public class FakeStepsTests
 
     private class TestContainerWithFake : TestContainer
     {
+        // ReSharper disable once MemberCanBeMadeStatic.Local
         public Proof<string> TestWithFake()
         {
             return

@@ -39,12 +39,4 @@ public class BetaEngineController
             new XElement("className", test.TestClassName),
             new XElement("methodName", test.Method.Name),
             new XElement("input", test.Input ?? string.Empty));
-
-    public void Run()
-    {
-    }
-
-    public void Stop()
-    {
-    }
 }

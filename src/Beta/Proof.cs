@@ -12,7 +12,7 @@ public abstract class Proof
 
 public class Proof<T>(Task<T> actual) : Proof
 {
-    private readonly List<ProofHandler<T>> _handlers = new();
+    private readonly List<ProofHandler<T>> _handlers = [];
 
     public Proof(T given) : this(Task.FromResult(given))
     {
