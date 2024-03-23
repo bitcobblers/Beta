@@ -36,7 +36,7 @@ public class StepChainerTests
 
         // Act
         var result = step.SelectMany(
-            x => new Step<string>(() => "Hello"),
+            _ => new Step<string>(() => "Hello"),
             (x, y) => $"{x} {y}");
 
         // Assert

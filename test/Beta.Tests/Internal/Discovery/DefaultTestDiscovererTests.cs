@@ -42,6 +42,7 @@ public class DefaultTestDiscovererTests
 
     private class StubWithTest : TestContainer
     {
+        [UsedImplicitly]
         public BetaTest SingleTest()
         {
             return Test(() => new Proof<int>(42));

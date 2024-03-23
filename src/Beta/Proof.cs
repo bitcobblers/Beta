@@ -23,7 +23,7 @@ public class Proof<T>(Task<T> actual) : Proof
     {
         var actualValue = await actual.NoMarshal();
 
-        foreach (var handler in _handlers.TakeWhile(handler => !cancellationToken.IsCancellationRequested))
+        foreach (var handler in _handlers.TakeWhile(_ => !cancellationToken.IsCancellationRequested))
         {
             yield return handler(actualValue);
         }

@@ -7,9 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta.Internal;
 
+[PublicAPI]
 public class BetaEngineController
 {
-    private readonly IServiceProvider _serviceProvider;
     private readonly Assembly _testAssembly;
 
     private readonly ITestAssemblyExplorer _testAssemblyExplorer;
@@ -27,20 +27,18 @@ public class BetaEngineController
         serviceCollection.AddSingleton<ITestRunner, DefaultTestRunner>();
         serviceCollection.AddSingleton<ITestSuiteProcessor, TestContainerProcessor>();
 
-        _serviceProvider = serviceCollection.BuildServiceProvider();
+        var serviceProvider = serviceCollection.BuildServiceProvider();
         _testAssembly = testAssembly;
-        _testAssemblyExplorer = _serviceProvider.GetRequiredService<ITestAssemblyExplorer>();
+        _testAssemblyExplorer = serviceProvider.GetRequiredService<ITestAssemblyExplorer>();
     }
 
-    public IEnumerable<XElement> Query()
-    {
-        return from test in _testAssemblyExplorer.Explore(_testAssembly)
-               select new XElement("test",
-                   new XAttribute("id", test.Id),
-                   new XElement("className", test.TestClassName),
-                   new XElement("methodName", test.Method.Name),
-                   new XElement("input", test.Input ?? string.Empty));
-    }
+    public IEnumerable<XElement> Query() =>
+        from test in _testAssemblyExplorer.Explore(_testAssembly)
+        select new XElement("test",
+            new XAttribute("id", test.Id),
+            new XElement("className", test.TestClassName),
+            new XElement("methodName", test.Method.Name),
+            new XElement("input", test.Input ?? string.Empty));
 
     public void Run()
     {
