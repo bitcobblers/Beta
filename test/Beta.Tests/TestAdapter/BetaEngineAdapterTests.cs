@@ -1,4 +1,5 @@
 ﻿using Beta.TestAdapter;
+using Beta.TestAdapter.Exceptions;
 using mock_assembly;
 
 namespace Beta.Tests.TestAdapter;
