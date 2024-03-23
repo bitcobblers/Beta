@@ -23,7 +23,9 @@ public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> 
             let suite = new
             {
                 Instance = g.Key,
-                Tests = g.ToArray()
+                Tests = (from t in g
+                         where filter.Filter(t)
+                         select t).ToArray()
             }
             where suite.Tests.Length > 0
             select suite;
