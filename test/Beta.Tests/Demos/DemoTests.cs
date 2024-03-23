@@ -17,7 +17,7 @@ public class XUnitLogger(ITestOutputHelper output) : ILogger
 public class DemoTests(ITestOutputHelper output)
 {
     [Fact]
-    public async Task RunTestsFromType()
+    public Task RunTestsFromType()
     {
         var logger = new XUnitLogger(output);
 
@@ -29,6 +29,9 @@ public class DemoTests(ITestOutputHelper output)
 
         var runner = new DefaultTestRunner(logger, processors, A.Fake<ITestListener>());
 
-        await runner.Run(aggregator.Aggregate([typeof(CalculatorDemo)]), A.Fake<ITestFilter>(), CancellationToken.None);
+        return runner.Run(
+            aggregator.Aggregate([typeof(CalculatorDemo)]),
+            A.Fake<ITestFilter>(),
+            CancellationToken.None);
     }
 }
