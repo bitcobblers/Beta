@@ -27,7 +27,7 @@ public sealed class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
     private bool _disposed;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="EngineAdapter" /> class.
+    ///     Initializes a new instance of the <see cref="BetaEngineAdapter" /> class.
     /// </summary>
     /// <param name="assemblyPath">The path to the test assembly.</param>
     /// <param name="logger">The internal logger to use.</param>
@@ -51,7 +51,7 @@ public sealed class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="EngineAdapter" /> class.
+    ///     Initializes a new instance of the <see cref="BetaEngineAdapter" /> class.
     /// </summary>
     /// <param name="controllerInstance">The controller instance.</param>
     /// <param name="logger">The logger to use.</param>
@@ -105,7 +105,7 @@ public sealed class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
         Execute(ControllerMethods.Stop, []);
 
     /// <summary>
-    ///     Finalizes an instance of the <see cref="EngineAdapter" /> class.
+    ///     Finalizes an instance of the <see cref="BetaEngineAdapter" /> class.
     /// </summary>
     ~BetaEngineAdapter() => Dispose(false);
 
