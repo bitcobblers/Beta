@@ -1,10 +1,12 @@
 ﻿using System.Reflection;
 using System.Xml.Linq;
-using Beta.Discovery;
-using Beta.Execution;
+using Beta;
+using Beta.Internal.Discovery;
+using Beta.Internal.Execution;
+using Beta.Sdk.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Beta.Engine;
+namespace Beta.Internal;
 
 public class BetaEngineController
 {

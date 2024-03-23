@@ -1,4 +1,8 @@
-namespace Beta.Discovery;
+using Beta;
+using Beta.Sdk.Abstractions;
+using Beta.Sdk.Interfaces;
+
+namespace Beta.Internal.Discovery;
 
 /// <summary>
 ///     Defines the default test suite aggregator.

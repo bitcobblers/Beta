@@ -1,4 +1,4 @@
-namespace Beta.Execution;
+namespace Beta.Sdk.Interfaces;
 
 /// <summary>
 ///     Defines a processor that can do pre/post processing of a test class.

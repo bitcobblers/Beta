@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using Beta.Discovery;
+using Beta.Internal.Discovery;
+using Beta.Sdk.Abstractions;
+using Beta.Sdk.Interfaces;
 
-namespace Beta.Tests.Discovery;
+namespace Beta.Tests.Internal.Discovery;
 
 public class DefaultTestDiscovererTests
 {

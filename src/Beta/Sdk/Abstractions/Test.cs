@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Beta.Discovery;
+namespace Beta.Sdk.Abstractions;
 
 /// <summary>
 ///     Defines a single test that can be executed by the runner.

@@ -1,4 +1,4 @@
-namespace Beta.Execution;
+namespace Beta.Sdk.Interfaces;
 
 /// <summary>
 ///     Defines a filter for excluding tests from execution.

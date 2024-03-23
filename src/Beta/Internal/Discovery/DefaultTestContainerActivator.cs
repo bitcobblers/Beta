@@ -1,4 +1,6 @@
-namespace Beta.Discovery;
+using Beta.Sdk.Interfaces;
+
+namespace Beta.Internal.Discovery;
 
 /// <summary>
 ///     Defines an implementation of the test container activator that uses <see cref="Activator.CreateInstance(Type)" />.

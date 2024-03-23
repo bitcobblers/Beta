@@ -1,4 +1,6 @@
-namespace Beta.Execution;
+using Beta.Sdk.Abstractions;
+
+namespace Beta.Sdk.Interfaces;
 
 /// <summary>
 ///     Defines a listener used to receive test events.
