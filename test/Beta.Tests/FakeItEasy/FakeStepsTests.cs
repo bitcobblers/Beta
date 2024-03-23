@@ -1,4 +1,5 @@
-﻿using Beta.FakeItEasy;
+﻿using System.Diagnostics.CodeAnalysis;
+using Beta.FakeItEasy;
 
 namespace Beta.Tests.FakeItEasy;
 
@@ -20,6 +21,7 @@ public class FakeStepsTests
         result[0].Success.ShouldBeTrue();
     }
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     private class TestContainerWithFake : TestContainer
     {
         public Proof<string> TestWithFake()

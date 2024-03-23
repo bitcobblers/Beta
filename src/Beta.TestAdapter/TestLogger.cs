@@ -28,9 +28,6 @@ public class TestLogger(string scope, Stopwatch stopwatch, IMessageLogger? logge
     }
 
     /// <inheritdoc />
-    public int Verbosity => verbosity;
-
-    /// <inheritdoc />
     public string Scope => scope;
 
     /// <inheritdoc />
@@ -79,7 +76,7 @@ public class TestLogger(string scope, Stopwatch stopwatch, IMessageLogger? logge
             LogLevel.Info => TestMessageLevel.Informational,
             LogLevel.Warn => TestMessageLevel.Warning,
             LogLevel.Error => TestMessageLevel.Error,
-            var _ => TestMessageLevel.Informational
+            _ => TestMessageLevel.Informational
         };
     }
 
@@ -100,5 +97,5 @@ public class TestLogger(string scope, Stopwatch stopwatch, IMessageLogger? logge
 
     private string FormatScope(string newScope) => scope == "/" ? $"/{newScope}" : $"{scope}/{newScope}";
 
-    private bool ShouldLog(LogLevel level) => (int)level >= Verbosity;
+    private bool ShouldLog(LogLevel level) => (int)level >= verbosity;
 }

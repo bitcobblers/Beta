@@ -5,13 +5,24 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 
 namespace Beta.TestAdapter;
 
+/// <summary>
+///     Defines the discoverer for beta tests.
+/// </summary>
+/// <param name="getAdapter">An optional factory method to create adapters with.</param>
 [FileExtension(".dll")]
 [FileExtension(".exe")]
-[DefaultExecutorUri(ExecutorUri)]
+[DefaultExecutorUri(VsTestExecutor.ExecutorUri)]
 [Category("managed")]
-public class VsTestDiscoverer : VsTestAdapter, ITestDiscoverer
+public class VsTestDiscoverer(AdapterFactory? getAdapter) : VsTestAdapter(getAdapter), ITestDiscoverer
 {
-    public const string ExecutorUri = "executor://BetaTestExecutor/v1";
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="VsTestDiscoverer" /> class.
+    /// </summary>
+    [PublicAPI]
+    public VsTestDiscoverer() :
+        this(null)
+    {
+    }
 
     /// <inheritdoc />
     public void DiscoverTests(IEnumerable<string> sources,
@@ -28,7 +39,7 @@ public class VsTestDiscoverer : VsTestAdapter, ITestDiscoverer
                 ? source
                 : Path.Combine(Directory.GetCurrentDirectory(), source);
 
-            using var engineAdapter = new BetaEngineAdapter(assemblyPath, Logger);
+            using var engineAdapter = GetAdapter(assemblyPath);
 
             foreach (var testCase in engineAdapter.Query())
             {

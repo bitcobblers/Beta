@@ -4,9 +4,9 @@ using mock_assembly;
 
 namespace Beta.Tests.TestAdapter;
 
-public class BetaEngineAdapterTests
+public class EngineAdapterTests
 {
-    public class CtorMethod : BetaEngineAdapterTests
+    public class CtorMethod : EngineAdapterTests
     {
         [Fact]
         public void CanInit()
@@ -20,7 +20,7 @@ public class BetaEngineAdapterTests
         }
     }
 
-    public class MaybeThrowsMethod : BetaEngineAdapterTests
+    public class MaybeThrowsMethod : EngineAdapterTests
     {
         [Fact]
         public void ThrownExceptionWrappedAsBetaEngineLoadFailedException()
@@ -47,7 +47,7 @@ public class BetaEngineAdapterTests
         }
     }
 
-    public class ExecuteMethod : BetaEngineAdapterTests
+    public class ExecuteMethod : EngineAdapterTests
     {
         [Fact]
         public void CallsMethodOnControllerInstance()

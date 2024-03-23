@@ -6,11 +6,6 @@
 public interface ITestLogger
 {
     /// <summary>
-    ///     Gets the verbosity of the logger.
-    /// </summary>
-    int Verbosity { get; }
-
-    /// <summary>
     ///     Gets the scope of the logger.
     /// </summary>
     string Scope { get; }

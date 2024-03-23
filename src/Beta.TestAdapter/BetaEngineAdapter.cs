@@ -12,7 +12,7 @@ namespace Beta.TestAdapter;
 ///     Defines an adapter for calling the beta engine from the test assembly's referenced engine.
 /// </summary>
 /// <param name="logger">The internal logger to use.</param>
-public class BetaEngineAdapter(ITestLogger logger) : IDisposable
+public sealed class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
 {
     private const string ControllerName = "Beta.Internal.BetaEngineController";
 
@@ -72,15 +72,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    ///     Finalizes an instance of the <see cref="BetaEngineAdapter" /> class.
-    /// </summary>
-    ~BetaEngineAdapter() => Dispose(false);
-
-    /// <summary>
-    ///     Queries the controller for discovered tests.
-    /// </summary>
-    /// <returns>A collection of tests.</returns>
+    /// <inheritdoc />
     public IEnumerable<TestCase> Query() =>
         from test in (IEnumerable<XElement>)Execute(ControllerMethods.Query, [])!
         let fragment = new
@@ -98,29 +90,30 @@ public class BetaEngineAdapter(ITestLogger logger) : IDisposable
             Id = Guid.Parse(fragment.Id),
             FullyQualifiedName = fqn,
             DisplayName = string.IsNullOrWhiteSpace(fragment.Input) ? fqn : $"{fqn}({fragment.Input})",
-            ExecutorUri = new Uri(VsTestDiscoverer.ExecutorUri),
+            ExecutorUri = new Uri(VsTestExecutor.ExecutorUri),
             Source = _assemblyPath,
             CodeFilePath = navData.FileName,
             LineNumber = navData.LineNumber
         };
 
-    /// <summary>
-    ///     Instructs the controller to begin executing tests.
-    /// </summary>
+    /// <inheritdoc />
     public void Run() =>
         Execute(ControllerMethods.Run, []);
 
-    /// <summary>
-    ///     Instructs the controller to stop executing tests.
-    /// </summary>
+    /// <inheritdoc />
     public void Stop() =>
         Execute(ControllerMethods.Stop, []);
+
+    /// <summary>
+    ///     Finalizes an instance of the <see cref="BetaEngineAdapter" /> class.
+    /// </summary>
+    ~BetaEngineAdapter() => Dispose(false);
 
     /// <summary>
     ///     Disposes of any resources used by the adapter.
     /// </summary>
     /// <param name="disposing">True if the dispose method was called by user code.</param>
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (disposing && !_disposed)
         {

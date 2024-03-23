@@ -9,15 +9,18 @@ public record BetaTestResult(Guid Id)
     /// <summary>
     ///     Gets the outcome of the test.
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     public TestOutcome Outcome { get; init; }
 
     /// <summary>
     ///     Gets the proof results associated with the test.
     /// </summary>
-    public List<ProofResult> Results { get; init; } = [];
+    // ReSharper disable once CollectionNeverQueried.Global
+    public List<ProofResult> Results { get; } = [];
 
     /// <summary>
     ///     Gets the text output for the test.
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     public string Output { get; init; } = string.Empty;
 }

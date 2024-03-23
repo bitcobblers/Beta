@@ -1,4 +1,5 @@
-﻿using Beta.Shouldly.ShouldBe;
+﻿using System.Diagnostics.CodeAnalysis;
+using Beta.Shouldly.ShouldBe;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta.Tests.Demos;
@@ -39,10 +40,9 @@ public class CalculatorDemo : TestContainer
 
     private record Input(int A, int B, int Expected);
 
+    [SuppressMessage("Performance", "CA1822:Mark members as static")]
     public class Calculator
     {
         public int Add(int a, int b) => a + b;
-
-        public int Sub(int a, int b) => a - b;
     }
 }

@@ -14,7 +14,7 @@ public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> 
     : ITestRunner
 {
     /// <inheritdoc />
-    public async Task Run(IEnumerable<Test> tests, ITestFilter filter, CancellationToken cancellationToken)
+    public Task Run(IEnumerable<Test> tests, ITestFilter filter, CancellationToken cancellationToken)
     {
         var suites =
             from test in tests
@@ -23,12 +23,14 @@ public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> 
             let suite = new
             {
                 Instance = g.Key,
-                Tests = g.ToArray()
+                Tests = (from t in g
+                         where filter.Filter(t)
+                         select t).ToArray()
             }
             where suite.Tests.Length > 0
             select suite;
 
-        await Parallel.ForEachAsync(suites, cancellationToken, async (suite, token) =>
+        return Parallel.ForEachAsync(suites, cancellationToken, async (suite, token) =>
         {
             if (token.IsCancellationRequested)
             {

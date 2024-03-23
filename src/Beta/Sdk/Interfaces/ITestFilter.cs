@@ -1,3 +1,5 @@
+using Beta.Sdk.Abstractions;
+
 namespace Beta.Sdk.Interfaces;
 
 /// <summary>
@@ -10,5 +12,5 @@ public interface ITestFilter
     /// </summary>
     /// <param name="test">The test to check.</param>
     /// <returns>True if the test should be included in the execution.</returns>
-    bool Filter(BetaTest test);
+    bool Filter(Test test);
 }

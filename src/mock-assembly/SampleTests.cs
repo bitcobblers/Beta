@@ -1,7 +1,10 @@
-﻿using Beta;
+﻿using System.Diagnostics.CodeAnalysis;
+using Beta;
 
 namespace mock_assembly;
 
+[PublicAPI]
+[ExcludeFromCodeCoverage]
 public class SampleTests : TestContainer
 {
     public BetaTest SampleTest() =>
