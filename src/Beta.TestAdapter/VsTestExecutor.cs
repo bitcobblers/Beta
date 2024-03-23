@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 
@@ -22,25 +23,31 @@ public class VsTestExecutor(AdapterFactory? getAdapter) : VsTestAdapter(getAdapt
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public void RunTests(IEnumerable<TestCase>? tests,
                          IRunContext? runContext,
                          IFrameworkHandle? frameworkHandle)
     {
-        Reset(runContext, frameworkHandle);
-        PrintBanner();
+        // Reset(runContext, frameworkHandle);
+        // PrintBanner();
+        throw new NotImplementedException();
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public void RunTests(IEnumerable<string>? sources,
                          IRunContext? runContext,
                          IFrameworkHandle? frameworkHandle)
     {
-        Reset(runContext, frameworkHandle);
-        PrintBanner();
+        // Reset(runContext, frameworkHandle);
+        // PrintBanner();
+        throw new NotImplementedException();
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public void Cancel()
     {
+        throw new NotImplementedException();
     }
 }
