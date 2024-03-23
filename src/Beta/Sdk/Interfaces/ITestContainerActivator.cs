@@ -1,4 +1,4 @@
-namespace Beta.Discovery;
+namespace Beta.Sdk.Interfaces;
 
 /// <summary>
 ///     Defines a system used to create instances of test containers.

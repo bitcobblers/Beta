@@ -1,4 +1,6 @@
-namespace Beta.Execution;
+using Beta.Sdk.Interfaces;
+
+namespace Beta.Internal.Execution;
 
 /// <summary>
 ///     Defines the processor that can initialize a <see cref="TestContainer" /> instance.

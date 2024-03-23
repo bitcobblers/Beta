@@ -1,6 +1,7 @@
 using System.Reflection;
+using Beta.Sdk.Abstractions;
 
-namespace Beta.Discovery;
+namespace Beta.Sdk.Interfaces;
 
 /// <summary>
 ///     Defines a discoverer that can find tests in a given method.

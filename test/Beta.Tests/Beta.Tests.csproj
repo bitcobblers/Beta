@@ -29,4 +29,8 @@
         <Using Include="Shouldly" />
         <Using Include="Xunit" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Sdk\" />
+    </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
-using Beta.Discovery;
-using Beta.Internal;
+using Beta.Sdk.Abstractions;
+using Beta.Sdk.Interfaces;
 
-namespace Beta.Execution;
+namespace Beta.Internal.Execution;
 
 /// <summary>
 ///     Defines the default test runner.

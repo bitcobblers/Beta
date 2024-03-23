@@ -1,4 +1,6 @@
-namespace Beta.Discovery;
+using Beta.Sdk.Abstractions;
+
+namespace Beta.Sdk.Interfaces;
 
 /// <summary>
 ///     Defines an aggregator that can turn a collection of types into a flat list of tests.

@@ -1,6 +1,7 @@
 using System.Reflection;
+using Beta.Sdk.Abstractions;
 
-namespace Beta.Discovery;
+namespace Beta.Sdk.Interfaces;
 
 /// <summary>
 ///     Defines an interface used to explore an assembly for test suites.

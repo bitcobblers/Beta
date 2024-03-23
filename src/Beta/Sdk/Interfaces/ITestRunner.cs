@@ -1,6 +1,6 @@
-using Beta.Discovery;
+using Beta.Sdk.Abstractions;
 
-namespace Beta.Execution;
+namespace Beta.Sdk.Interfaces;
 
 /// <summary>
 ///     Defines a runner used to execute tests.

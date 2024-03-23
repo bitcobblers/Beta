@@ -1,23 +1,12 @@
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Xml.Linq;
+using Beta.TestAdapter.Exceptions;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
 namespace Beta.TestAdapter;
-
-public class BetaEngineLoadFailedException(string message, Exception innerException)
-    : Exception(message, innerException);
-
-public class BetaReferenceNotFoundException(string message)
-    : Exception(message);
-
-public class BetaControllerInstantiationFailed(string message)
-    : Exception(message);
-
-public class BetaControllerNotFoundException(string message)
-    : Exception(message);
 
 /// <summary>
 ///     Defines an adapter for calling the beta engine from the test assembly's referenced engine.
@@ -25,15 +14,15 @@ public class BetaControllerNotFoundException(string message)
 /// <param name="logger">The internal logger to use.</param>
 public class BetaEngineAdapter(ITestLogger logger) : IDisposable
 {
-    private const string ControllerName = "Beta.Engine.BetaEngineController";
+    private const string ControllerName = "Beta.Internal.BetaEngineController";
 
     private readonly string _assemblyPath;
     private readonly Assembly _betaAssembly;
     private readonly object _controllerInstance;
     private readonly Type _controllerType;
-    private readonly NavigationDataProvider _navigationDataProvider;
 
     private readonly AssemblyLoadContext _loadContext;
+    private readonly NavigationDataProvider _navigationDataProvider;
 
     private bool _disposed;
 
@@ -62,11 +51,6 @@ public class BetaEngineAdapter(ITestLogger logger) : IDisposable
     }
 
     /// <summary>
-    /// Finalizes an instance of the <see cref="BetaEngineAdapter"/> class.
-    /// </summary>
-    ~BetaEngineAdapter() => Dispose(false);
-
-    /// <summary>
     ///     Initializes a new instance of the <see cref="BetaEngineAdapter" /> class.
     /// </summary>
     /// <param name="controllerInstance">The controller instance.</param>
@@ -80,6 +64,18 @@ public class BetaEngineAdapter(ITestLogger logger) : IDisposable
         _controllerInstance = controllerInstance;
         _controllerType = controllerInstance.GetType();
     }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    ///     Finalizes an instance of the <see cref="BetaEngineAdapter" /> class.
+    /// </summary>
+    ~BetaEngineAdapter() => Dispose(false);
 
     /// <summary>
     ///     Queries the controller for discovered tests.
@@ -105,7 +101,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IDisposable
             ExecutorUri = new Uri(VsTestDiscoverer.ExecutorUri),
             Source = _assemblyPath,
             CodeFilePath = navData.FileName,
-            LineNumber = navData.LineNumber,
+            LineNumber = navData.LineNumber
         };
 
     /// <summary>
@@ -120,15 +116,8 @@ public class BetaEngineAdapter(ITestLogger logger) : IDisposable
     public void Stop() =>
         Execute(ControllerMethods.Stop, []);
 
-    /// <inheritdoc />
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
     /// <summary>
-    /// Disposes of any resources used by the adapter.
+    ///     Disposes of any resources used by the adapter.
     /// </summary>
     /// <param name="disposing">True if the dispose method was called by user code.</param>
     protected virtual void Dispose(bool disposing)
@@ -191,7 +180,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IDisposable
 
                 if (instance == null)
                 {
-                    throw new BetaControllerInstantiationFailed("Instantiation of controller returned null.");
+                    throw new BetaControllerInstantiationFailedException("Instantiation of controller returned null.");
                 }
 
                 return instance;

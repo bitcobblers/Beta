@@ -1,4 +1,4 @@
-namespace Beta.Execution;
+namespace Beta.Sdk.Abstractions;
 
 /// <summary>
 ///     Defines the outcome of a single test.
