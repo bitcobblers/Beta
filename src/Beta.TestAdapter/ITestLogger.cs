@@ -1,4 +1,6 @@
-﻿namespace Beta.TestAdapter;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Beta.TestAdapter;
 
 /// <summary>
 ///     Defines the various log levels.
@@ -33,6 +35,7 @@ public interface ITestLogger
     ///     Logs a debug message.
     /// </summary>
     /// <param name="message">The message to log.</param>
+    [ExcludeFromCodeCoverage]
     void Debug(string message) =>
         Log(LogLevel.Debug, message);
 
@@ -40,6 +43,7 @@ public interface ITestLogger
     ///     Logs an info message.
     /// </summary>
     /// <param name="message">The message to log.</param>
+    [ExcludeFromCodeCoverage]
     void Info(string message) =>
         Log(LogLevel.Info, message);
 
@@ -47,6 +51,7 @@ public interface ITestLogger
     ///     Logs a warning message.
     /// </summary>
     /// <param name="message">The message to log.</param>
+    [ExcludeFromCodeCoverage]
     void Warning(string message) =>
         Log(LogLevel.Warn, message);
 
@@ -55,6 +60,7 @@ public interface ITestLogger
     /// </summary>
     /// <param name="message">The message to log.</param>
     /// <param name="ex">The exception to log.</param>
+    [ExcludeFromCodeCoverage]
     void Warning(string message, Exception? ex) =>
         Log(LogLevel.Warn, message, ex);
 
@@ -62,6 +68,7 @@ public interface ITestLogger
     ///     Logs an error message.
     /// </summary>
     /// <param name="message">The message to log.</param>
+    [ExcludeFromCodeCoverage]
     void Error(string message) =>
         Log(LogLevel.Error, message);
 
@@ -70,6 +77,7 @@ public interface ITestLogger
     /// </summary>
     /// <param name="message">The message to log.</param>
     /// <param name="ex">The exception to log.</param>
+    [ExcludeFromCodeCoverage]
     void Error(string message, Exception? ex) =>
         Log(LogLevel.Error, message, ex);
 
