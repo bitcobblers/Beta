@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Beta.TestAdapter;
@@ -36,6 +37,7 @@ public class NavigationDataProvider : IDisposable
     /// <summary>
     ///     Finalizes an instance of the provider.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     ~NavigationDataProvider() => Dispose(false);
 
     /// <summary>
