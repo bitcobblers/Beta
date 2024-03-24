@@ -7,10 +7,9 @@ namespace Beta.Internal.Execution;
 ///     Defines the default test runner.
 /// </summary>
 /// <param name="logger">The internal logger to use.</param>
-/// <param name="processors">The suite processors to use.</param>
 /// <param name="listener">The test listener to use.</param>
 // ReSharper disable once ParameterTypeCanBeEnumerable.Local
-public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> processors, ITestListener listener)
+public class DefaultTestRunner(ILogger logger, ITestListener listener)
     : ITestRunner
 {
     /// <inheritdoc />

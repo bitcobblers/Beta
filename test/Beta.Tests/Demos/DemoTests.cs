@@ -26,9 +26,8 @@ public class DemoTests(ITestOutputHelper output)
         var testCaseDiscoverer = new DefaultTestCaseDiscoverer(activator);
         var discoverer = new DefaultTestDiscoverer(testCaseDiscoverer);
         var aggregator = new DefaultTestSuiteAggregator([discoverer]);
-        ITestSuiteProcessor[] processors = [new InitializeContainerProcessor()];
 
-        var runner = new DefaultTestRunner(logger, processors, A.Fake<ITestListener>());
+        var runner = new DefaultTestRunner(logger, A.Fake<ITestListener>());
 
         return runner.Run(
             aggregator.Aggregate([typeof(CalculatorDemo)]),
