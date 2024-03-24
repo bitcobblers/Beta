@@ -29,9 +29,8 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter) : VsTestAdapter(ge
                          IRunContext? runContext,
                          IFrameworkHandle? frameworkHandle)
     {
-        // Reset(runContext, frameworkHandle);
-        // PrintBanner();
-        throw new NotImplementedException();
+        Reset(runContext, frameworkHandle);
+        PrintBanner();
     }
 
     /// <inheritdoc />
@@ -40,15 +39,13 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter) : VsTestAdapter(ge
                          IRunContext? runContext,
                          IFrameworkHandle? frameworkHandle)
     {
-        // Reset(runContext, frameworkHandle);
-        // PrintBanner();
-        throw new NotImplementedException();
+        Reset(runContext, frameworkHandle);
+        PrintBanner();
     }
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
     public void Cancel()
     {
-        throw new NotImplementedException();
     }
 }
