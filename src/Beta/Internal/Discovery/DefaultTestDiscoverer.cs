@@ -13,7 +13,7 @@ public class DefaultTestDiscoverer(ITestCaseDiscoverer testCaseDiscoverer)
 {
     /// <inheritdoc />
     public bool IsSuite(Type type) =>
-        type.IsAssignableTo(typeof(TestContainer)) &&
+        type.IsAssignableTo(typeof(TestSuite.DI)) &&
         type.GetConstructor(BindingFlags.Public | BindingFlags.Instance, []) != null &&
         type.GetMethods().Any(IsTest);
 

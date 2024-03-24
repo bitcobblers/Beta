@@ -2,15 +2,15 @@
 
 namespace Beta.Tests;
 
-public class TestContainerTests
+public class TestSuiteTests
 {
-    public class PrepareMethod : TestContainerTests
+    public class PrepareMethod : TestSuiteTests
     {
         [Fact]
         public void DefinitivelyAssignsServicesProvider()
         {
             // Arrange
-            var container = new TestContainer();
+            var container = new TestSuite.DI();
 
             // Act
             container.Initialize();
@@ -34,7 +34,7 @@ public class TestContainerTests
 
         private class StubType;
 
-        private class StubThatRegistersService : TestContainer
+        private class StubThatRegistersService : TestSuite.DI
         {
             protected override void ConfigureServices(IServiceCollection services)
             {
@@ -43,7 +43,7 @@ public class TestContainerTests
         }
     }
 
-    public class RequireMethod : TestContainerTests
+    public class RequireMethod : TestSuiteTests
     {
         [Fact]
         public void CanResolveGenericType()
@@ -75,7 +75,7 @@ public class TestContainerTests
 
         private class StubType;
 
-        private class StubContainer : TestContainer
+        private class StubContainer : TestSuite.DI
         {
             protected override void ConfigureServices(IServiceCollection services)
             {

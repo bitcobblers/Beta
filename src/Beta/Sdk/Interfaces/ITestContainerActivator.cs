@@ -6,9 +6,9 @@ namespace Beta.Sdk.Interfaces;
 public interface ITestContainerActivator
 {
     /// <summary>
-    ///     Creates a new instance of a test container.
+    ///     Creates a new instance of a test suite.
     /// </summary>
-    /// <param name="type">The container type to create.</param>
-    /// <returns>A new instance of the test container.</returns>
+    /// <param name="type">The suite type to create.</param>
+    /// <returns>A new instance of the test suite.</returns>
     object Create(Type type);
 }

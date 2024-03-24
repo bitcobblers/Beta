@@ -3,7 +3,7 @@ using Beta.Sdk.Interfaces;
 namespace Beta.Internal.Discovery;
 
 /// <summary>
-///     Defines an implementation of the test container activator that uses <see cref="Activator.CreateInstance(Type)" />.
+///     Defines an implementation of the test suite activator that uses <see cref="Activator.CreateInstance(Type)" />.
 /// </summary>
 public class DefaultTestContainerActivator : ITestContainerActivator
 {

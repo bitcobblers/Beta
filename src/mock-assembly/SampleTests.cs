@@ -5,7 +5,7 @@ namespace mock_assembly;
 
 [PublicAPI]
 [ExcludeFromCodeCoverage]
-public class SampleTests : TestContainer
+public class SampleTests : TestSuite
 {
     public BetaTest SampleTest() =>
         Test(() =>

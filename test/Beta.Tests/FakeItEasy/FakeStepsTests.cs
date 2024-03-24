@@ -22,7 +22,7 @@ public class FakeStepsTests
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static")]
-    private class TestContainerWithFake : TestContainer
+    private class TestContainerWithFake : TestSuite
     {
         public Proof<string> TestWithFake()
         {
