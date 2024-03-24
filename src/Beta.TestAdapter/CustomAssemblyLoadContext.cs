@@ -6,14 +6,30 @@ namespace Beta.TestAdapter;
 /// <summary>
 ///     Defines a custom loading context for our test assemblies.
 /// </summary>
-/// <param name="assemblyLoadPath">The path to the test assembly to load.</param>
 /// <remarks>
-///     This class was ported from the NUnit source code.
+///     This class was largely ported from the NUnit source code.
+///     with some minor refactorings.
 /// </remarks>
-public class CustomAssemblyLoadContext(string assemblyLoadPath) : AssemblyLoadContext
+public class CustomAssemblyLoadContext : AssemblyLoadContext
 {
-    private readonly string _basePath = Path.GetDirectoryName(assemblyLoadPath)!;
-    private readonly AssemblyDependencyResolver _resolver = new(assemblyLoadPath);
+    private readonly string _basePath;
+    private readonly AssemblyDependencyResolver _resolver;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="CustomAssemblyLoadContext" /> class
+    /// </summary>
+    /// <param name="assemblyLoadPath">The path to the assembly to load.</param>
+    public CustomAssemblyLoadContext(string assemblyLoadPath)
+    {
+        _basePath = Path.GetDirectoryName(assemblyLoadPath)!;
+        _resolver = _resolver = new AssemblyDependencyResolver(assemblyLoadPath);
+
+        Resolving += (context, name) =>
+        {
+            var calc = context as CustomAssemblyLoadContext;
+            return calc?.LoadFallback(name);
+        };
+    }
 
     /// <inheritdoc />
     protected override Assembly? Load(AssemblyName assemblyName)
@@ -37,7 +53,7 @@ public class CustomAssemblyLoadContext(string assemblyLoadPath) : AssemblyLoadCo
     /// <returns>
     ///     The loaded assembly.
     /// </returns>
-    public Assembly? LoadFallback(AssemblyName name)
+    private Assembly? LoadFallback(AssemblyName name)
     {
         var assemblyPath = Path.Combine(_basePath, name.Name + ".dll");
 

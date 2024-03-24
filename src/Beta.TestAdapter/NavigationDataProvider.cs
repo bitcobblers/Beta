@@ -1,36 +1,31 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Beta.TestAdapter;
 
 /// <summary>
-/// Defines a navigation provider for inspecting the test assembly.
+///     Defines a navigation provider for inspecting the test assembly.
 /// </summary>
-/// <param name="assemblyPath">The path to the assembly to create the navigator for.</param>
-public class NavigationDataProvider(string assemblyPath) : IDisposable
+public class NavigationDataProvider : INavigationDataProvider
 {
-    private readonly DiaSession _session = new(assemblyPath);
+    private readonly DiaSession? _session;
     private bool _disposed;
 
     /// <summary>
-    /// Finalizes an instance of the provider.
+    ///     Initializes a new instance of the <see cref="NavigationDataProvider" /> class.
     /// </summary>
-    ~NavigationDataProvider() => Dispose(false);
-
-    /// <summary>
-    /// Gets the navigation data for a test method.
-    /// </summary>
-    /// <param name="className">The fully qualified name of the class that defined the test.</param>
-    /// <param name="methodName">The name of the test method.</param>
-    /// <returns>The navigation data for the test method, or null if not found.</returns>
-    public NavigationData? Get(string className, string methodName)
+    /// <param name="assemblyPath">The path to the assembly to create the navigator for.</param>
+    public NavigationDataProvider(string assemblyPath)
     {
-        var symbol = _session.GetNavigationDataForMethod(className, methodName);
-
-        return symbol == null
-            ? null
-            : new NavigationData(symbol.FileName!, symbol.MinLineNumber);
+        try
+        {
+            _session = new DiaSession(assemblyPath);
+        }
+        catch
+        {
+            // Ignore any exceptions loading the assembly.  Subsequent calls will return null.
+        }
     }
-
 
     /// <inheritdoc />
     public void Dispose()
@@ -39,11 +34,27 @@ public class NavigationDataProvider(string assemblyPath) : IDisposable
         GC.SuppressFinalize(this);
     }
 
+    /// <inheritdoc />
+    public NavigationData? Get(string className, string methodName)
+    {
+        var symbol = _session?.GetNavigationDataForMethod(className, methodName);
+
+        return symbol == null
+            ? null
+            : new NavigationData(symbol.FileName!, symbol.MinLineNumber);
+    }
+
+    /// <summary>
+    ///     Finalizes an instance of the provider.
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    ~NavigationDataProvider() => Dispose(false);
+
     private void Dispose(bool disposing)
     {
         if (disposing && !_disposed)
         {
-            _session.Dispose();
+            _session?.Dispose();
         }
 
         _disposed = true;

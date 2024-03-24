@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Beta.Sdk.Interfaces;
 
 namespace Beta.Internal.Execution;
@@ -12,6 +13,7 @@ public class TestContainerProcessor : ITestSuiteProcessor
         (instance as TestContainer)?.Initialize();
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public void PostProcess(object instance)
     {
     }

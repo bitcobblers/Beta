@@ -1,5 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
+using static Beta.TestAdapter.Factories;
 
 namespace Beta.TestAdapter;
 
@@ -8,7 +10,7 @@ namespace Beta.TestAdapter;
 /// </summary>
 /// <param name="getAdapter">An optional factory method to create adapters with.</param>
 [ExtensionUri(ExecutorUri)]
-public class VsTestExecutor(AdapterFactory? getAdapter) : VsTestAdapter(getAdapter), ITestExecutor
+public class VsTestExecutor(EngineAdapterFactory? getAdapter) : VsTestAdapter(getAdapter), ITestExecutor
 {
     public const string ExecutorUri = "executor://BetaTestExecutor/v1";
 
@@ -22,6 +24,7 @@ public class VsTestExecutor(AdapterFactory? getAdapter) : VsTestAdapter(getAdapt
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public void RunTests(IEnumerable<TestCase>? tests,
                          IRunContext? runContext,
                          IFrameworkHandle? frameworkHandle)
@@ -31,6 +34,7 @@ public class VsTestExecutor(AdapterFactory? getAdapter) : VsTestAdapter(getAdapt
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public void RunTests(IEnumerable<string>? sources,
                          IRunContext? runContext,
                          IFrameworkHandle? frameworkHandle)
@@ -40,6 +44,7 @@ public class VsTestExecutor(AdapterFactory? getAdapter) : VsTestAdapter(getAdapt
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public void Cancel()
     {
     }

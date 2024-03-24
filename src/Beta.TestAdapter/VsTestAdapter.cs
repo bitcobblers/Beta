@@ -1,27 +1,22 @@
 using Beta.TestAdapter.Models;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using static Beta.TestAdapter.Factories;
 
 namespace Beta.TestAdapter;
-
-/// <summary>
-///     Defines a factory method that can resolve an adapter to the engine for a given assembly.
-/// </summary>
-/// <param name="assemblyPath">The path to the assembly to create the adapter for.</param>
-public delegate IEngineAdapter AdapterFactory(string assemblyPath);
 
 /// <summary>
 ///     Defines the base class for a test adapter.
 /// </summary>
 public class VsTestAdapter
 {
-    private readonly AdapterFactory _adapterFactory;
+    private readonly EngineAdapterFactory _adapterFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="VsTestAdapter" /> class.
     /// </summary>
     /// <param name="getAdapter">An optional factory method to get a new adapter.</param>
-    internal VsTestAdapter(AdapterFactory? getAdapter)
+    internal VsTestAdapter(EngineAdapterFactory? getAdapter)
     {
         _adapterFactory = getAdapter ?? (path => new BetaEngineAdapter(path, Logger));
     }
