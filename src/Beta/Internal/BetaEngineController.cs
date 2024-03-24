@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
-using System.Xml.Linq;
+using Beta.Api;
+using Beta.Api.Contracts;
 using Beta.Internal.Discovery;
 using Beta.Internal.Execution;
 using Beta.Internal.Processors;
@@ -9,7 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Beta.Internal;
 
 [PublicAPI]
-public class BetaEngineController
+public class BetaEngineController : IEngineController
 {
     private readonly Assembly _testAssembly;
 
@@ -33,11 +34,13 @@ public class BetaEngineController
         _testAssemblyExplorer = serviceProvider.GetRequiredService<ITestAssemblyExplorer>();
     }
 
-    public IEnumerable<XElement> Query() =>
+    public IEnumerable<DiscoveredTest> Query() =>
         from test in _testAssemblyExplorer.Explore(_testAssembly)
-        select new XElement("test",
-            new XAttribute("id", test.Id),
-            new XElement("className", test.TestClassName),
-            new XElement("methodName", test.Method.Name),
-            new XElement("input", test.Input ?? string.Empty));
+        select new DiscoveredTest
+        {
+            ClassName = test.TestClassName,
+            MethodName = test.Method.Name,
+            Input = test.Input ?? string.Empty,
+            TestName = string.Empty
+        };
 }

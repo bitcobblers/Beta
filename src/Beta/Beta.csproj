@@ -9,4 +9,8 @@
     <ItemGroup>
         <InternalsVisibleTo Include="Beta.Tests" Key="$(BetaPublicKey)" />
     </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Beta.Api\Beta.Api.csproj" />
+    </ItemGroup>
 </Project>

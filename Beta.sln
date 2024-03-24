@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mock-assembly", "src\mock-a
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extensions", "extensions", "{C38E9E5B-E8B3-4015-A2CE-5B5FE9ABE2B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Beta.Api", "src\Beta.Api\Beta.Api.csproj", "{F23D0698-9ACF-4732-9D11-9E5695FFAD8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{F1B6F762-6C30-4307-AA27-E82842729E80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1B6F762-6C30-4307-AA27-E82842729E80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1B6F762-6C30-4307-AA27-E82842729E80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F23D0698-9ACF-4732-9D11-9E5695FFAD8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F23D0698-9ACF-4732-9D11-9E5695FFAD8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F23D0698-9ACF-4732-9D11-9E5695FFAD8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F23D0698-9ACF-4732-9D11-9E5695FFAD8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{E33B7854-05E6-449D-872C-9767B8B67F7B} = {A7B779DC-0CBE-4056-974C-1AE30F3BFB63}
 		{F1B6F762-6C30-4307-AA27-E82842729E80} = {E33B7854-05E6-449D-872C-9767B8B67F7B}
 		{C38E9E5B-E8B3-4015-A2CE-5B5FE9ABE2B2} = {A7B779DC-0CBE-4056-974C-1AE30F3BFB63}
+		{F23D0698-9ACF-4732-9D11-9E5695FFAD8B} = {A7B779DC-0CBE-4056-974C-1AE30F3BFB63}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {75514120-3808-42A3-A9F6-75B4A903FCCF}
