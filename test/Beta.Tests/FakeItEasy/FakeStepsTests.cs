@@ -11,7 +11,7 @@ public class FakeStepsTests
     public async Task CanCreateFakeWithExtensionMethod()
     {
         // Arrange.
-        var proof = new TestContainerWithFake().TestWithFake();
+        var proof = new TestSuiteWithFake().TestWithFake();
 
         // Act.
         var result = await proof.Test().ToListAsync();
@@ -22,7 +22,7 @@ public class FakeStepsTests
     }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static")]
-    private class TestContainerWithFake : TestSuite
+    private class TestSuiteWithFake : TestSuite
     {
         public Proof<string> TestWithFake()
         {

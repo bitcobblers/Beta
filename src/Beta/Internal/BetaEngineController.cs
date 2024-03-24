@@ -22,7 +22,7 @@ public class BetaEngineController
         // TODO: Replace static discovery with dynamic discovery.
         serviceCollection.AddSingleton<ITestAssemblyExplorer, DefaultTestAssemblyExplorer>();
         serviceCollection.AddSingleton<ITestCaseDiscoverer, DefaultTestCaseDiscoverer>();
-        serviceCollection.AddSingleton<ITestContainerActivator, DefaultTestContainerActivator>();
+        serviceCollection.AddSingleton<ITestSuiteActivator, DefaultTestSuiteActivator>();
         serviceCollection.AddSingleton<ITestDiscoverer, DefaultTestDiscoverer>();
         serviceCollection.AddSingleton<ITestSuiteAggregator, DefaultTestSuiteAggregator>();
         serviceCollection.AddSingleton<ITestRunner, DefaultTestRunner>();

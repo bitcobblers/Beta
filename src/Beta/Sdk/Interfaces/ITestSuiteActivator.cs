@@ -3,7 +3,7 @@ namespace Beta.Sdk.Interfaces;
 /// <summary>
 ///     Defines a system used to create instances of test containers.
 /// </summary>
-public interface ITestContainerActivator
+public interface ITestSuiteActivator
 {
     /// <summary>
     ///     Creates a new instance of a test suite.
