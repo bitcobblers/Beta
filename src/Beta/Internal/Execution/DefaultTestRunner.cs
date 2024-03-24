@@ -39,7 +39,7 @@ public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> 
 
             foreach (var test in suite.Tests)
             {
-                processors.ForEach(p => p.PreProcess(test.Instance));
+                test.Instance.PreProcessors.ForEach(p => p.Process(test.Instance));
                 var result = new BetaTestResult(test.Id);
                 var outcome = TestOutcome.Passed;
 
@@ -62,7 +62,7 @@ public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> 
                 }
                 finally
                 {
-                    processors.ForEach(p => p.PostProcess(test.Instance));
+                    test.Instance.PostProcessors.ForEach(p => p.Process(test.Instance));
                 }
             }
         });

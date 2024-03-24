@@ -1,4 +1,6 @@
 using System.Runtime.CompilerServices;
+using Beta.Internal.Processors;
+using Beta.Sdk.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta;
@@ -6,12 +8,48 @@ namespace Beta;
 /// <summary>
 ///     Defines the base suite class used for defining tests.
 /// </summary>
-public class TestSuite : IDisposable
+public class TestSuite
 {
-    /// <inheritdoc />
-#pragma warning disable CA1816
-    public virtual void Dispose()
-#pragma warning restore CA1816
+    private readonly List<ITestSuiteProcessor> _postprocessors = [];
+    private readonly List<ITestSuiteProcessor> _preprocessors = [];
+
+    /// <summary>
+    ///     Gets the collection of pre-processors to apply.
+    /// </summary>
+    public IEnumerable<ITestSuiteProcessor> PreProcessors => _preprocessors;
+
+    /// <summary>
+    ///     Gets the collection of post-processors to apply.
+    /// </summary>
+    public IEnumerable<ITestSuiteProcessor> PostProcessors => _postprocessors;
+
+    /// <summary>
+    ///     Registers a pre-processor to apply before test execution.
+    /// </summary>
+    /// <param name="processor">The processor to apply.</param>
+    protected void AddPreProcessor(ITestSuiteProcessor processor) =>
+        _preprocessors.Add(processor);
+
+    /// <summary>
+    ///     Registers a post-processor to apply after to test execution.
+    /// </summary>
+    /// <param name="processor">The processor to apply.</param>
+    protected void AddPostProcessor(ITestSuiteProcessor processor) =>
+        _postprocessors.Add(processor);
+
+    /// <summary>
+    ///     Allows optional setup code to execute just prior to a test.
+    /// </summary>
+    [PublicAPI]
+    protected virtual void Setup()
+    {
+    }
+
+    /// <summary>
+    ///     Allows optional teardown code to execute just after a test.
+    /// </summary>
+    [PublicAPI]
+    protected virtual void Teardown()
     {
     }
 
@@ -80,6 +118,17 @@ public class TestSuite : IDisposable
     /// </summary>
     public class DI : TestSuite
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TestSuite.DI" /> class.
+        /// </summary>
+        public DI()
+        {
+            AddPreProcessor(new InitializeContainerProcessor());
+        }
+
+        /// <summary>
+        ///     The underlying service provider.
+        /// </summary>
         internal IServiceProvider? ServicesProvider { get; private set; }
 
         /// <summary>
@@ -105,9 +154,19 @@ public class TestSuite : IDisposable
         {
         }
 
+        /// <summary>
+        ///     Creates a new step that resolves a service from the DI container.
+        /// </summary>
+        /// <typeparam name="T">The type of service to resolve.</typeparam>
+        /// <returns>A new step.</returns>
         protected Step<T> Require<T>() where T : notnull =>
             new(() => ServicesProvider!.GetRequiredService<T>());
 
+        /// <summary>
+        ///     Creates a new step that resolves a service from the DI container.
+        /// </summary>
+        /// <param name="type">The type of service to resolve.</param>
+        /// <returns>A new step.</returns>
         protected Step<object> Require(Type type) =>
             new(() => ServicesProvider!.GetRequiredService(type));
     }

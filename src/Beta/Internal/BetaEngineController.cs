@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using Beta.Internal.Discovery;
 using Beta.Internal.Execution;
+using Beta.Internal.Processors;
 using Beta.Sdk.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,7 +26,7 @@ public class BetaEngineController
         serviceCollection.AddSingleton<ITestDiscoverer, DefaultTestDiscoverer>();
         serviceCollection.AddSingleton<ITestSuiteAggregator, DefaultTestSuiteAggregator>();
         serviceCollection.AddSingleton<ITestRunner, DefaultTestRunner>();
-        serviceCollection.AddSingleton<ITestSuiteProcessor, TestContainerProcessor>();
+        serviceCollection.AddSingleton<ITestSuiteProcessor, InitializeContainerProcessor>();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         _testAssembly = testAssembly;

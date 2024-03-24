@@ -8,7 +8,7 @@ namespace Beta.Internal.Discovery;
 public class DefaultTestContainerActivator : ITestContainerActivator
 {
     /// <inheritdoc />
-    public object Create(Type type) =>
-        Activator.CreateInstance(type) ??
+    public TestSuite Create(Type type) =>
+        Activator.CreateInstance(type) as TestSuite ??
         throw new TestContainerActivationFailedException("Activator.CreateInstance() returned null.");
 }

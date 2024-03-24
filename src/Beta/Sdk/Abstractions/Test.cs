@@ -5,7 +5,7 @@ namespace Beta.Sdk.Abstractions;
 /// <summary>
 ///     Defines a single test that can be executed by the runner.
 /// </summary>
-public record Test(object Instance, MethodInfo Method, Func<Proof> Apply)
+public record Test(TestSuite Instance, MethodInfo Method, Func<Proof> Apply)
 {
     /// <summary>
     ///     Gets the id of the test.
