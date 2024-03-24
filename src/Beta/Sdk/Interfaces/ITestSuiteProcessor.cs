@@ -6,13 +6,7 @@ namespace Beta.Sdk.Interfaces;
 public interface ITestSuiteProcessor
 {
     /// <summary>
-    ///     Applies the pre-processor.
+    ///     Applies the processor.
     /// </summary>
-    void PreProcess(object instance);
-
-    /// <summary>
-    ///     Applies the post-processor.
-    /// </summary>
-    /// <param name="instance"></param>
-    void PostProcess(object instance);
+    void Process(TestSuite instance);
 }

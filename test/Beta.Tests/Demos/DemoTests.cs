@@ -1,5 +1,6 @@
 ﻿using Beta.Internal.Discovery;
 using Beta.Internal.Execution;
+using Beta.Internal.Processors;
 using Beta.Sdk.Interfaces;
 using Xunit.Abstractions;
 
@@ -21,13 +22,12 @@ public class DemoTests(ITestOutputHelper output)
     {
         var logger = new XUnitLogger(output);
 
-        var activator = new DefaultTestContainerActivator();
+        var activator = new DefaultTestSuiteActivator();
         var testCaseDiscoverer = new DefaultTestCaseDiscoverer(activator);
         var discoverer = new DefaultTestDiscoverer(testCaseDiscoverer);
         var aggregator = new DefaultTestSuiteAggregator([discoverer]);
-        ITestSuiteProcessor[] processors = [new TestContainerProcessor()];
 
-        var runner = new DefaultTestRunner(logger, processors, A.Fake<ITestListener>());
+        var runner = new DefaultTestRunner(logger, A.Fake<ITestListener>());
 
         return runner.Run(
             aggregator.Aggregate([typeof(CalculatorDemo)]),

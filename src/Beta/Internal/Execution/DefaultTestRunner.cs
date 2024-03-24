@@ -7,10 +7,9 @@ namespace Beta.Internal.Execution;
 ///     Defines the default test runner.
 /// </summary>
 /// <param name="logger">The internal logger to use.</param>
-/// <param name="processors">The suite processors to use.</param>
 /// <param name="listener">The test listener to use.</param>
 // ReSharper disable once ParameterTypeCanBeEnumerable.Local
-public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> processors, ITestListener listener)
+public class DefaultTestRunner(ILogger logger, ITestListener listener)
     : ITestRunner
 {
     /// <inheritdoc />
@@ -39,7 +38,7 @@ public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> 
 
             foreach (var test in suite.Tests)
             {
-                processors.ForEach(p => p.PreProcess(test.Instance));
+                test.Instance.PreProcessors.ForEach(p => p.Process(test.Instance));
                 var result = new BetaTestResult(test.Id);
                 var outcome = TestOutcome.Passed;
 
@@ -62,7 +61,7 @@ public class DefaultTestRunner(ILogger logger, IEnumerable<ITestSuiteProcessor> 
                 }
                 finally
                 {
-                    processors.ForEach(p => p.PostProcess(test.Instance));
+                    test.Instance.PostProcessors.ForEach(p => p.Process(test.Instance));
                 }
             }
         });

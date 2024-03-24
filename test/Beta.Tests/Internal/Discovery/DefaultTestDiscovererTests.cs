@@ -40,7 +40,7 @@ public class DefaultTestDiscovererTests
         tests.ShouldBeEmpty();
     }
 
-    private class StubWithTest : TestContainer
+    private class StubWithTest : TestSuite
     {
         [UsedImplicitly]
         public BetaTest SingleTest()
@@ -49,7 +49,7 @@ public class DefaultTestDiscovererTests
         }
     }
 
-    private class StubWithNoTests : TestContainer
+    private class StubWithNoTests : TestSuite
     {
         [UsedImplicitly]
         [SuppressMessage("Performance", "CA1822:Mark members as static")]

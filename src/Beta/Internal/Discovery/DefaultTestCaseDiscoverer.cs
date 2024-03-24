@@ -8,7 +8,7 @@ namespace Beta.Internal.Discovery;
 ///     Defines the default test case discoverer.
 /// </summary>
 /// <param name="activator"></param>
-public class DefaultTestCaseDiscoverer(ITestContainerActivator activator) : ITestCaseDiscoverer
+public class DefaultTestCaseDiscoverer(ITestSuiteActivator activator) : ITestCaseDiscoverer
 {
     /// <inheritdoc />
     public IEnumerable<Test> Discover(MethodInfo method)
@@ -19,19 +19,13 @@ public class DefaultTestCaseDiscoverer(ITestContainerActivator activator) : ITes
         if (test.Input != null)
         {
             return from input in test.Input
-                   let testCaseInstance = activator.Create(method.DeclaringType!)
+                   let testCaseInstance = activator.Create(method.DeclaringType!) as TestSuite
+                   where testCaseInstance is not null
                    let testCase = (BetaTest)method.Invoke(testCaseInstance, [])!
                    select new Test(testCaseInstance, method, () => testCase.Apply(input))
                    {
                        Input = input.ToString() // TODO: Use a better way to serialize this.
                    };
-            // {
-            //     TestClassName = method.DeclaringType!.FullName!,
-            //     Instance = testCaseInstance,
-            //     Method = method,
-            //     Input = string.Empty, // <-- Need to serialize from input
-            //     Apply = () => testCase.Apply(input)
-            // };
         }
 
         return new[]

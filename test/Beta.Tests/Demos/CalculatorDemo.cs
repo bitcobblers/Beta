@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Beta.Tests.Demos;
 
 [PublicAPI]
-public class CalculatorDemo : TestContainer
+public class CalculatorDemo : TestSuite.DI
 {
     private static IEnumerable<Input> AdditionInput
     {

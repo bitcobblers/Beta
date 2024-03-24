@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using Beta.Internal.Discovery;
 using Beta.Internal.Execution;
+using Beta.Internal.Processors;
 using Beta.Sdk.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,11 +22,11 @@ public class BetaEngineController
         // TODO: Replace static discovery with dynamic discovery.
         serviceCollection.AddSingleton<ITestAssemblyExplorer, DefaultTestAssemblyExplorer>();
         serviceCollection.AddSingleton<ITestCaseDiscoverer, DefaultTestCaseDiscoverer>();
-        serviceCollection.AddSingleton<ITestContainerActivator, DefaultTestContainerActivator>();
+        serviceCollection.AddSingleton<ITestSuiteActivator, DefaultTestSuiteActivator>();
         serviceCollection.AddSingleton<ITestDiscoverer, DefaultTestDiscoverer>();
         serviceCollection.AddSingleton<ITestSuiteAggregator, DefaultTestSuiteAggregator>();
         serviceCollection.AddSingleton<ITestRunner, DefaultTestRunner>();
-        serviceCollection.AddSingleton<ITestSuiteProcessor, TestContainerProcessor>();
+        serviceCollection.AddSingleton<ITestSuiteProcessor, InitializeContainerProcessor>();
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
         _testAssembly = testAssembly;
