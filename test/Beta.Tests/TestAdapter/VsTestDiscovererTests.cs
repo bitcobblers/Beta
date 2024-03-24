@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using static Beta.TestAdapter.Factories;
 
 namespace Beta.Tests.TestAdapter;
 
@@ -15,7 +16,7 @@ public class VsTestDiscovererTests
         var logger = A.Fake<IMessageLogger>();
         var sink = A.Fake<ITestCaseDiscoverySink>();
         var adapter = A.Fake<IEngineAdapter>();
-        var factory = new AdapterFactory(_ => adapter);
+        var factory = new EngineAdapterFactory(_ => adapter);
 
         A.CallTo(() => adapter.Query())
          .Returns([A.Dummy<TestCase>()]);

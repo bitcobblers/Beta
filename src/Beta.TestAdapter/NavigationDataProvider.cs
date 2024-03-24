@@ -6,7 +6,7 @@ namespace Beta.TestAdapter;
 /// <summary>
 ///     Defines a navigation provider for inspecting the test assembly.
 /// </summary>
-public class NavigationDataProvider : IDisposable
+public class NavigationDataProvider : INavigationDataProvider
 {
     private readonly DiaSession? _session;
     private bool _disposed;
@@ -34,18 +34,7 @@ public class NavigationDataProvider : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    ///     Finalizes an instance of the provider.
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    ~NavigationDataProvider() => Dispose(false);
-
-    /// <summary>
-    ///     Gets the navigation data for a test method.
-    /// </summary>
-    /// <param name="className">The fully qualified name of the class that defined the test.</param>
-    /// <param name="methodName">The name of the test method.</param>
-    /// <returns>The navigation data for the test method, or null if not found.</returns>
+    /// <inheritdoc />
     public NavigationData? Get(string className, string methodName)
     {
         var symbol = _session?.GetNavigationDataForMethod(className, methodName);
@@ -54,6 +43,12 @@ public class NavigationDataProvider : IDisposable
             ? null
             : new NavigationData(symbol.FileName!, symbol.MinLineNumber);
     }
+
+    /// <summary>
+    ///     Finalizes an instance of the provider.
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    ~NavigationDataProvider() => Dispose(false);
 
     private void Dispose(bool disposing)
     {

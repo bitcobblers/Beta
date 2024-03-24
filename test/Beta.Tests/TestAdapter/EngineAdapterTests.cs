@@ -1,4 +1,6 @@
-﻿using Beta.TestAdapter;
+﻿using System.Reflection;
+using System.Runtime.Loader;
+using Beta.TestAdapter;
 using Beta.TestAdapter.Exceptions;
 using mock_assembly;
 
@@ -55,7 +57,9 @@ public class EngineAdapterTests
             // Arrange.
             var logger = A.Fake<ITestLogger>();
             var controllerInstance = A.Fake<IStub>();
-            var adapter = new BetaEngineAdapter(controllerInstance, logger);
+
+            // using var adapter = new BetaEngineAdapter(controllerInstance, logger);
+            using var adapter = new FakeBetaEngineAdapter(controllerInstance);
 
             // Act.
             adapter.Execute(nameof(IStub.Method), [1, "two"]);
@@ -68,6 +72,26 @@ public class EngineAdapterTests
         public interface IStub
         {
             void Method(int i, string s);
+        }
+
+        public class FakeBetaEngineAdapter(object controllerInstance) :
+            BetaEngineAdapter(
+                "assembly-path",
+                A.Fake<ITestLogger>(),
+                _ => A.Fake<AssemblyLoadContext>(),
+                _ => A.Fake<INavigationDataProvider>())
+        {
+            /// <inheritdoc />
+            protected override Assembly LoadTestAssembly(string assemblyPath) =>
+                A.Dummy<Assembly>();
+
+            /// <inheritdoc />
+            protected override Assembly LoadBetaAssembly(Assembly assembly) =>
+                A.Dummy<Assembly>();
+
+            /// <inheritdoc />
+            protected override object CreateController(string typeName, object[] args) =>
+                controllerInstance;
         }
     }
 }

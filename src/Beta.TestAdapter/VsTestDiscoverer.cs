@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
+using static Beta.TestAdapter.Factories;
 
 namespace Beta.TestAdapter;
 
@@ -13,7 +14,7 @@ namespace Beta.TestAdapter;
 [FileExtension(".exe")]
 [DefaultExecutorUri(VsTestExecutor.ExecutorUri)]
 [Category("managed")]
-public class VsTestDiscoverer(AdapterFactory? getAdapter) : VsTestAdapter(getAdapter), ITestDiscoverer
+public class VsTestDiscoverer(EngineAdapterFactory? getAdapter) : VsTestAdapter(getAdapter), ITestDiscoverer
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="VsTestDiscoverer" /> class.
