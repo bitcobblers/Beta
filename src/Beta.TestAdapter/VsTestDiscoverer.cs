@@ -40,9 +40,17 @@ public class VsTestDiscoverer(EngineAdapterFactory? getAdapter) : VsTestAdapter(
                 ? source
                 : Path.Combine(Directory.GetCurrentDirectory(), source);
 
-            using var engineAdapter = GetAdapter(assemblyPath);
+            var engineAdapter = GetAdapter(assemblyPath);
+            var engine = engineAdapter.GetController();
 
-            foreach (var testCase in engineAdapter.Query())
+            if (engine == null)
+            {
+                Logger.Error($"Failed to get controller for [{assemblyPath}].");
+                continue;
+            }
+
+            foreach (var testCase in from test in engine.Query()
+                                     select ToTestCase(test))
             {
                 Logger.Debug($"Discovered test [{testCase.DisplayName}].");
                 discoverySink.SendTestCase(testCase);

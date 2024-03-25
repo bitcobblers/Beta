@@ -1,4 +1,5 @@
 using Beta.TestAdapter.Models;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using static Beta.TestAdapter.Factories;
@@ -57,4 +58,15 @@ public class VsTestAdapter
     {
         Logger.Info($"Target Framework Version: {Settings.Configuration.TargetFrameworkVersion}");
     }
+
+    protected static TestCase ToTestCase(DiscoveredTest discoveredTest) =>
+        new(discoveredTest.ClassName,
+            new Uri(VsTestExecutor.ExecutorUri),
+            "ignored")
+        {
+            FullyQualifiedName = $"{discoveredTest.ClassName}.{discoveredTest.MethodName}",
+            DisplayName = discoveredTest.MethodName,
+            CodeFilePath = "ignored",
+            LineNumber = 0
+        };
 }

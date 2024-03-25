@@ -1,4 +1,5 @@
 ﻿using Beta.TestAdapter;
+using Beta.TestAdapter.Models;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
@@ -17,9 +18,21 @@ public class VsTestDiscovererTests
         var sink = A.Fake<ITestCaseDiscoverySink>();
         var adapter = A.Fake<IEngineAdapter>();
         var factory = new EngineAdapterFactory(_ => adapter);
+        var engine = A.Fake<IEngineController>();
 
-        A.CallTo(() => adapter.Query())
-         .Returns([A.Dummy<TestCase>()]);
+        A.CallTo(() => adapter.GetController())
+         .Returns(engine);
+
+        A.CallTo(() => engine.Query())
+         .Returns([
+             new DiscoveredTest
+             {
+                 ClassName = "SomeClass",
+                 MethodName = "SomeMethod",
+                 Input = string.Empty,
+                 TestName = "Some Test"
+             }
+         ]);
 
         var discoverer = new VsTestDiscoverer(factory);
 

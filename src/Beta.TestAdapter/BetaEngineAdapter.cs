@@ -1,9 +1,6 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Xml.Linq;
 using Beta.TestAdapter.Exceptions;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using static Beta.TestAdapter.Factories;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -19,14 +16,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
     private const string ControllerName = "Beta.Internal.BetaEngineController";
 
     private readonly string _assemblyPath;
-    private readonly Assembly _betaAssembly;
-    private readonly object _controllerInstance;
-    private readonly Type _controllerType;
-
     private readonly AssemblyLoadContext _loadContext;
-    private readonly INavigationDataProvider _navigationDataProvider;
-
-    private bool _disposed;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BetaEngineAdapter" /> class.
@@ -37,8 +27,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
         : this(
             assemblyPath,
             logger,
-            p => new CustomAssemblyLoadContext(p),
-            p => new NavigationDataProvider(p))
+            p => new CustomAssemblyLoadContext(p))
     {
     }
 
@@ -48,94 +37,60 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
     /// <param name="assemblyPath">The path to the test assembly.</param>
     /// <param name="logger">The internal logger to use.</param>
     /// <param name="loadContextFactory">The factory method to create a new loader context.</param>
-    /// <param name="navigationDataProviderFactory">The factory method to create a new navigation provider.</param>
-    [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
     protected BetaEngineAdapter(string assemblyPath,
                                 ITestLogger logger,
-                                GetLoadContextFactory loadContextFactory,
-                                NavigationDataProviderFactory navigationDataProviderFactory)
+                                GetLoadContextFactory loadContextFactory)
         : this(logger)
     {
         _assemblyPath = Path.GetFullPath(assemblyPath);
         _loadContext = loadContextFactory(_assemblyPath);
-        _navigationDataProvider = navigationDataProviderFactory(_assemblyPath);
-
-        // TODO: restructure this so that there are no virtual member calls.
-        var testAssembly = LoadTestAssembly(_assemblyPath);
-        _betaAssembly = LoadBetaAssembly(testAssembly);
-        _controllerInstance = CreateController(ControllerName, [testAssembly]);
-        _controllerType = _controllerInstance.GetType();
     }
 
     /// <inheritdoc />
-    public void Dispose()
+    public IEngineController? GetController()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+        var testAssembly = LoadTestAssembly();
 
-    /// <inheritdoc />
-    public IEnumerable<TestCase> Query() =>
-        from test in (IEnumerable<XElement>)Execute(ControllerMethods.Query, [])!
-        let fragment = new
+        if (testAssembly == null)
         {
-            Id = test.Attribute("id")?.Value!,
-            ClassName = test.Element("className")?.Value!,
-            MethodName = test.Element("methodName")?.Value!,
-            Input = test.Element("input")?.Value!
-        }
-        let fqn = $"{fragment.ClassName}.{fragment.MethodName}"
-        let navData = _navigationDataProvider.Get(fragment.ClassName, fragment.MethodName)
-        where navData is not null
-        select new TestCase
-        {
-            Id = Guid.Parse(fragment.Id),
-            FullyQualifiedName = fqn,
-            DisplayName = string.IsNullOrWhiteSpace(fragment.Input) ? fqn : $"{fqn}({fragment.Input})",
-            ExecutorUri = new Uri(VsTestExecutor.ExecutorUri),
-            Source = _assemblyPath,
-            CodeFilePath = navData.FileName,
-            LineNumber = navData.LineNumber
-        };
-
-    /// <inheritdoc />
-    public void Run() =>
-        Execute(ControllerMethods.Run, []);
-
-    /// <inheritdoc />
-    public void Stop() =>
-        Execute(ControllerMethods.Stop, []);
-
-    /// <summary>
-    ///     Finalizes an instance of the <see cref="BetaEngineAdapter" /> class.
-    /// </summary>
-    ~BetaEngineAdapter() => Dispose(false);
-
-    /// <summary>
-    ///     Disposes of any resources used by the adapter.
-    /// </summary>
-    /// <param name="disposing">True if the dispose method was called by user code.</param>
-    private void Dispose(bool disposing)
-    {
-        if (disposing && !_disposed)
-        {
-            // TODO: is this needed?
-            // _loadContext.Unload();
-
-            _navigationDataProvider.Dispose();
+            return null;
         }
 
-        _disposed = true;
+        var betaAssembly = LoadBetaAssembly(testAssembly);
+
+        if (betaAssembly == null)
+        {
+            return null;
+        }
+
+        var controllerInstance = CreateController(ControllerName, betaAssembly, [testAssembly]);
+
+        return controllerInstance == null
+            ? null
+            : new WrappedEngineController(controllerInstance);
     }
 
-    protected virtual Assembly LoadTestAssembly(string assemblyPath) =>
+    /// <summary>
+    ///     Uses the context to load the test assembly.
+    /// </summary>
+    /// <returns>
+    ///     The loaded test assembly.
+    /// </returns>
+    protected virtual Assembly? LoadTestAssembly() =>
         MaybeThrows(
             logger,
-            $"Loading test assembly: {assemblyPath}",
-            () => _loadContext.LoadFromAssemblyPath(assemblyPath),
+            $"Loading test assembly: {_assemblyPath}",
+            () => _loadContext.LoadFromAssemblyPath(_assemblyPath),
             "Unable to load test assembly: {0}");
 
-    protected virtual Assembly LoadBetaAssembly(Assembly assembly) =>
+    /// <summary>
+    ///     Gets the beta assembly as a reference from the test assembly.
+    /// </summary>
+    /// <param name="assembly">The test assembly to get the beta reference from.</param>
+    /// <returns>
+    ///     A reference to the beta assembly.
+    /// </returns>
+    protected virtual Assembly? LoadBetaAssembly(Assembly assembly) =>
         MaybeThrows(
             logger,
             "Loading beta assembly.",
@@ -146,10 +101,13 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
                      where reference.Name == "Beta"
                      select reference).FirstOrDefault();
 
-                return betaRef == null
-                    ? throw new BetaReferenceNotFoundException(
-                        $"Could not find reference to Beta assembly in {assembly.FullName}")
-                    : _loadContext.LoadFromAssemblyName(betaRef);
+                if (betaRef != null)
+                {
+                    return _loadContext.LoadFromAssemblyName(betaRef);
+                }
+
+                logger.Error($"Could not find reference to Beta assembly in {assembly.FullName}");
+                return null;
             },
             "Unable to load beta assembly: {0}");
 
@@ -157,48 +115,38 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
     ///     Creates a new instance of the controller.
     /// </summary>
     /// <param name="typeName">The fully qualified name of the controller.</param>
+    /// <param name="betaAssembly">The beta assembly to load the controller from.</param>
     /// <param name="args">The arguments to pass to the controller.</param>
     /// <returns>An instance to the controller.</returns>
     /// <exception cref="BetaEngineLoadFailedException">Thrown if unable to create the controller.</exception>
-    protected virtual object CreateController(string typeName, object[] args) =>
+    protected virtual object? CreateController(string typeName, Assembly betaAssembly, object[] args) =>
         MaybeThrows(
             logger,
             "Creating controller instance.",
             () =>
             {
-                var type = _betaAssembly.DefinedTypes.FirstOrDefault(t => t.FullName == typeName);
+                var type = betaAssembly.DefinedTypes.FirstOrDefault(t => t.FullName == typeName);
 
                 if (type == null)
                 {
-                    throw new BetaControllerNotFoundException("Unable to find type {typeName} in Beta assembly.");
+                    logger.Error($"Unable to find type {typeName} in Beta assembly.");
+                    return null;
                 }
 
                 var instance = Activator.CreateInstance(type, args);
 
-                if (instance == null)
+                if (instance != null)
                 {
-                    throw new BetaControllerInstantiationFailedException("Instantiation of controller returned null.");
+                    return instance;
                 }
 
-                return instance;
+                logger.Error("Instantiation of controller returned null.");
+                return null;
             },
             "Unable to create controller instance: {0}");
 
     /// <summary>
-    ///     Executes a method against the controller.
-    /// </summary>
-    /// <param name="methodName">The name of the method to execute.</param>
-    /// <param name="args">The arguments to pass into the method.</param>
-    /// <returns>The result of the method (if any).</returns>
-    internal object? Execute(string methodName, object[] args) =>
-        MaybeThrows(
-            logger,
-            $"Executing method {methodName}.",
-            () => _controllerType.GetMethod(methodName)?.Invoke(_controllerInstance, args),
-            "Unable to execute method {methodName}: {0}");
-
-    /// <summary>
-    ///     Utility method to execute code and trap/wrap exceptions.
+    ///     Utility method to execute code and trap/log exceptions.
     /// </summary>
     /// <param name="logger">The logger to use.</param>
     /// <param name="message">The debug message to log before performing the action.</param>
@@ -207,7 +155,8 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
     /// <typeparam name="T">The type to return.</typeparam>
     /// <returns>The result of the action.</returns>
     /// <exception cref="BetaEngineLoadFailedException">Wraps any exception that is thrown by the block.</exception>
-    internal static T MaybeThrows<T>(ITestLogger logger, string message, Func<T> getValue, string formattedMessage)
+    internal static T? MaybeThrows<T>(ITestLogger logger, string message, Func<T> getValue, string formattedMessage)
+        where T : class?
     {
         logger.Debug(message);
 
@@ -219,28 +168,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
         {
             var errorMessage = string.Format(formattedMessage, ex.Message);
             logger.Error(errorMessage);
-            throw new BetaEngineLoadFailedException(errorMessage, ex);
+            return null;
         }
-    }
-
-    /// <summary>
-    ///     Defines the methods that can be called on the controller.
-    /// </summary>
-    private static class ControllerMethods
-    {
-        /// <summary>
-        ///     Queries for discovered tests.
-        /// </summary>
-        public const string Query = "Query";
-
-        /// <summary>
-        ///     Runs the tests in the assembly.
-        /// </summary>
-        public const string Run = "Run";
-
-        /// <summary>
-        ///     Stops the current test execution.
-        /// </summary>
-        public const string Stop = "Stop";
     }
 }

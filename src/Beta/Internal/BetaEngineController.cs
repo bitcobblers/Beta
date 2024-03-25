@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
-using Beta.Api;
-using Beta.Api.Contracts;
+using System.Text.Json;
 using Beta.Internal.Discovery;
 using Beta.Internal.Execution;
 using Beta.Internal.Processors;
@@ -10,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Beta.Internal;
 
 [PublicAPI]
-public class BetaEngineController : IEngineController
+public class BetaEngineController
 {
     private readonly Assembly _testAssembly;
 
@@ -34,13 +33,13 @@ public class BetaEngineController : IEngineController
         _testAssemblyExplorer = serviceProvider.GetRequiredService<ITestAssemblyExplorer>();
     }
 
-    public IEnumerable<DiscoveredTest> Query() =>
+    public IEnumerable<string> Query() =>
         from test in _testAssemblyExplorer.Explore(_testAssembly)
-        select new DiscoveredTest
+        select JsonSerializer.Serialize(new DiscoveredTest
         {
             ClassName = test.TestClassName,
             MethodName = test.Method.Name,
             Input = test.Input ?? string.Empty,
             TestName = string.Empty
-        };
+        });
 }
