@@ -7,13 +7,10 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.TestPlatform.ObjectModel" />
+        <PackageReference Include="System.Text.Json" />
     </ItemGroup>
 
     <ItemGroup>
         <InternalsVisibleTo Include="Beta.Tests" Key="$(BetaPublicKey)" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Beta.Api\Beta.Api.csproj" />
     </ItemGroup>
 </Project>
