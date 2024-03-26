@@ -14,14 +14,15 @@ namespace Beta.TestAdapter;
 [FileExtension(".exe")]
 [DefaultExecutorUri(VsTestExecutor.ExecutorUri)]
 [Category("managed")]
-public class VsTestDiscoverer(EngineAdapterFactory? getAdapter) : VsTestAdapter(getAdapter), ITestDiscoverer
+public class VsTestDiscoverer(EngineAdapterFactory? getAdapter, NavigationDataProviderFactory? getNavigation)
+    : VsTestAdapter(getAdapter, getNavigation), ITestDiscoverer
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="VsTestDiscoverer" /> class.
     /// </summary>
     [PublicAPI]
     public VsTestDiscoverer() :
-        this(null)
+        this(null, null)
     {
     }
 
@@ -42,6 +43,7 @@ public class VsTestDiscoverer(EngineAdapterFactory? getAdapter) : VsTestAdapter(
 
             var engineAdapter = GetAdapter(assemblyPath);
             var engine = engineAdapter.GetController();
+            using var navigation = GetNavigation(assemblyPath);
 
             if (engine == null)
             {

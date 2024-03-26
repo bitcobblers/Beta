@@ -17,7 +17,9 @@ public class VsTestDiscovererTests
         var logger = A.Fake<IMessageLogger>();
         var sink = A.Fake<ITestCaseDiscoverySink>();
         var adapter = A.Fake<IEngineAdapter>();
-        var factory = new EngineAdapterFactory(_ => adapter);
+        var engineFactory = new EngineAdapterFactory(_ => adapter);
+        var navigationFactory = new NavigationDataProviderFactory(_ => A.Fake<INavigationDataProvider>());
+
         var engine = A.Fake<IEngineController>();
 
         A.CallTo(() => adapter.GetController())
@@ -34,7 +36,7 @@ public class VsTestDiscovererTests
              }
          ]);
 
-        var discoverer = new VsTestDiscoverer(factory);
+        var discoverer = new VsTestDiscoverer(engineFactory, navigationFactory);
 
         // Act.
         discoverer.DiscoverTests(["test.dll"], context, logger, sink);
