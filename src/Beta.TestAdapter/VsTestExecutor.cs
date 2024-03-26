@@ -10,7 +10,8 @@ namespace Beta.TestAdapter;
 /// </summary>
 /// <param name="getAdapter">An optional factory method to create adapters with.</param>
 [ExtensionUri(ExecutorUri)]
-public class VsTestExecutor(EngineAdapterFactory? getAdapter) : VsTestAdapter(getAdapter), ITestExecutor
+public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProviderFactory? getNavigation)
+    : VsTestAdapter(getAdapter, getNavigation), ITestExecutor
 {
     public const string ExecutorUri = "executor://BetaTestExecutor/v1";
 
@@ -19,7 +20,7 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter) : VsTestAdapter(ge
     /// </summary>
     [PublicAPI]
     public VsTestExecutor() :
-        this(null)
+        this(null, null)
     {
     }
 

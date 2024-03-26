@@ -14,14 +14,15 @@ namespace Beta.TestAdapter;
 [FileExtension(".exe")]
 [DefaultExecutorUri(VsTestExecutor.ExecutorUri)]
 [Category("managed")]
-public class VsTestDiscoverer(EngineAdapterFactory? getAdapter) : VsTestAdapter(getAdapter), ITestDiscoverer
+public class VsTestDiscoverer(EngineAdapterFactory? getAdapter, NavigationDataProviderFactory? getNavigation)
+    : VsTestAdapter(getAdapter, getNavigation), ITestDiscoverer
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="VsTestDiscoverer" /> class.
     /// </summary>
     [PublicAPI]
     public VsTestDiscoverer() :
-        this(null)
+        this(null, null)
     {
     }
 
@@ -40,9 +41,18 @@ public class VsTestDiscoverer(EngineAdapterFactory? getAdapter) : VsTestAdapter(
                 ? source
                 : Path.Combine(Directory.GetCurrentDirectory(), source);
 
-            using var engineAdapter = GetAdapter(assemblyPath);
+            var engineAdapter = GetAdapter(assemblyPath);
+            var engine = engineAdapter.GetController();
+            using var navigation = GetNavigation(assemblyPath);
 
-            foreach (var testCase in engineAdapter.Query())
+            if (engine == null)
+            {
+                Logger.Error($"Failed to get controller for [{assemblyPath}].");
+                continue;
+            }
+
+            foreach (var testCase in from test in engine.Query()
+                                     select ToTestCase(test))
             {
                 Logger.Debug($"Discovered test [{testCase.DisplayName}].");
                 discoverySink.SendTestCase(testCase);

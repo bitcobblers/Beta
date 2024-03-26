@@ -1,4 +1,5 @@
 using Beta.TestAdapter.Models;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using static Beta.TestAdapter.Factories;
@@ -11,14 +12,17 @@ namespace Beta.TestAdapter;
 public class VsTestAdapter
 {
     private readonly EngineAdapterFactory _adapterFactory;
+    private readonly NavigationDataProviderFactory _navigationFactory;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="VsTestAdapter" /> class.
     /// </summary>
     /// <param name="getAdapter">An optional factory method to get a new adapter.</param>
-    internal VsTestAdapter(EngineAdapterFactory? getAdapter)
+    /// <param name="getNavigation">An optional factory method to get a new data navigator.</param>
+    internal VsTestAdapter(EngineAdapterFactory? getAdapter, NavigationDataProviderFactory? getNavigation)
     {
         _adapterFactory = getAdapter ?? (path => new BetaEngineAdapter(path, Logger));
+        _navigationFactory = getNavigation ?? (path => new NavigationDataProvider(path));
     }
 
     /// <summary>
@@ -51,10 +55,29 @@ public class VsTestAdapter
         _adapterFactory(assemblyPath);
 
     /// <summary>
+    ///     Gets the navigation data provider for the given assembly path.
+    /// </summary>
+    /// <param name="assemblyPath">The path to the assembly to read.</param>
+    /// <returns>A new navigation provider for the assembly.</returns>
+    protected INavigationDataProvider GetNavigation(string assemblyPath) =>
+        _navigationFactory(assemblyPath);
+
+    /// <summary>
     ///     Prints the current banner.
     /// </summary>
     protected void PrintBanner()
     {
         Logger.Info($"Target Framework Version: {Settings.Configuration.TargetFrameworkVersion}");
     }
+
+    protected static TestCase ToTestCase(DiscoveredTest discoveredTest) =>
+        new(discoveredTest.ClassName,
+            new Uri(VsTestExecutor.ExecutorUri),
+            "ignored")
+        {
+            FullyQualifiedName = $"{discoveredTest.ClassName}.{discoveredTest.MethodName}",
+            DisplayName = discoveredTest.MethodName,
+            CodeFilePath = "ignored",
+            LineNumber = 0
+        };
 }

@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using System.Xml.Linq;
+using System.Text.Json;
 using Beta.Internal.Discovery;
 using Beta.Internal.Execution;
 using Beta.Internal.Processors;
@@ -33,11 +33,13 @@ public class BetaEngineController
         _testAssemblyExplorer = serviceProvider.GetRequiredService<ITestAssemblyExplorer>();
     }
 
-    public IEnumerable<XElement> Query() =>
+    public IEnumerable<string> Query() =>
         from test in _testAssemblyExplorer.Explore(_testAssembly)
-        select new XElement("test",
-            new XAttribute("id", test.Id),
-            new XElement("className", test.TestClassName),
-            new XElement("methodName", test.Method.Name),
-            new XElement("input", test.Input ?? string.Empty));
+        select JsonSerializer.Serialize(new DiscoveredTest
+        {
+            ClassName = test.TestClassName,
+            MethodName = test.Method.Name,
+            Input = test.Input ?? string.Empty,
+            TestName = string.Empty
+        });
 }

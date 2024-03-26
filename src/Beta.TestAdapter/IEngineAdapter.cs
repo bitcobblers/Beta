@@ -1,25 +1,13 @@
-﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-
-namespace Beta.TestAdapter;
+﻿namespace Beta.TestAdapter;
 
 /// <summary>
 ///     Defines an adapter for the execution engine.
 /// </summary>
-public interface IEngineAdapter : IDisposable
+public interface IEngineAdapter
 {
     /// <summary>
-    ///     Queries the controller for discovered tests.
+    ///     Gets an instance to the underlying controller.
     /// </summary>
-    /// <returns>A collection of tests.</returns>
-    IEnumerable<TestCase> Query();
-
-    /// <summary>
-    ///     Instructs the controller to begin executing tests.
-    /// </summary>
-    void Run();
-
-    /// <summary>
-    ///     Instructs the controller to stop executing tests.
-    /// </summary>
-    void Stop();
+    /// <returns>An instance to the underlying controller.</returns>
+    IEngineController? GetController();
 }
