@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Runtime.Loader;
-using Beta.TestAdapter.Exceptions;
 using static Beta.TestAdapter.Factories;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -118,7 +117,6 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
     /// <param name="betaAssembly">The beta assembly to load the controller from.</param>
     /// <param name="args">The arguments to pass to the controller.</param>
     /// <returns>An instance to the controller.</returns>
-    /// <exception cref="BetaEngineLoadFailedException">Thrown if unable to create the controller.</exception>
     protected virtual object? CreateController(string typeName, Assembly betaAssembly, object[] args) =>
         MaybeThrows(
             logger,
@@ -154,7 +152,6 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
     /// <param name="formattedMessage">A formatted error message if an exception is thrown.</param>
     /// <typeparam name="T">The type to return.</typeparam>
     /// <returns>The result of the action.</returns>
-    /// <exception cref="BetaEngineLoadFailedException">Wraps any exception that is thrown by the block.</exception>
     internal static T? MaybeThrows<T>(ITestLogger logger, string message, Func<T> getValue, string formattedMessage)
         where T : class?
     {
