@@ -24,6 +24,7 @@ public class FakeStepsTests
     [SuppressMessage("Performance", "CA1822:Mark members as static")]
     private class TestSuiteWithFake : TestSuite
     {
+        // ReSharper disable once MemberCanBeMadeStatic.Local
         public Proof<string> TestWithFake()
         {
             return

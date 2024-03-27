@@ -8,7 +8,6 @@ namespace Beta.Internal.Execution;
 /// </summary>
 /// <param name="logger">The internal logger to use.</param>
 /// <param name="listener">The test listener to use.</param>
-// ReSharper disable once ParameterTypeCanBeEnumerable.Local
 public class DefaultTestRunner(ILogger logger, ITestListener listener)
     : ITestRunner
 {
@@ -44,12 +43,11 @@ public class DefaultTestRunner(ILogger logger, ITestListener listener)
 
                 try
                 {
-                    //await RunTest(test, cancellationToken);
                     await foreach (var proofResult in test.Apply().Test(cancellationToken))
                     {
                         result.Results.Add(proofResult);
                         listener.OnUpdate(result.Id, proofResult);
-                        logger.Log(proofResult.ToString());
+                        logger.Debug(proofResult.ToString());
 
                         if (proofResult.Success == false)
                         {
