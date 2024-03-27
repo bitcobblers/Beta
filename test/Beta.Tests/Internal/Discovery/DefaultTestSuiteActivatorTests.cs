@@ -1,33 +1,42 @@
 ﻿using Beta.Internal.Discovery;
+using Xunit.Abstractions;
 
 namespace Beta.Tests.Internal.Discovery;
 
-public class DefaultTestSuiteActivatorTests
+public class DefaultTestSuiteActivatorTests(ITestOutputHelper output)
 {
+    private readonly XUnitLogger _logger = new(output);
+
     [Fact]
-    public void ThrowsTestSuiteActivationFailedExceptionWhenActivatorReturnsNonTestSuite()
+    public void ReturnsNullWhenActivatorReturnsNonTestSuite()
     {
         // Arrange.
-        var activator = new DefaultTestSuiteActivator();
+        var activator = new DefaultTestSuiteActivator(_logger);
+
+        // Act.
+        var result = activator.Create(typeof(NonTestSuite));
 
         // Assert.
-        Assert.Throws<TestSuiteActivationFailedException>(() =>
-            activator.Create(typeof(DefaultTestSuiteActivatorTests)));
+        result.ShouldBeNull();
     }
 
     [Fact]
-    public void ThrowsTestSuiteActivationFailedExceptionWhenActivatorReturnsNull()
+    public void ReturnsNullWhenActivatorReturnsNull()
     {
         // Arrange.
-        var activator = new DefaultTestSuiteActivator();
+        var activator = new DefaultTestSuiteActivator(_logger);
+
+        // Act.
+        var result = activator.Create(typeof(TestSuiteThatThrowsException));
 
         // Assert.
-        Assert.Throws<TestSuiteActivationFailedException>(() =>
-            activator.Create(typeof(TestSuiteThatThrowsException)));
+        result.ShouldBeNull();
     }
 
     private class TestSuiteThatThrowsException : TestSuite
     {
         public TestSuiteThatThrowsException() => throw new Exception("I failed");
     }
+
+    private class NonTestSuite;
 }

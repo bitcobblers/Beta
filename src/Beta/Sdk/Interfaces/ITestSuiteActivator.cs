@@ -10,5 +10,5 @@ public interface ITestSuiteActivator
     /// </summary>
     /// <param name="type">The suite type to create.</param>
     /// <returns>A new instance of the test suite.</returns>
-    TestSuite Create(Type type);
+    TestSuite? Create(Type type);
 }

@@ -5,33 +5,40 @@ namespace Beta.Internal.Discovery;
 /// <summary>
 ///     Defines an implementation of the test suite activator that uses <see cref="Activator.CreateInstance(Type)" />.
 /// </summary>
-public class DefaultTestSuiteActivator : ITestSuiteActivator
+public class DefaultTestSuiteActivator(ILogger logger) : ITestSuiteActivator
 {
     /// <inheritdoc />
-    public TestSuite Create(Type type)
+    public TestSuite? Create(Type type)
     {
         object? suite;
 
         try
         {
+            logger.Debug($"Suite activator creating an instance of type {type.FullName}");
             suite = Activator.CreateInstance(type);
         }
         catch (Exception ex)
         {
-            throw new TestSuiteActivationFailedException("Activator.CreateInstance() threw an exception.", ex);
+            // The activator will wrap the exception with its own.
+            if (ex.InnerException is not null)
+            {
+                ex = ex.InnerException;
+            }
+
+            logger.Error("Suite activator threw an exception.", ex);
+            return null;
         }
 
-        if (suite is null)
+        switch (suite)
         {
-            throw new TestSuiteActivationFailedException("Activator.CreateInstance() returned null.");
+            case TestSuite testSuite:
+                return testSuite;
+            case null:
+                logger.Error("Suite activator returned null");
+                return null;
+            default:
+                logger.Error($"Suite activator returned a type that is not assignable to {nameof(TestSuite)}.");
+                return null;
         }
-
-        if (suite is not TestSuite testSuite)
-        {
-            throw new TestSuiteActivationFailedException(
-                "Activator returned a type that is not assignable to TestSuite.");
-        }
-
-        return testSuite;
     }
 }

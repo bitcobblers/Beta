@@ -13,6 +13,11 @@ public record Test(TestSuite Instance, MethodInfo Method, Func<Proof> Apply)
     public Guid Id { get; } = Guid.NewGuid();
 
     /// <summary>
+    ///     Gets the friendly name of the test.
+    /// </summary>
+    public string FriendlyName { get; init; } = string.Empty;
+
+    /// <summary>
     ///     gets the fully qualified name of the test class.
     /// </summary>
     public string TestClassName { get; } = Method.DeclaringType!.FullName!;

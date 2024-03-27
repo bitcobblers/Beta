@@ -63,21 +63,29 @@ public class VsTestAdapter
         _navigationFactory(assemblyPath);
 
     /// <summary>
-    ///     Prints the current banner.
+    ///     Converts a discovered test from the controller into a <see cref="TestCase" /> usable by vstest.
     /// </summary>
-    protected void PrintBanner()
+    /// <param name="discoveredTest">The discovered test.</param>
+    /// <param name="source">The path to the source assembly the test came from.</param>
+    /// <param name="navData">The navigation data used to resolve metadata from.</param>
+    /// <returns>The converted <see cref="TestCase" />.</returns>
+    protected static TestCase ToTestCase(
+        DiscoveredTest discoveredTest,
+        string source,
+        INavigationDataProvider navData)
     {
-        Logger.Info($"Target Framework Version: {Settings.Configuration.TargetFrameworkVersion}");
-    }
+        var sourceInformation = navData.Get(discoveredTest.ClassName, discoveredTest.MethodName);
 
-    protected static TestCase ToTestCase(DiscoveredTest discoveredTest) =>
-        new(discoveredTest.ClassName,
+        return new TestCase(
+            discoveredTest.ClassName,
             new Uri(VsTestExecutor.ExecutorUri),
-            "ignored")
+            source)
         {
+            Id = Guid.NewGuid(),
             FullyQualifiedName = $"{discoveredTest.ClassName}.{discoveredTest.MethodName}",
-            DisplayName = discoveredTest.MethodName,
-            CodeFilePath = "ignored",
-            LineNumber = 0
+            DisplayName = "",
+            CodeFilePath = sourceInformation?.FileName,
+            LineNumber = sourceInformation?.LineNumber ?? 1
         };
+    }
 }

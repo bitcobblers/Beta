@@ -31,7 +31,6 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProv
                          IFrameworkHandle? frameworkHandle)
     {
         Reset(runContext, frameworkHandle);
-        PrintBanner();
     }
 
     /// <inheritdoc />
@@ -41,7 +40,6 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProv
                          IFrameworkHandle? frameworkHandle)
     {
         Reset(runContext, frameworkHandle);
-        PrintBanner();
     }
 
     /// <inheritdoc />

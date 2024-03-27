@@ -33,7 +33,6 @@ public class VsTestDiscoverer(EngineAdapterFactory? getAdapter, NavigationDataPr
                               ITestCaseDiscoverySink discoverySink)
     {
         Reset(discoveryContext, logger);
-        PrintBanner();
 
         foreach (var source in sources)
         {
@@ -52,7 +51,8 @@ public class VsTestDiscoverer(EngineAdapterFactory? getAdapter, NavigationDataPr
             }
 
             foreach (var testCase in from test in engine.Query()
-                                     select ToTestCase(test))
+                                         // ReSharper disable once AccessToDisposedClosure
+                                     select ToTestCase(test, source, navigation))
             {
                 Logger.Debug($"Discovered test [{testCase.DisplayName}].");
                 discoverySink.SendTestCase(testCase);
