@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Beta.Internal;
 
+/// <summary>
+///     Defines a controller that the adapter can invoke to perform test-related functions.
+/// </summary>
 [PublicAPI]
 public class BetaEngineController
 {
@@ -17,6 +20,11 @@ public class BetaEngineController
     private readonly Assembly? _testAssembly;
     private readonly ITestAssemblyExplorer? _testAssemblyExplorer;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="BetaEngineController" /> class.
+    /// </summary>
+    /// <param name="testAssembly">The assembly to scan for tests in.</param>
+    /// <param name="log">The logger callback to use.</param>
     public BetaEngineController(Assembly testAssembly, Action<int, string, Exception?> log)
     {
         _logger = new InternalLogger(log);
@@ -51,7 +59,26 @@ public class BetaEngineController
         }
     }
 
-    private T ExecuteIfInitialized<T>(
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="BetaEngineController" /> class.
+    /// </summary>
+    /// <param name="isInitialized">True if the controller should be marked as initialized.</param>
+    /// <param name="logger">The logger to use.</param>
+    /// <param name="testAssembly">The assembly to scan for tests in.</param>
+    /// <param name="testAssemblyExplorer">The assembly explorer implementation to use.</param>
+    /// <remarks>
+    ///     This constructor is only meant for unit testing.
+    /// </remarks>
+    internal BetaEngineController(bool isInitialized, ILogger logger, Assembly? testAssembly,
+                                  ITestAssemblyExplorer? testAssemblyExplorer)
+    {
+        _isInitialized = isInitialized;
+        _logger = logger;
+        _testAssembly = testAssembly;
+        _testAssemblyExplorer = testAssemblyExplorer;
+    }
+
+    internal T ExecuteIfInitialized<T>(
         T defaultValue,
         Func<T> func,
         [CallerMemberName] string caller = "")
@@ -74,6 +101,10 @@ public class BetaEngineController
         }
     }
 
+    /// <summary>
+    ///     Queries the test assembly for all tests.
+    /// </summary>
+    /// <returns>A collection of discovered tests encoded in XML.</returns>
     public IEnumerable<string> Query() =>
         ExecuteIfInitialized([], () =>
             from test in _testAssemblyExplorer!.Explore(_testAssembly!)
