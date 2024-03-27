@@ -19,7 +19,7 @@ public class DefaultTestCaseDiscoverer(ITestSuiteActivator activator) : ITestCas
         if (test.Input != null)
         {
             return from input in test.Input
-                   let testCaseInstance = activator.Create(method.DeclaringType!) as TestSuite
+                   let testCaseInstance = activator.Create(method.DeclaringType!)
                    where testCaseInstance is not null
                    let testCase = (BetaTest)method.Invoke(testCaseInstance, [])!
                    select new Test(testCaseInstance, method, () => testCase.Apply(input))

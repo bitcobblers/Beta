@@ -16,6 +16,7 @@ public enum LogLevel
 /// <summary>
 ///     Defines an internal logger interface for use by the runner.
 /// </summary>
+[PublicAPI]
 public interface ITestLogger
 {
     /// <summary>

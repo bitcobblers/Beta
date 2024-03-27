@@ -8,6 +8,7 @@ namespace Beta;
 /// <summary>
 ///     Defines the base suite class used for defining tests.
 /// </summary>
+[PublicAPI]
 public class TestSuite
 {
     private readonly List<ITestSuiteProcessor> _postprocessors = [];

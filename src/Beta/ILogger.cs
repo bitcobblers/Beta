@@ -1,4 +1,6 @@
-﻿namespace Beta;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Beta;
 
 /// <summary>
 ///     Defines a logger that can be used for internal messages.
@@ -10,6 +12,7 @@ public interface ILogger
     ///     Writes a debug message.
     /// </summary>
     /// <param name="message">The debug message to write.</param>
+    [ExcludeFromCodeCoverage]
     void Debug(string message) =>
         Log(Level.Debug, message);
 
@@ -17,6 +20,7 @@ public interface ILogger
     ///     Write an info message.
     /// </summary>
     /// <param name="message">The info message to write.</param>
+    [ExcludeFromCodeCoverage]
     void Info(string message) =>
         Log(Level.Info, message);
 
@@ -24,6 +28,7 @@ public interface ILogger
     ///     Writes a warning message.
     /// </summary>
     /// <param name="message">The warning message to write.</param>
+    [ExcludeFromCodeCoverage]
     void Warn(string message) =>
         Warn(message, null);
 
@@ -32,6 +37,7 @@ public interface ILogger
     /// </summary>
     /// <param name="message">The message to write.</param>
     /// <param name="ex">An optional exception to write.</param>
+    [ExcludeFromCodeCoverage]
     void Warn(string message, Exception? ex) =>
         Log(Level.Warn, message, ex);
 
@@ -39,6 +45,7 @@ public interface ILogger
     ///     Writes an error message.
     /// </summary>
     /// <param name="message">The error message to write.</param>
+    [ExcludeFromCodeCoverage]
     void Error(string message) =>
         Error(message, null);
 
@@ -47,6 +54,7 @@ public interface ILogger
     /// </summary>
     /// <param name="message">The error message to write.</param>
     /// <param name="ex">The optional exception to write.</param>
+    [ExcludeFromCodeCoverage]
     void Error(string message, Exception? ex) =>
         Log(Level.Error, message, ex);
 
