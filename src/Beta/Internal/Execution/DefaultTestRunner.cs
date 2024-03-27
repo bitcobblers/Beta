@@ -8,7 +8,6 @@ namespace Beta.Internal.Execution;
 /// </summary>
 /// <param name="logger">The internal logger to use.</param>
 /// <param name="listener">The test listener to use.</param>
-// ReSharper disable once ParameterTypeCanBeEnumerable.Local
 public class DefaultTestRunner(ILogger logger, ITestListener listener)
     : ITestRunner
 {
