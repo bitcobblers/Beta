@@ -62,7 +62,8 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
             return null;
         }
 
-        var controllerInstance = CreateController(ControllerName, betaAssembly, [testAssembly]);
+        var logMethod = GetFrameworkLogger(logger.CreateScope("framework"));
+        var controllerInstance = CreateController(ControllerName, betaAssembly, [testAssembly, logMethod]);
 
         return controllerInstance == null
             ? null
@@ -142,6 +143,21 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
                 return null;
             },
             "Unable to create controller instance: {0}");
+
+    private static Action<int, string, Exception?> GetFrameworkLogger(ITestLogger logger) =>
+        (level, message, ex) =>
+        {
+            var logLevel = level switch
+            {
+                0 => LogLevel.Debug,
+                1 => LogLevel.Info,
+                2 => LogLevel.Warn,
+                3 => LogLevel.Error,
+                _ => LogLevel.Info
+            };
+
+            logger.Log(logLevel, message, ex);
+        };
 
     /// <summary>
     ///     Utility method to execute code and trap/log exceptions.

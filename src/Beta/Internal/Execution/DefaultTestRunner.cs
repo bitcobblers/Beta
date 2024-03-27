@@ -44,12 +44,11 @@ public class DefaultTestRunner(ILogger logger, ITestListener listener)
 
                 try
                 {
-                    //await RunTest(test, cancellationToken);
                     await foreach (var proofResult in test.Apply().Test(cancellationToken))
                     {
                         result.Results.Add(proofResult);
                         listener.OnUpdate(result.Id, proofResult);
-                        logger.Log(proofResult.ToString());
+                        logger.Debug(proofResult.ToString());
 
                         if (proofResult.Success == false)
                         {

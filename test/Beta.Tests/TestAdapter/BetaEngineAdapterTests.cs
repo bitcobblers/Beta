@@ -2,18 +2,19 @@
 using System.Runtime.Loader;
 using Beta.TestAdapter;
 using mock_assembly;
+using Xunit.Abstractions;
 
 namespace Beta.Tests.TestAdapter;
 
 public class BetaEngineAdapterTests
 {
-    public class GetControllerMethod : BetaEngineAdapterTests
+    public class GetControllerMethod(ITestOutputHelper output) : BetaEngineAdapterTests
     {
         [Fact]
         public void CanGetController()
         {
             // Arrange.
-            var logger = A.Fake<ITestLogger>();
+            var logger = new XUnitTestLogger(output);
             var assemblyPath = typeof(SampleTests).Assembly.Location;
             var adapter = new BetaEngineAdapter(assemblyPath, logger);
 

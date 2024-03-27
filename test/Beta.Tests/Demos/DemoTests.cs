@@ -1,19 +1,9 @@
 ﻿using Beta.Internal.Discovery;
 using Beta.Internal.Execution;
-using Beta.Internal.Processors;
 using Beta.Sdk.Interfaces;
 using Xunit.Abstractions;
 
 namespace Beta.Tests.Demos;
-
-public class XUnitLogger(ITestOutputHelper output) : ILogger
-{
-    /// <inheritdoc />
-    public void Log(string message)
-    {
-        output.WriteLine(message);
-    }
-}
 
 public class DemoTests(ITestOutputHelper output)
 {
