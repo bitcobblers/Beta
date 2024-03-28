@@ -22,4 +22,7 @@ public class XUnitLogger(ITestOutputHelper output) : ILogger
         output.WriteLine(ex.Message);
         output.WriteLine(ex.StackTrace);
     }
+
+    /// <inheritdoc />
+    public ILogger CreateScope(params string[] newScopes) => this;
 }

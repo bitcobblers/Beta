@@ -144,8 +144,8 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
             },
             "Unable to create controller instance: {0}");
 
-    private static Action<int, string, Exception?> GetFrameworkLogger(ITestLogger logger) =>
-        (level, message, ex) =>
+    private static Action<int, string[], string, Exception?> GetFrameworkLogger(ITestLogger logger) =>
+        (level, scopes, message, ex) =>
         {
             var logLevel = level switch
             {
@@ -156,7 +156,8 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
                 _ => LogLevel.Info
             };
 
-            logger.Log(logLevel, message, ex);
+            // TODO: Optimize this by creating an overload of Log that takes additional scopes.
+            logger.CreateScope(scopes).Log(logLevel, message, ex);
         };
 
     /// <summary>

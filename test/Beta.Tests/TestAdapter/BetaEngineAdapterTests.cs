@@ -10,13 +10,14 @@ public class BetaEngineAdapterTests
 {
     public class GetControllerMethod(ITestOutputHelper output) : BetaEngineAdapterTests
     {
+        private readonly ITestLogger _logger = new XUnitTestLogger(output);
+
         [Fact]
         public void CanGetController()
         {
             // Arrange.
-            var logger = new XUnitTestLogger(output);
             var assemblyPath = typeof(SampleTests).Assembly.Location;
-            var adapter = new BetaEngineAdapter(assemblyPath, logger);
+            var adapter = new BetaEngineAdapter(assemblyPath, _logger);
 
             // Act.
             var controller = adapter.GetController();
@@ -32,7 +33,8 @@ public class BetaEngineAdapterTests
             var adapter = new FakeBetaEngineAdapter(
                 false,
                 true,
-                A.Dummy<object>());
+                A.Dummy<object>(),
+                _logger);
 
             // Act.
             var result = adapter.GetController();
@@ -48,7 +50,8 @@ public class BetaEngineAdapterTests
             var adapter = new FakeBetaEngineAdapter(
                 true,
                 false,
-                A.Dummy<object>());
+                A.Dummy<object>(),
+                _logger);
 
             // Act.
             var result = adapter.GetController();
@@ -60,10 +63,11 @@ public class BetaEngineAdapterTests
         private class FakeBetaEngineAdapter(
             bool hasTestAssembly,
             bool hasBetaAssembly,
-            object? controllerInstance = null)
+            object? controllerInstance,
+            ITestLogger logger)
             : BetaEngineAdapter(
                 "assembly-path.dll",
-                A.Fake<ITestLogger>(),
+                logger,
                 _ => A.Fake<AssemblyLoadContext>())
         {
             /// <inheritdoc />

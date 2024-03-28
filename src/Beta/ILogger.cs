@@ -67,6 +67,13 @@ public interface ILogger
     void Log(int verbosity, string message, Exception? ex = null);
 
     /// <summary>
+    ///     Initializes a new instance of the <see cref="InternalLogger" /> class.
+    /// </summary>
+    /// <param name="newScopes">The new scopes to apply.</param>
+    /// <returns>A new logger with the scopes applied.</returns>
+    ILogger CreateScope(params string[] newScopes);
+
+    /// <summary>
     ///     Defines the verbosity level of a message.
     /// </summary>
     private static class Level

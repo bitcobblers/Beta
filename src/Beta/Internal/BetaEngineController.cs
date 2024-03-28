@@ -25,7 +25,7 @@ public class BetaEngineController
     /// </summary>
     /// <param name="testAssembly">The assembly to scan for tests in.</param>
     /// <param name="log">The logger callback to use.</param>
-    public BetaEngineController(Assembly testAssembly, Action<int, string, Exception?> log)
+    public BetaEngineController(Assembly testAssembly, Action<int, string[], string, Exception?> log)
     {
         _logger = new InternalLogger(log);
         var serviceCollection = new ServiceCollection();
@@ -69,7 +69,9 @@ public class BetaEngineController
     /// <remarks>
     ///     This constructor is only meant for unit testing.
     /// </remarks>
-    internal BetaEngineController(bool isInitialized, ILogger logger, Assembly? testAssembly,
+    internal BetaEngineController(bool isInitialized,
+                                  ILogger logger,
+                                  Assembly? testAssembly,
                                   ITestAssemblyExplorer? testAssemblyExplorer)
     {
         _isInitialized = isInitialized;

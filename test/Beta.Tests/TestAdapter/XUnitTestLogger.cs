@@ -18,5 +18,5 @@ public class XUnitTestLogger(ITestOutputHelper output) : ITestLogger
         output.WriteLine("[{0}] {1} {2}", level, message, ex == null ? string.Empty : $"({ex})");
 
     /// <inheritdoc />
-    public ITestLogger CreateScope(string newScope) => this;
+    public ITestLogger CreateScope(params string[] newScopes) => this;
 }

@@ -85,7 +85,7 @@ public interface ITestLogger
     /// <summary>
     ///     Creates a new logging scope.
     /// </summary>
-    /// <param name="newScope">The new scope to create.</param>
+    /// <param name="newScopes">The new scope to create.</param>
     /// <returns>A new logger for the scope.</returns>
-    ITestLogger CreateScope(string newScope);
+    ITestLogger CreateScope(params string[] newScopes);
 }
