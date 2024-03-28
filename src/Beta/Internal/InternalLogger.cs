@@ -18,5 +18,5 @@ public class InternalLogger(Action<int, string[], string, Exception?> log, strin
 
     /// <inheritdoc />
     public ILogger CreateScope(params string[] newScopes) =>
-        new InternalLogger(log, scopes.Concat(scopes).ToArray());
+        new InternalLogger(log, scopes.Concat(newScopes).ToArray());
 }
