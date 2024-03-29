@@ -31,6 +31,35 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProv
                          IFrameworkHandle? frameworkHandle)
     {
         Reset(runContext, frameworkHandle);
+
+        if (frameworkHandle == null)
+        {
+            return;
+        }
+
+        var executionLogger = Logger.CreateScope("execution");
+        executionLogger.Info("Executing tests.");
+
+        foreach (var testGroup in from test in tests ?? []
+                                  group test by test.Source
+                                  into g
+                                  select new
+                                  {
+                                      Source = g.Key,
+                                      Tests = g.ToArray()
+                                  })
+        {
+            foreach (var test in testGroup.Tests)
+            {
+                executionLogger.Debug($"Executing test: {test.FullyQualifiedName} ({test.DisplayName}).");
+                frameworkHandle.RecordStart(test);
+                frameworkHandle.RecordResult(new TestResult(test)
+                {
+                    Outcome = TestOutcome.Skipped
+                });
+                frameworkHandle.RecordEnd(test, TestOutcome.Skipped);
+            }
+        }
     }
 
     /// <inheritdoc />
@@ -40,6 +69,7 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProv
                          IFrameworkHandle? frameworkHandle)
     {
         Reset(runContext, frameworkHandle);
+        RunTests(CollectTests(sources ?? []), runContext, frameworkHandle);
     }
 
     /// <inheritdoc />

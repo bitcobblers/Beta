@@ -88,4 +88,41 @@ public class VsTestAdapter
             LineNumber = sourceInformation?.LineNumber ?? 1
         };
     }
+
+    /// <summary>
+    ///     Collects a collection of tests from the given sources.
+    /// </summary>
+    /// <param name="sources">The sources to look for tests in.</param>
+    /// <returns>A collection of tests.</returns>
+    protected IEnumerable<TestCase> CollectTests(IEnumerable<string> sources)
+    {
+        var adapterLogger = Logger.CreateScope("adapter");
+
+        adapterLogger.Debug("Collecting tests.");
+
+        foreach (var source in sources)
+        {
+            var assemblyPath = Path.IsPathRooted(source)
+                ? source
+                : Path.Combine(Directory.GetCurrentDirectory(), source);
+
+            var engineAdapter = GetAdapter(assemblyPath);
+            var engine = engineAdapter.GetController();
+            using var navigation = GetNavigation(assemblyPath);
+
+            if (engine == null)
+            {
+                adapterLogger.Error($"Failed to get controller for [{assemblyPath}].");
+                continue;
+            }
+
+            foreach (var testCase in from test in engine.Query()
+                                         // ReSharper disable once AccessToDisposedClosure
+                                     select ToTestCase(test, source, navigation))
+            {
+                adapterLogger.Debug($"Discovered test [{testCase.DisplayName}].");
+                yield return testCase;
+            }
+        }
+    }
 }
