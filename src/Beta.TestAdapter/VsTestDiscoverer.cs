@@ -34,6 +34,8 @@ public class VsTestDiscoverer(EngineAdapterFactory? getAdapter, NavigationDataPr
     {
         Reset(discoveryContext, logger);
 
+        var adapterLogger = Logger.CreateScope("adapter");
+
         foreach (var source in sources)
         {
             var assemblyPath = Path.IsPathRooted(source)
@@ -46,7 +48,7 @@ public class VsTestDiscoverer(EngineAdapterFactory? getAdapter, NavigationDataPr
 
             if (engine == null)
             {
-                Logger.Error($"Failed to get controller for [{assemblyPath}].");
+                adapterLogger.Error($"Failed to get controller for [{assemblyPath}].");
                 continue;
             }
 
@@ -54,7 +56,7 @@ public class VsTestDiscoverer(EngineAdapterFactory? getAdapter, NavigationDataPr
                                          // ReSharper disable once AccessToDisposedClosure
                                      select ToTestCase(test, source, navigation))
             {
-                Logger.Debug($"Discovered test [{testCase.DisplayName}].");
+                adapterLogger.Debug($"Registering test [{testCase.DisplayName}].");
                 discoverySink.SendTestCase(testCase);
             }
         }

@@ -83,7 +83,7 @@ public class VsTestAdapter
         {
             Id = Guid.NewGuid(),
             FullyQualifiedName = $"{discoveredTest.ClassName}.{discoveredTest.MethodName}",
-            DisplayName = "",
+            DisplayName = discoveredTest.TestName,
             CodeFilePath = sourceInformation?.FileName,
             LineNumber = sourceInformation?.LineNumber ?? 1
         };

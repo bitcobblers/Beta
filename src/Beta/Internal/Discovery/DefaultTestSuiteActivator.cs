@@ -5,8 +5,18 @@ namespace Beta.Internal.Discovery;
 /// <summary>
 ///     Defines an implementation of the test suite activator that uses <see cref="Activator.CreateInstance(Type)" />.
 /// </summary>
-public class DefaultTestSuiteActivator(ILogger logger) : ITestSuiteActivator
+public class DefaultTestSuiteActivator : ITestSuiteActivator
 {
+    private readonly ILogger _logger;
+
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="DefaultTestSuiteActivator" /> class.
+    /// </summary>
+    /// <param name="logger">The logger to use.</param>
+    // ReSharper disable once ConvertToPrimaryConstructor
+    public DefaultTestSuiteActivator(ILogger logger) =>
+        _logger = logger.CreateScope("activator");
+
     /// <inheritdoc />
     public TestSuite? Create(Type type)
     {
@@ -14,7 +24,7 @@ public class DefaultTestSuiteActivator(ILogger logger) : ITestSuiteActivator
 
         try
         {
-            logger.Debug($"Suite activator creating an instance of type {type.FullName}");
+            _logger.Debug($"Suite activator creating an instance of type [{type.FullName}]");
             suite = Activator.CreateInstance(type);
         }
         catch (Exception ex)
@@ -25,7 +35,7 @@ public class DefaultTestSuiteActivator(ILogger logger) : ITestSuiteActivator
                 ex = ex.InnerException;
             }
 
-            logger.Error("Suite activator threw an exception.", ex);
+            _logger.Error("Suite activator threw an exception.", ex);
             return null;
         }
 
@@ -34,10 +44,10 @@ public class DefaultTestSuiteActivator(ILogger logger) : ITestSuiteActivator
             case TestSuite testSuite:
                 return testSuite;
             case null:
-                logger.Error("Suite activator returned null");
+                _logger.Error("Suite activator returned null");
                 return null;
             default:
-                logger.Error($"Suite activator returned a type that is not assignable to {nameof(TestSuite)}.");
+                _logger.Error($"Suite activator returned a type that is not assignable to [{nameof(TestSuite)}].");
                 return null;
         }
     }

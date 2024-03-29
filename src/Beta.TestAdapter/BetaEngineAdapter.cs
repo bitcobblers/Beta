@@ -62,7 +62,8 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
             return null;
         }
 
-        var logMethod = GetFrameworkLogger(logger.CreateScope("framework"));
+        var scope = $"framework ({testAssembly.GetName().Name})";
+        var logMethod = GetFrameworkLogger(logger.CreateScope(scope));
         var controllerInstance = CreateController(ControllerName, betaAssembly, [testAssembly, logMethod]);
 
         return controllerInstance == null
@@ -79,9 +80,9 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
     protected virtual Assembly? LoadTestAssembly() =>
         MaybeThrows(
             logger,
-            $"Loading test assembly: {_assemblyPath}",
+            $"Loading test assembly: [{_assemblyPath}].",
             () => _loadContext.LoadFromAssemblyPath(_assemblyPath),
-            "Unable to load test assembly: {0}");
+            "Unable to load test assembly: [{0}].");
 
     /// <summary>
     ///     Gets the beta assembly as a reference from the test assembly.
@@ -106,7 +107,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
                     return _loadContext.LoadFromAssemblyName(betaRef);
                 }
 
-                logger.Error($"Could not find reference to Beta assembly in {assembly.FullName}");
+                logger.Error($"Could not find reference to Beta assembly in [{assembly.FullName}].");
                 return null;
             },
             "Unable to load beta assembly: {0}");
@@ -128,7 +129,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
 
                 if (type == null)
                 {
-                    logger.Error($"Unable to find type {typeName} in Beta assembly.");
+                    logger.Error($"Unable to find type [{typeName}] in Beta assembly.");
                     return null;
                 }
 
@@ -142,7 +143,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
                 logger.Error("Instantiation of controller returned null.");
                 return null;
             },
-            "Unable to create controller instance: {0}");
+            "Unable to create controller instance: [{0}].");
 
     private static Action<int, string[], string, Exception?> GetFrameworkLogger(ITestLogger logger) =>
         (level, scopes, message, ex) =>

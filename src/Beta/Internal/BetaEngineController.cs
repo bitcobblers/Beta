@@ -89,7 +89,7 @@ public class BetaEngineController
         {
             if (_isInitialized)
             {
-                _logger.Debug($"Executing {caller}.");
+                _logger.Debug($"Executing controller function [{caller}].");
                 return func();
             }
 
@@ -115,6 +115,6 @@ public class BetaEngineController
                 ClassName = test.TestClassName,
                 MethodName = test.Method.Name,
                 Input = test.Input ?? string.Empty,
-                TestName = string.Empty
+                TestName = test.FriendlyName
             }));
 }

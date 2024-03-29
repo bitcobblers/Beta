@@ -13,7 +13,7 @@ public class DemoTests(ITestOutputHelper output)
         var logger = new XUnitLogger(output);
 
         var activator = new DefaultTestSuiteActivator(logger);
-        var testCaseDiscoverer = new DefaultTestCaseDiscoverer(activator);
+        var testCaseDiscoverer = new DefaultTestCaseDiscoverer(activator, logger);
         var discoverer = new DefaultTestDiscoverer(testCaseDiscoverer);
         var aggregator = new DefaultTestSuiteAggregator([discoverer]);
 
