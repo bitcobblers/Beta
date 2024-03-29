@@ -67,9 +67,10 @@ public class TestLogger : ITestLogger, IMessageLogger
 
         SendMessage(messageLevel, FormatMessage(message));
 
-        if (ex != null)
+        while (ex != null)
         {
             SendMessage(messageLevel, FormatMessage(ex.ToString()));
+            ex = ex.InnerException;
         }
     }
 
