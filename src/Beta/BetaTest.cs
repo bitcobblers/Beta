@@ -29,17 +29,6 @@ public record BetaTest(object Suite, IEnumerable<object>? Input, string TestName
     }
 
     /// <summary>
-    ///     Gets the unique identifier for the test.
-    /// </summary>
-    public Guid Id { get; init; } = Guid.NewGuid();
-
-    /// <summary>
-    ///     Gets the inputs as a key-value pair.
-    /// </summary>
-    public Dictionary<Guid, object> Inputs { get; } =
-        (Input ?? Array.Empty<object>()).ToDictionary(_ => Guid.NewGuid());
-
-    /// <summary>
     ///     Gets the FQN of the suite for the test.
     /// </summary>
     public string FullyQualifiedTypeName { get; } = Suite.GetType().FullName!;
