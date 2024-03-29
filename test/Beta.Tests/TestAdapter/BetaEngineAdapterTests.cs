@@ -110,7 +110,7 @@ public class BetaEngineAdapterTests
                 "ignored {0}");
 
             // Assert.
-            A.CallTo(() => logger.Error(A<string>._)).MustHaveHappened();
+            A.CallTo(() => logger.Error(A<string>._, A<Exception>._)).MustHaveHappened();
         }
 
         [Fact]

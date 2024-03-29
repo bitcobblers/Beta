@@ -182,7 +182,7 @@ public class BetaEngineAdapter(ITestLogger logger) : IEngineAdapter
         catch (Exception ex)
         {
             var errorMessage = string.Format(formattedMessage, ex.Message);
-            logger.Error(errorMessage);
+            logger.Error(errorMessage, ex);
             return null;
         }
     }
