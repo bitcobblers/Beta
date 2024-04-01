@@ -7,17 +7,11 @@ namespace Beta.Tests.Demos;
 [PublicAPI]
 public class CalculatorDemo : TestSuite.DI
 {
-    private static IEnumerable<Input> AdditionInput
-    {
-        get
-        {
-            return new Input[]
-            {
-                new(1, 2, 3),
-                new(2, 3, 5)
-            };
-        }
-    }
+    private static IEnumerable<Input> AdditionInput =>
+    [
+        new(1, 2, 3),
+        new(2, 3, 5)
+    ];
 
     protected override void ConfigureServices(IServiceCollection services)
     {

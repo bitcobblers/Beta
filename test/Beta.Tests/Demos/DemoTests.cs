@@ -17,7 +17,7 @@ public class DemoTests(ITestOutputHelper output)
         var discoverer = new DefaultTestDiscoverer(testCaseDiscoverer);
         var aggregator = new DefaultTestSuiteAggregator([discoverer]);
 
-        var runner = new DefaultTestRunner(logger);
+        var runner = new DefaultTestRunner();
 
         return runner.Run(
             aggregator.Aggregate([typeof(CalculatorDemo)]),

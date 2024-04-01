@@ -1,8 +1,6 @@
 ﻿using System.Text.Json;
 using Beta.TestAdapter.Models;
 
-#pragma warning disable CS8618
-
 namespace Beta.TestAdapter;
 
 /// <summary>
