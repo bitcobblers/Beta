@@ -15,6 +15,8 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProv
 {
     public const string ExecutorUri = "executor://BetaTestExecutor/v1";
 
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
+
     /// <summary>
     ///     Initializes a new instance of the <see cref="VsTestExecutor" /> class.
     /// </summary>
@@ -38,7 +40,6 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProv
         }
 
         var executionLogger = Logger.CreateScope("execution");
-        executionLogger.Info("Executing tests.");
 
         foreach (var testGroup in from test in tests ?? []
                                   group test by test.Source
@@ -52,12 +53,6 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProv
             foreach (var test in testGroup.Tests)
             {
                 executionLogger.Debug($"Executing test: {test.FullyQualifiedName} ({test.DisplayName}).");
-                frameworkHandle.RecordStart(test);
-                frameworkHandle.RecordResult(new TestResult(test)
-                {
-                    Outcome = TestOutcome.Skipped
-                });
-                frameworkHandle.RecordEnd(test, TestOutcome.Skipped);
             }
         }
     }
@@ -74,7 +69,6 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProv
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    public void Cancel()
-    {
-    }
+    public void Cancel() =>
+        _cancellationTokenSource.Cancel();
 }
