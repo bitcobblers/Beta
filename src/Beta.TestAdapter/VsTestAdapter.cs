@@ -107,16 +107,16 @@ public class VsTestAdapter
                 : Path.Combine(Directory.GetCurrentDirectory(), source);
 
             var engineAdapter = GetAdapter(assemblyPath);
-            var engine = engineAdapter.GetController();
+            var controller = engineAdapter.GetController();
             using var navigation = GetNavigation(assemblyPath);
 
-            if (engine == null)
+            if (controller is null)
             {
                 adapterLogger.Error($"Failed to get controller for [{assemblyPath}].");
                 continue;
             }
 
-            foreach (var testCase in from test in engine.Query()
+            foreach (var testCase in from test in controller.Query()
                                          // ReSharper disable once AccessToDisposedClosure
                                      select ToTestCase(test, source, navigation))
             {
