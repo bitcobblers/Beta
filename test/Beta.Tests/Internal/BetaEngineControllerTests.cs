@@ -17,31 +17,12 @@ public class BetaEngineControllerTests
             // Arrange.
             var controller =
                 new BetaEngineController(
-                    true,
                     _logger,
                     A.Dummy<Assembly>(),
                     A.Fake<ITestAssemblyExplorer>());
 
             // Act.
-            var result = controller.ExecuteIfInitialized(false, () => true);
-
-            // Assert.
-            result.ShouldBeTrue();
-        }
-
-        [Fact]
-        public void ReturnsDefaultValueIfNotInitialized()
-        {
-            // Arrange.
-            var controller =
-                new BetaEngineController(
-                    false,
-                    _logger,
-                    A.Dummy<Assembly>(),
-                    A.Fake<ITestAssemblyExplorer>());
-
-            // Act.
-            var result = controller.ExecuteIfInitialized(true, () => false);
+            var result = controller.Execute(false, () => true);
 
             // Assert.
             result.ShouldBeTrue();
@@ -53,13 +34,12 @@ public class BetaEngineControllerTests
             // Arrange.
             var controller =
                 new BetaEngineController(
-                    true,
                     _logger,
                     A.Dummy<Assembly>(),
                     A.Fake<ITestAssemblyExplorer>());
 
             // Act.
-            var result = controller.ExecuteIfInitialized(
+            var result = controller.Execute(
                 true,
                 () => throw new Exception("I failed"));
 
