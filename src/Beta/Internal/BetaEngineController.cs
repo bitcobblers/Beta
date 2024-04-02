@@ -4,6 +4,7 @@ using System.Text.Json;
 using Beta.Internal.Discovery;
 using Beta.Internal.Execution;
 using Beta.Internal.Processors;
+using Beta.Sdk.Abstractions;
 using Beta.Sdk.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,8 @@ public class BetaEngineController
     private readonly ILogger _logger;
     private readonly Assembly _testAssembly;
     private readonly ITestAssemblyExplorer _testAssemblyExplorer;
+
+    private readonly Test[] _discoveredTests;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="BetaEngineController" /> class.
@@ -44,6 +47,7 @@ public class BetaEngineController
         var serviceProvider = serviceCollection.BuildServiceProvider();
         _testAssembly = testAssembly;
         _testAssemblyExplorer = serviceProvider.GetRequiredService<ITestAssemblyExplorer>();
+        _discoveredTests = Execute([], () => _testAssemblyExplorer.Explore(testAssembly).ToArray());
 
         _logger.Debug("Controller initialization complete");
     }
@@ -64,6 +68,7 @@ public class BetaEngineController
         _logger = logger;
         _testAssembly = testAssembly;
         _testAssemblyExplorer = testAssemblyExplorer;
+        _discoveredTests = Execute([], () => _testAssemblyExplorer.Explore(testAssembly).ToArray());
     }
 
     /// <summary>
@@ -117,7 +122,7 @@ public class BetaEngineController
     /// </summary>
     /// <returns>A collection of discovered tests encoded in JSON.</returns>
     public IEnumerable<string> Query() =>
-        Execute([], () => from test in _testAssemblyExplorer.Explore(_testAssembly)
+        Execute([], () => from test in _discoveredTests
                           select JsonSerializer.Serialize(new DiscoveredTest
                           {
                               ClassName = test.TestClassName,
