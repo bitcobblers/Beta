@@ -108,7 +108,7 @@ public class VsTestAdapter
     /// </summary>
     /// <param name="sources">The sources to look for tests in.</param>
     /// <returns>A collection of tests.</returns>
-    protected IEnumerable<TestCase> CollectTests(IEnumerable<string> sources)
+    protected IEnumerable<TestCollection> CollectTests(IEnumerable<string> sources)
     {
         var adapterLogger = Logger.CreateScope("adapter");
 
@@ -120,9 +120,10 @@ public class VsTestAdapter
                 ? source
                 : Path.Combine(Directory.GetCurrentDirectory(), source);
 
+            using var navigation = GetNavigation(assemblyPath);
             var engineAdapter = GetAdapter(assemblyPath);
             var controller = engineAdapter.GetController();
-            using var navigation = GetNavigation(assemblyPath);
+            var tests = new List<TestCase>();
 
             if (controller is null)
             {
@@ -135,8 +136,17 @@ public class VsTestAdapter
                                      select ToTestCase(test, source, navigation))
             {
                 adapterLogger.Debug($"Discovered test [{testCase.DisplayName}].");
-                yield return testCase;
+                tests.Add(testCase);
             }
+
+            yield return new TestCollection(controller, [.. tests]);
         }
     }
+
+    /// <summary>
+    /// Defines a collection of tests.
+    /// </summary>
+    /// <param name="Controller">The controller that loaded the assembly containing the tests.</param>
+    /// <param name="Tests">The tests within the assembly.</param>
+    public record TestCollection(IEngineController Controller, TestCase[] Tests);
 }

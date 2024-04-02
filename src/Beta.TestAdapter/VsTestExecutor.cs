@@ -64,7 +64,6 @@ public class VsTestExecutor(EngineAdapterFactory? getAdapter, NavigationDataProv
                          IFrameworkHandle? frameworkHandle)
     {
         Reset(runContext, frameworkHandle);
-        RunTests(CollectTests(sources ?? []), runContext, frameworkHandle);
     }
 
     /// <inheritdoc />

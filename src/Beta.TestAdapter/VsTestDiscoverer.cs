@@ -28,13 +28,13 @@ public class VsTestDiscoverer(EngineAdapterFactory? getAdapter, NavigationDataPr
 
     /// <inheritdoc />
     public void DiscoverTests(IEnumerable<string> sources,
-                              IDiscoveryContext discoveryContext,
-                              IMessageLogger logger,
-                              ITestCaseDiscoverySink discoverySink)
+        IDiscoveryContext discoveryContext,
+        IMessageLogger logger,
+        ITestCaseDiscoverySink discoverySink)
     {
         Reset(discoveryContext, logger);
 
-        foreach (var test in CollectTests(sources))
+        foreach (var test in CollectTests(sources).SelectMany(t => t.Tests))
         {
             discoverySink.SendTestCase(test);
         }
