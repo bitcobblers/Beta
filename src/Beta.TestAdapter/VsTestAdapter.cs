@@ -15,6 +15,16 @@ public class VsTestAdapter
     private readonly NavigationDataProviderFactory _navigationFactory;
 
     /// <summary>
+    ///    The property to store the test case input.
+    /// </summary>
+    internal static readonly TestProperty TestCaseInputProperty =
+        TestProperty.Register(
+            "Beta.TestCaseInput",
+            "Input data for the test case",
+            typeof(int),
+            typeof(VsTestAdapter));
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="VsTestAdapter" /> class.
     /// </summary>
     /// <param name="getAdapter">An optional factory method to get a new adapter.</param>
@@ -69,14 +79,14 @@ public class VsTestAdapter
     /// <param name="source">The path to the source assembly the test came from.</param>
     /// <param name="navData">The navigation data used to resolve metadata from.</param>
     /// <returns>The converted <see cref="TestCase" />.</returns>
-    protected static TestCase ToTestCase(
+    internal static TestCase ToTestCase(
         DiscoveredTest discoveredTest,
         string source,
         INavigationDataProvider navData)
     {
         var sourceInformation = navData.Get(discoveredTest.ClassName, discoveredTest.MethodName);
 
-        return new TestCase(
+        var testCase = new TestCase(
             discoveredTest.ClassName,
             new Uri(VsTestExecutor.ExecutorUri),
             source)
@@ -87,6 +97,10 @@ public class VsTestAdapter
             CodeFilePath = sourceInformation?.FileName,
             LineNumber = sourceInformation?.LineNumber ?? 1
         };
+
+        testCase.SetPropertyValue(TestCaseInputProperty, discoveredTest.InputIndex);
+
+        return testCase;
     }
 
     /// <summary>

@@ -8,11 +8,6 @@ namespace Beta.Sdk.Abstractions;
 public record Test(TestSuite Instance, MethodInfo Method, Func<Proof> Apply)
 {
     /// <summary>
-    ///     Gets the id of the test.
-    /// </summary>
-    public Guid Id { get; } = Guid.NewGuid();
-
-    /// <summary>
     ///     Gets the friendly name of the test.
     /// </summary>
     public string FriendlyName { get; init; } = string.Empty;
@@ -26,4 +21,9 @@ public record Test(TestSuite Instance, MethodInfo Method, Func<Proof> Apply)
     ///     Gets the serialized input for the test.
     /// </summary>
     public string? Input { get; init; }
+
+    /// <summary>
+    ///     Gets the index of the input for the test.
+    /// </summary>
+    public int InputIndex { get; init; }
 }

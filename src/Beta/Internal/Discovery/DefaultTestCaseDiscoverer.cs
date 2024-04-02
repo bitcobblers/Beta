@@ -63,6 +63,8 @@ public class DefaultTestCaseDiscoverer : ITestCaseDiscoverer
                                                                  MethodInfo method,
                                                                  BetaTest test)
     {
+        var index = 0;
+
         return from input in test.Input
                let testCaseInstance = activator.Create(method.DeclaringType!)
                where testCaseInstance is not null
@@ -71,7 +73,8 @@ public class DefaultTestCaseDiscoverer : ITestCaseDiscoverer
                select new Test(testCaseInstance, method, () => testCase.Apply(input))
                {
                    FriendlyName = $"{testCase.TestName}({input})",
-                   Input = input.ToString() // TODO: Use a better way to serialize this.
+                   Input = input.ToString(), // TODO: Use a better way to serialize this.
+                   InputIndex = index++
                };
     }
 }

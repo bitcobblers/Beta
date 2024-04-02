@@ -26,6 +26,11 @@ public record DiscoveredTest
     public string Input { get; init; }
 
     /// <summary>
+    ///    Gets the index of the input for the test.
+    /// </summary>
+    public int InputIndex { get; init; }
+
+    /// <summary>
     ///     Gets the friendly name of the test.
     /// </summary>
     public string TestName { get; init; }

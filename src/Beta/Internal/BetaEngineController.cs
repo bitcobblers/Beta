@@ -102,6 +102,7 @@ public class BetaEngineController
                               ClassName = test.TestClassName,
                               MethodName = test.Method.Name,
                               Input = test.Input ?? string.Empty,
+                              InputIndex = test.InputIndex,
                               TestName = test.FriendlyName
                           }));
 }
