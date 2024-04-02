@@ -2,13 +2,13 @@
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
-namespace Beta.Internal;
+namespace Beta.TestAdapter.Models;
 
 /// <summary>
-///     Defines a single discovered test case.
+/// Defines a single test that should be executed by the framework.
 /// </summary>
 [ExcludeFromCodeCoverage]
-public record DiscoveredTest
+public record TestInvocationRequest
 {
     /// <summary>
     ///     Gets the class name of the test.
@@ -21,17 +21,7 @@ public record DiscoveredTest
     public string MethodName { get; init; }
 
     /// <summary>
-    ///     Gets the input to apply to the test case.
-    /// </summary>
-    public string Input { get; init; }
-
-    /// <summary>
     ///     Gets the index of the input for the test.
     /// </summary>
     public int InputIndex { get; init; }
-
-    /// <summary>
-    ///     Gets the friendly name of the test.
-    /// </summary>
-    public string TestName { get; init; }
 }

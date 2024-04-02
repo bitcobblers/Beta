@@ -92,6 +92,27 @@ public class BetaEngineController
     }
 
     /// <summary>
+    /// Wraps an invocation within a try-catch block to log exceptions.
+    /// </summary>
+    /// <typeparam name="T">The type to return from the invocation.</typeparam>
+    /// <param name="func">The callback to execute.</param>
+    /// <param name="caller">The calling method.</param>
+    internal void Execute(
+        Action func,
+        [CallerMemberName] string caller = "")
+    {
+        try
+        {
+            _logger.Debug($"Executing controller function [{caller}].");
+            func();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error("An error occurred while executing a function.", ex);
+        }
+    }
+
+    /// <summary>
     ///     Queries the test assembly for all tests.
     /// </summary>
     /// <returns>A collection of discovered tests encoded in JSON.</returns>
@@ -105,4 +126,21 @@ public class BetaEngineController
                               InputIndex = test.InputIndex,
                               TestName = test.FriendlyName
                           }));
+
+    /// <summary>
+    ///     Executes a single test.
+    /// </summary>
+    /// <param name="serializedTest">The serialized request for the test to execute.</param>
+    public void Run(string serializedTest) =>
+        Execute(() =>
+        {
+            var test = JsonSerializer.Deserialize<TestInvocationRequest>(serializedTest);
+
+            if (test is null)
+            {
+                return;
+            }
+
+            _logger.Debug($"Executing {test.ClassName}.{test.MethodName}:{test.InputIndex}");
+        });
 }

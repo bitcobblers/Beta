@@ -17,10 +17,20 @@ public class WrappedEngineController(object instance) : IEngineController
         where test != null
         select JsonSerializer.Deserialize<DiscoveredTest>(test);
 
+    /// <inheritdoc />
+    public void Run(TestInvocationRequest test) =>
+        Execute("Run", [JsonSerializer.Serialize(test)]);
+
     private T? Execute<T>(string methodName, object?[] parameters)
         where T : class
     {
         var method = _instanceType.GetMethod(methodName);
         return method?.Invoke(instance, parameters) as T;
+    }
+
+    private void Execute(string methodName, object?[] parameters)
+    {
+        var method = _instanceType.GetMethod(methodName);
+        method?.Invoke(instance, parameters);
     }
 }
