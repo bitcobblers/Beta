@@ -19,7 +19,8 @@ public class BetaEngineControllerTests
                 new BetaEngineController(
                     _logger,
                     A.Dummy<Assembly>(),
-                    A.Fake<ITestAssemblyExplorer>());
+                    A.Fake<ITestAssemblyExplorer>(),
+                    A.Fake<ITestRunner>());
 
             // Act.
             var result = controller.Execute(false, () => true);
@@ -36,7 +37,8 @@ public class BetaEngineControllerTests
                 new BetaEngineController(
                     _logger,
                     A.Dummy<Assembly>(),
-                    A.Fake<ITestAssemblyExplorer>());
+                    A.Fake<ITestAssemblyExplorer>(),
+                    A.Fake<ITestRunner>());
 
             // Act.
             var result = controller.Execute(

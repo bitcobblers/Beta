@@ -17,8 +17,8 @@ namespace Beta.Internal;
 public class BetaEngineController
 {
     private readonly ILogger _logger;
-    private readonly Assembly _testAssembly;
     private readonly ITestAssemblyExplorer _testAssemblyExplorer;
+    private readonly ITestRunner _testRunner;
 
     private readonly Test[] _discoveredTests;
 
@@ -45,8 +45,8 @@ public class BetaEngineController
         serviceCollection.AddSingleton(_logger);
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
-        _testAssembly = testAssembly;
         _testAssemblyExplorer = serviceProvider.GetRequiredService<ITestAssemblyExplorer>();
+        _testRunner = serviceProvider.GetRequiredService<ITestRunner>();
         _discoveredTests = Execute([], () => _testAssemblyExplorer.Explore(testAssembly).ToArray());
 
         _logger.Debug("Controller initialization complete");
@@ -58,16 +58,18 @@ public class BetaEngineController
     /// <param name="logger">The logger to use.</param>
     /// <param name="testAssembly">The assembly to scan for tests in.</param>
     /// <param name="testAssemblyExplorer">The assembly explorer implementation to use.</param>
+    /// <param name="testRunner">The test runner to use.</param>
     /// <remarks>
     ///     This constructor is only meant for unit testing.
     /// </remarks>
     internal BetaEngineController(ILogger logger,
         Assembly testAssembly,
-        ITestAssemblyExplorer testAssemblyExplorer)
+        ITestAssemblyExplorer testAssemblyExplorer,
+        ITestRunner testRunner)
     {
         _logger = logger;
-        _testAssembly = testAssembly;
         _testAssemblyExplorer = testAssemblyExplorer;
+        _testRunner = testRunner;
         _discoveredTests = Execute([], () => _testAssemblyExplorer.Explore(testAssembly).ToArray());
     }
 
@@ -146,6 +148,21 @@ public class BetaEngineController
                 return;
             }
 
-            _logger.Debug($"Executing {test.ClassName}.{test.MethodName}:{test.InputIndex}");
+            var matchingTest = _discoveredTests.FirstOrDefault(t =>
+                               t.TestClassName == test.ClassName &&
+                                              t.Method.Name == test.MethodName &&
+                                              t.InputIndex == test.InputIndex);
+
+            var input = test.InputIndex > 0 ? $" with input {test.InputIndex}" : string.Empty;
+            var testDescription = $"{test.ClassName}.{test.MethodName}{input}";
+
+            if (matchingTest is null)
+            {
+                _logger.Error($"Could not find matching test for [{testDescription}].");
+                return;
+            }
+
+            _logger.Debug($"Executing [{testDescription}]");
+            _testRunner.Run(matchingTest);
         });
 }

@@ -8,9 +8,7 @@ namespace Beta.Internal.Execution;
 /// </summary>
 public class DefaultTestRunner : ITestRunner
 {
-    /// <inheritdoc />
-    public Task Run(
-        IEnumerable<Test> tests,
-        ITestFilter filter,
-        CancellationToken cancellationToken) => Task.CompletedTask;
+    public void Run(Test test)
+    {
+    }
 }
