@@ -4,13 +4,13 @@ on:
   workflow_call:
     outputs:
       version:
-        description: "The version for the assembly"
+        description: 'The version for the assembly'
         value: ${{ jobs.calculate-variables.outputs.version }}
       package-version:
-        description: "The version for the package"
+        description: 'The version for the package'
         value: ${{ jobs.calculate-variables.outputs.package-version }}
       packages-directory:
-        description: "The directory containing the nuget packages"
+        description: 'The directory containing the nuget packages'
         value: ${{ jobs.calculate-variables.outputs.package-directory }}
 
 env:
@@ -36,13 +36,12 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
-            7.0.x
             8.0.x
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v0.11.0
         with:
-          versionSpec: "5.x"
+          versionSpec: '5.x'
 
       - name: Get Current Version
         id: gitversion
