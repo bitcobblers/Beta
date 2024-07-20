@@ -4,12 +4,12 @@ on:
   workflow_call:
     inputs:
       package-version:
-        description: "The version for the package"
-        type: "string"
+        description: 'The version for the package'
+        type: 'string'
         required: true
       packages-directory:
-        description: "The directory to save the nuget packages to"
-        type: "string"
+        description: 'The directory to save the nuget packages to'
+        type: 'string'
         required: true
 
 env:
@@ -31,7 +31,6 @@ jobs:
         with:
           dotnet-version: |
             6.0.x
-            7.0.x
             8.0.x
 
       - name: Restore Packages
